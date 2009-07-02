@@ -1,0 +1,71 @@
+/* Copyright (C) 2001 Free Software Foundation, Inc.
+   This file is part of the GNU LIBICONV Library.
+
+   The GNU LIBICONV Library is free software; you can redistribute it
+   and/or modify it under the terms of the GNU Library General Public
+   License as published by the Free Software Foundation; either version 2
+   of the License, or (at your option) any later version.
+
+   The GNU LIBICONV Library is distributed in the hope that it will be
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with the GNU LIBICONV Library; see the file COPYING.LIB.
+   If not, write to the Free Software Foundation, Inc., 59 Temple Place -
+   Suite 330, Boston, MA 02111-1307, USA.  */
+
+/* Encodings used by recode, but not by the standalone libiconv. */
+
+DEFENCODING(( "CP737",                  /* JDK 1.1 */
+            ),
+            cp737,
+            { cp737_mbtowc, NULL },       { cp737_wctomb, NULL })
+
+DEFENCODING(( "CP853",
+            ),
+            cp853,
+            { cp853_mbtowc, NULL },       { cp853_wctomb, NULL })
+
+DEFENCODING(( "CP860",                  /* IANA, JDK 1.1 */
+              "IBM860",                 /* IANA */
+              "860",                    /* IANA */
+              "csIBM860",               /* IANA */
+            ),
+            cp860,
+            { cp860_mbtowc, NULL },       { cp860_wctomb, NULL })
+
+DEFENCODING(( "CP863",                  /* IANA, JDK 1.1 */
+              "IBM863",                 /* IANA */
+              "863",                    /* IANA */
+              "csIBM863",               /* IANA */
+            ),
+            cp863,
+            { cp863_mbtowc, NULL },       { cp863_wctomb, NULL })
+
+DEFENCODING(( "TDS565",
+              "ISO-IR-230",
+            ),
+            tds565,
+            { tds565_mbtowc, NULL },      { tds565_wctomb, NULL })
+
+DEFENCODING(( "RISCOS-LATIN1",
+            ),
+            riscos1,
+            { riscos1_mbtowc, NULL },     { riscos1_wctomb, NULL })
+
+DEFENCODING(( "T.50-IRA",
+            ),
+            t50,
+            { t50_mbtowc, NULL },         { t50_wctomb, NULL })
+
+DEFENCODING(( "GSM-03.38",
+            ),
+            gsm,
+            { gsm_mbtowc, NULL },         { gsm_wctomb, NULL })
+
+DEFENCODING(( "GSM-ERICSSON",
+            ),
+            gsme,
+            { gsme_mbtowc, NULL },        { gsme_wctomb, NULL })
