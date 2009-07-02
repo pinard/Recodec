@@ -1,0 +1,20 @@
+Free `recode' has originally been written by François Pinard.  Other people
+contributed to Free recode by reporting problems, suggesting various
+improvements or submitting actual code.  Here is a list of these people.
+Help me keeping it complete and exempt of errors.  See various ChangeLogs
+for a detailed description of contributions.
+
+(The following entries relate to Recodec only.  Merge of `THANKS' file
+might occur only before Free `recode' 4.0 is released.)
+
+Detlef Lannert		lannert@uni-duesseldorf.de
+Frantisek Hanzlik	hanzlik@lanprojekt.cz
+Frédéric Gobry		frederic.gobry@epfl.ch
+			http://people.epfl.ch/frederic.gobry
+Frédéric Kayser 	geeks@free.fr
+			http://frederic.kayser.com
+Karl Heinz Marbaise	khmarbaise@gmx.de
+			http://www.fido.de/~kama/
+Martin Jaburek		longmatys@hotmail.com
+Robert Lachance 	rlachance@sram.qc.ca
+Yann Dirson		dirson@univ-mlv.fr

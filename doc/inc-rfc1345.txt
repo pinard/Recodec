@@ -1,0 +1,1196 @@
+  ..
+     DO NOT MODIFY THIS FILE!  It was automatically generated.
+     -*- coding: UTF-8 -*-
+  ..
+     Conversion between different charsets, surfaces and structures.
+     Copyright © 1993, 1997, 1999, 2002, 2004 Free Software Foundation, Inc.
+     Contributed by François Pinard <pinard@iro.umontreal.ca>, 1993.
+  ..
+     This library is free software; you can redistribute it and/or
+     modify it under the terms of the GNU Lesser General Public License
+     as published by the Free Software Foundation; either version 2 of the
+     License, or (at your option) any later version.
+  ..
+     This library is distributed in the hope that it will be
+     useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+     of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+     Lesser General Public License for more details.
+  ..
+     You should have received a copy of the GNU Lesser General Public
+     License along with the `recode' Library; see the file `COPYING.LIB'.
+     If not, write to the Free Software Foundation, Inc., 59 Temple Place -
+     Suite 330, Boston, MA 02111-1307, USA.
+
+  + *Charsets described within RFC 1345*
+
+  :charset:`ANSI_X3.4-1968`
+
+    .. :tindex ANSI_X3.4-1968, aliases and source
+    .. :tindex ANSI_X3.4-1986
+    .. :tindex ASCII
+    .. :tindex IBM367
+    .. :tindex ISO646-US
+    .. :tindex ISO_646.irv(1991)
+    .. :tindex US-ASCII
+    .. :tindex cp367
+    .. :tindex iso-ir-6
+    .. :tindex us
+
+    :charset:`ANSI_X3.4-1986`, :charset:`ASCII`, :charset:`IBM367`, :charset:`ISO646-US`, :charset:`ISO_646.irv:1991`, :charset:`US-ASCII`, :charset:`cp367`, :charset:`iso-ir-6` and :charset:`us` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ASMO_449`
+
+    .. :tindex ASMO_449, aliases and source
+    .. :tindex ISO_9036
+    .. :tindex arabic7
+    .. :tindex iso-ir-89
+
+    :charset:`ISO_9036`, :charset:`arabic7` and :charset:`iso-ir-89` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`BS_4730`
+
+    .. :tindex BS_4730, aliases and source
+    .. :tindex ISO646-GB
+    .. :tindex gb
+    .. :tindex iso-ir-4
+    .. :tindex uk
+
+    :charset:`ISO646-GB`, :charset:`gb`, :charset:`iso-ir-4` and :charset:`uk` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`BS_viewdata`
+
+    .. :tindex BS_viewdata, aliases and source
+    .. :tindex iso-ir-47
+
+    :charset:`iso-ir-47` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`CSA_Z243.4-1985-1`
+
+    .. :tindex CSA_Z243.4-1985-1, aliases and source
+    .. :tindex ISO646-CA
+    .. :tindex ca
+    .. :tindex csa7-1
+    .. :tindex iso-ir-121
+
+    :charset:`ISO646-CA`, :charset:`ca`, :charset:`csa7-1` and :charset:`iso-ir-121` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`CSA_Z243.4-1985-2`
+
+    .. :tindex CSA_Z243.4-1985-2, aliases and source
+    .. :tindex ISO646-CA2
+    .. :tindex csa7-2
+    .. :tindex iso-ir-122
+
+    :charset:`ISO646-CA2`, :charset:`csa7-2` and :charset:`iso-ir-122` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`CSA_Z243.4-1985-gr`
+
+    .. :tindex CSA_Z243.4-1985-gr, aliases and source
+    .. :tindex iso-ir-123
+
+    :charset:`iso-ir-123` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`CSN_369103`
+
+    .. :tindex CSN_369103, aliases and source
+    .. :tindex iso-ir-139
+
+    :charset:`iso-ir-139` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`DEC-MCS`
+
+    .. :tindex DEC-MCS, aliases and source
+    .. :tindex dec
+
+    :charset:`dec` is an alias for this charset.
+    VAX/VMS User's Manual, Order Number: AI-Y517A-TE, April 1986.
+
+  :charset:`DIN_66003`
+
+    .. :tindex DIN_66003, aliases and source
+    .. :tindex ISO646-DE
+    .. :tindex de
+    .. :tindex iso-ir-21
+
+    :charset:`ISO646-DE`, :charset:`de` and :charset:`iso-ir-21` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`DS_2089`
+
+    .. :tindex DS_2089, aliases and source
+    .. :tindex DS2089
+    .. :tindex ISO646-DK
+    .. :tindex dk
+
+    :charset:`DS2089`, :charset:`ISO646-DK` and :charset:`dk` are aliases for this charset.
+    Source: Danish Standard, DS 2089, February 1974.
+
+  :charset:`EBCDIC-AT-DE`
+
+    .. :tindex EBCDIC-AT-DE, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-AT-DE-A`
+
+    .. :tindex EBCDIC-AT-DE-A, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-CA-FR`
+
+    .. :tindex EBCDIC-CA-FR, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-DK-NO`
+
+    .. :tindex EBCDIC-DK-NO, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-DK-NO-A`
+
+    .. :tindex EBCDIC-DK-NO-A, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-ES`
+
+    .. :tindex EBCDIC-ES, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-ES-A`
+
+    .. :tindex EBCDIC-ES-A, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-ES-S`
+
+    .. :tindex EBCDIC-ES-S, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-FI-SE`
+
+    .. :tindex EBCDIC-FI-SE, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-FI-SE-A`
+
+    .. :tindex EBCDIC-FI-SE-A, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-FR`
+
+    .. :tindex EBCDIC-FR, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-IT`
+
+    .. :tindex EBCDIC-IT, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-PT`
+
+    .. :tindex EBCDIC-PT, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-UK`
+
+    .. :tindex EBCDIC-UK, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`EBCDIC-US`
+
+    .. :tindex EBCDIC-US, aliases and source
+
+    Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987.
+
+  :charset:`ECMA-cyrillic`
+
+    .. :tindex ECMA-cyrillic, aliases and source
+    .. :tindex iso-ir-111
+
+    :charset:`iso-ir-111` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`ES`
+
+    .. :tindex ES, aliases and source
+    .. :tindex ISO646-ES
+    .. :tindex iso-ir-17
+
+    :charset:`ISO646-ES` and :charset:`iso-ir-17` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ES2`
+
+    .. :tindex ES2, aliases and source
+    .. :tindex ISO646-ES2
+    .. :tindex iso-ir-85
+
+    :charset:`ISO646-ES2` and :charset:`iso-ir-85` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`GB_1988-80`
+
+    .. :tindex GB_1988-80, aliases and source
+    .. :tindex ISO646-CN
+    .. :tindex cn
+    .. :tindex iso-ir-57
+
+    :charset:`ISO646-CN`, :charset:`cn` and :charset:`iso-ir-57` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`GOST_19768-74`
+
+    .. :tindex GOST_19768-74, aliases and source
+    .. :tindex ST_SEV_358-88
+    .. :tindex iso-ir-153
+
+    :charset:`ST_SEV_358-88` and :charset:`iso-ir-153` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`IBM037`
+
+    .. :tindex IBM037, aliases and source
+    .. :tindex cp037
+    .. :tindex ebcdic-cp-ca
+    .. :tindex ebcdic-cp-nl
+    .. :tindex ebcdic-cp-us
+    .. :tindex ebcdic-cp-wt
+
+    :charset:`cp037`, :charset:`ebcdic-cp-ca`, :charset:`ebcdic-cp-nl`, :charset:`ebcdic-cp-us` and :charset:`ebcdic-cp-wt` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM038`
+
+    .. :tindex IBM038, aliases and source
+    .. :tindex EBCDIC-INT
+    .. :tindex cp038
+
+    :charset:`EBCDIC-INT` and :charset:`cp038` are aliases for this charset.
+    Source: IBM 3174 Character Set Ref, GA27-3831-02, March 1990.
+
+  :charset:`IBM1026`
+
+    .. :tindex IBM1026, aliases and source
+    .. :tindex CP1026
+
+    :charset:`CP1026` is an alias for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM273`
+
+    .. :tindex IBM273, aliases and source
+    .. :tindex CP273
+
+    :charset:`CP273` is an alias for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM274`
+
+    .. :tindex IBM274, aliases and source
+    .. :tindex CP274
+    .. :tindex EBCDIC-BE
+
+    :charset:`CP274` and :charset:`EBCDIC-BE` are aliases for this charset.
+    Source: IBM 3174 Character Set Ref, GA27-3831-02, March 1990.
+
+  :charset:`IBM275`
+
+    .. :tindex IBM275, aliases and source
+    .. :tindex EBCDIC-BR
+    .. :tindex cp275
+
+    :charset:`EBCDIC-BR` and :charset:`cp275` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM277`
+
+    .. :tindex IBM277, aliases and source
+    .. :tindex EBCDIC-CP-DK
+    .. :tindex EBCDIC-CP-NO
+
+    :charset:`EBCDIC-CP-DK` and :charset:`EBCDIC-CP-NO` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM278`
+
+    .. :tindex IBM278, aliases and source
+    .. :tindex CP278
+    .. :tindex ebcdic-cp-fi
+    .. :tindex ebcdic-cp-se
+
+    :charset:`CP278`, :charset:`ebcdic-cp-fi` and :charset:`ebcdic-cp-se` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM280`
+
+    .. :tindex IBM280, aliases and source
+    .. :tindex CP280
+    .. :tindex ebcdic-cp-it
+
+    :charset:`CP280` and :charset:`ebcdic-cp-it` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM281`
+
+    .. :tindex IBM281, aliases and source
+    .. :tindex EBCDIC-JP-E
+    .. :tindex cp281
+
+    :charset:`EBCDIC-JP-E` and :charset:`cp281` are aliases for this charset.
+    Source: IBM 3174 Character Set Ref, GA27-3831-02, March 1990.
+
+  :charset:`IBM284`
+
+    .. :tindex IBM284, aliases and source
+    .. :tindex CP284
+    .. :tindex ebcdic-cp-es
+
+    :charset:`CP284` and :charset:`ebcdic-cp-es` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM285`
+
+    .. :tindex IBM285, aliases and source
+    .. :tindex CP285
+    .. :tindex ebcdic-cp-gb
+
+    :charset:`CP285` and :charset:`ebcdic-cp-gb` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM290`
+
+    .. :tindex IBM290, aliases and source
+    .. :tindex EBCDIC-JP-kana
+    .. :tindex cp290
+
+    :charset:`EBCDIC-JP-kana` and :charset:`cp290` are aliases for this charset.
+    Source: IBM 3174 Character Set Ref, GA27-3831-02, March 1990.
+
+  :charset:`IBM297`
+
+    .. :tindex IBM297, aliases and source
+    .. :tindex cp297
+    .. :tindex ebcdic-cp-fr
+
+    :charset:`cp297` and :charset:`ebcdic-cp-fr` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM420`
+
+    .. :tindex IBM420, aliases and source
+    .. :tindex cp420
+    .. :tindex ebcdic-cp-ar1
+
+    :charset:`cp420` and :charset:`ebcdic-cp-ar1` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+    IBM NLS RM p 11-11.
+
+  :charset:`IBM423`
+
+    .. :tindex IBM423, aliases and source
+    .. :tindex cp423
+    .. :tindex ebcdic-cp-gr
+
+    :charset:`cp423` and :charset:`ebcdic-cp-gr` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM424`
+
+    .. :tindex IBM424, aliases and source
+    .. :tindex cp424
+    .. :tindex ebcdic-cp-he
+
+    :charset:`cp424` and :charset:`ebcdic-cp-he` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM437`
+
+    .. :tindex IBM437, aliases and source
+    .. :tindex 437
+    .. :tindex cp437
+
+    :charset:`437` and :charset:`cp437` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM500`
+
+    .. :tindex IBM500, aliases and source
+    .. :tindex CP500
+    .. :tindex ebcdic-cp-be
+    .. :tindex ebcdic-cp-ch
+
+    :charset:`CP500`, :charset:`ebcdic-cp-be` and :charset:`ebcdic-cp-ch` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM850`
+
+    .. :tindex IBM850, aliases and source
+    .. :tindex 850
+    .. :tindex cp850
+
+    :charset:`850` and :charset:`cp850` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM851`
+
+    .. :tindex IBM851, aliases and source
+    .. :tindex 851
+    .. :tindex cp851
+
+    :charset:`851` and :charset:`cp851` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM852`
+
+    .. :tindex IBM852, aliases and source
+    .. :tindex 852
+    .. :tindex cp852
+
+    :charset:`852` and :charset:`cp852` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM855`
+
+    .. :tindex IBM855, aliases and source
+    .. :tindex 855
+    .. :tindex cp855
+
+    :charset:`855` and :charset:`cp855` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM857`
+
+    .. :tindex IBM857, aliases and source
+    .. :tindex 857
+    .. :tindex cp857
+
+    :charset:`857` and :charset:`cp857` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM860`
+
+    .. :tindex IBM860, aliases and source
+    .. :tindex 860
+    .. :tindex cp860
+
+    :charset:`860` and :charset:`cp860` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM861`
+
+    .. :tindex IBM861, aliases and source
+    .. :tindex 861
+    .. :tindex cp-is
+    .. :tindex cp861
+
+    :charset:`861`, :charset:`cp-is` and :charset:`cp861` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM862`
+
+    .. :tindex IBM862, aliases and source
+    .. :tindex 862
+    .. :tindex cp862
+
+    :charset:`862` and :charset:`cp862` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM863`
+
+    .. :tindex IBM863, aliases and source
+    .. :tindex 863
+    .. :tindex cp863
+
+    :charset:`863` and :charset:`cp863` are aliases for this charset.
+    Source: IBM Keyboard layouts and code pages, PN 07G4586 June 1991.
+
+  :charset:`IBM864`
+
+    .. :tindex IBM864, aliases and source
+    .. :tindex cp864
+
+    :charset:`cp864` is an alias for this charset.
+    Source: IBM Keyboard layouts and code pages, PN 07G4586 June 1991.
+
+  :charset:`IBM865`
+
+    .. :tindex IBM865, aliases and source
+    .. :tindex 865
+    .. :tindex cp865
+
+    :charset:`865` and :charset:`cp865` are aliases for this charset.
+    Source: IBM DOS 3.3 Ref (Abridged), 94X9575 (Feb 1987).
+
+  :charset:`IBM868`
+
+    .. :tindex IBM868, aliases and source
+    .. :tindex CP868
+    .. :tindex cp-ar
+
+    :charset:`CP868` and :charset:`cp-ar` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM869`
+
+    .. :tindex IBM869, aliases and source
+    .. :tindex 869
+    .. :tindex cp-gr
+    .. :tindex cp869
+
+    :charset:`869`, :charset:`cp-gr` and :charset:`cp869` are aliases for this charset.
+    Source: IBM Keyboard layouts and code pages, PN 07G4586 June 1991.
+
+  :charset:`IBM870`
+
+    .. :tindex IBM870, aliases and source
+    .. :tindex CP870
+    .. :tindex ebcdic-cp-roece
+    .. :tindex ebcdic-cp-yu
+
+    :charset:`CP870`, :charset:`ebcdic-cp-roece` and :charset:`ebcdic-cp-yu` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM871`
+
+    .. :tindex IBM871, aliases and source
+    .. :tindex CP871
+    .. :tindex ebcdic-cp-is
+
+    :charset:`CP871` and :charset:`ebcdic-cp-is` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM880`
+
+    .. :tindex IBM880, aliases and source
+    .. :tindex EBCDIC-Cyrillic
+    .. :tindex cp880
+
+    :charset:`EBCDIC-Cyrillic` and :charset:`cp880` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM891`
+
+    .. :tindex IBM891, aliases and source
+    .. :tindex cp891
+
+    :charset:`cp891` is an alias for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM903`
+
+    .. :tindex IBM903, aliases and source
+    .. :tindex cp903
+
+    :charset:`cp903` is an alias for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM904`
+
+    .. :tindex IBM904, aliases and source
+    .. :tindex 904
+    .. :tindex cp904
+
+    :charset:`904` and :charset:`cp904` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IBM905`
+
+    .. :tindex IBM905, aliases and source
+    .. :tindex CP905
+    .. :tindex ebcdic-cp-tr
+
+    :charset:`CP905` and :charset:`ebcdic-cp-tr` are aliases for this charset.
+    Source: IBM 3174 Character Set Ref, GA27-3831-02, March 1990.
+
+  :charset:`IBM918`
+
+    .. :tindex IBM918, aliases and source
+    .. :tindex CP918
+    .. :tindex ebcdic-cp-ar2
+
+    :charset:`CP918` and :charset:`ebcdic-cp-ar2` are aliases for this charset.
+    Source: IBM NLS RM Vol2 SE09-8002-01, March 1990.
+
+  :charset:`IEC_P27-1`
+
+    .. :tindex IEC_P27-1, aliases and source
+    .. :tindex iso-ir-143
+
+    :charset:`iso-ir-143` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`INIS`
+
+    .. :tindex INIS, aliases and source
+    .. :tindex iso-ir-49
+
+    :charset:`iso-ir-49` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`INIS-8`
+
+    .. :tindex INIS-8, aliases and source
+    .. :tindex iso-ir-50
+
+    :charset:`iso-ir-50` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`INIS-cyrillic`
+
+    .. :tindex INIS-cyrillic, aliases and source
+    .. :tindex iso-ir-51
+
+    :charset:`iso-ir-51` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`INVARIANT`
+
+    .. :tindex INVARIANT, aliases and source
+
+
+  :charset:`ISO_10367-box`
+
+    .. :tindex ISO_10367-box, aliases and source
+    .. :tindex iso-ir-155
+
+    :charset:`iso-ir-155` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_2033-1983`
+
+    .. :tindex ISO_2033-1983, aliases and source
+    .. :tindex e13b
+    .. :tindex iso-ir-98
+
+    :charset:`e13b` and :charset:`iso-ir-98` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_5427`
+
+    .. :tindex ISO_5427, aliases and source
+    .. :tindex iso-ir-37
+
+    :charset:`iso-ir-37` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_5427:1981`
+
+    .. :tindex ISO_5427(1981), aliases and source
+    .. :tindex iso-ir-54
+
+    :charset:`iso-ir-54` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_5428:1980`
+
+    .. :tindex ISO_5428(1980), aliases and source
+    .. :tindex iso-ir-55
+
+    :charset:`iso-ir-55` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_646.basic:1983`
+
+    .. :tindex ISO_646.basic(1983), aliases and source
+    .. :tindex ref
+
+    :charset:`ref` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_646.irv:1983`
+
+    .. :tindex ISO_646.irv(1983), aliases and source
+    .. :tindex irv
+    .. :tindex iso-ir-2
+
+    :charset:`irv` and :charset:`iso-ir-2` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_6937-2-25`
+
+    .. :tindex ISO_6937-2-25, aliases and source
+    .. :tindex iso-ir-152
+
+    :charset:`iso-ir-152` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_8859-1:1987`
+
+    .. :tindex ISO_8859-1(1987), aliases and source
+    .. :tindex CP819
+    .. :tindex IBM819
+    .. :tindex ISO-8859-1
+    .. :tindex ISO_8859-1
+    .. :tindex iso-ir-100
+    .. :tindex l1
+    .. :tindex latin1
+
+    :charset:`CP819`, :charset:`IBM819`, :charset:`ISO-8859-1`, :charset:`ISO_8859-1`, :charset:`iso-ir-100`, :charset:`l1` and :charset:`latin1` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_8859-2:1987`
+
+    .. :tindex ISO_8859-2(1987), aliases and source
+    .. :tindex ISO-8859-2
+    .. :tindex ISO_8859-2
+    .. :tindex iso-ir-101
+    .. :tindex l2
+    .. :tindex latin2
+
+    :charset:`ISO-8859-2`, :charset:`ISO_8859-2`, :charset:`iso-ir-101`, :charset:`l2` and :charset:`latin2` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_8859-3:1988`
+
+    .. :tindex ISO_8859-3(1988), aliases and source
+    .. :tindex ISO-8859-3
+    .. :tindex ISO_8859-3
+    .. :tindex iso-ir-109
+    .. :tindex l3
+    .. :tindex latin3
+
+    :charset:`ISO-8859-3`, :charset:`ISO_8859-3`, :charset:`iso-ir-109`, :charset:`l3` and :charset:`latin3` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_8859-4:1988`
+
+    .. :tindex ISO_8859-4(1988), aliases and source
+    .. :tindex ISO-8859-4
+    .. :tindex ISO_8859-4
+    .. :tindex iso-ir-110
+    .. :tindex l4
+    .. :tindex latin4
+
+    :charset:`ISO-8859-4`, :charset:`ISO_8859-4`, :charset:`iso-ir-110`, :charset:`l4` and :charset:`latin4` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_8859-5:1988`
+
+    .. :tindex ISO_8859-5(1988), aliases and source
+    .. :tindex ISO-8859-5
+    .. :tindex ISO_8859-5
+    .. :tindex cyrillic
+    .. :tindex iso-ir-144
+
+    :charset:`ISO-8859-5`, :charset:`ISO_8859-5`, :charset:`cyrillic` and :charset:`iso-ir-144` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_8859-6:1987`
+
+    .. :tindex ISO_8859-6(1987), aliases and source
+    .. :tindex ASMO-708
+    .. :tindex ECMA-114
+    .. :tindex ISO-8859-6
+    .. :tindex ISO_8859-6
+    .. :tindex arabic
+    .. :tindex iso-ir-127
+
+    :charset:`ASMO-708`, :charset:`ECMA-114`, :charset:`ISO-8859-6`, :charset:`ISO_8859-6`, :charset:`arabic` and :charset:`iso-ir-127` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_8859-7:1987`
+
+    .. :tindex ISO_8859-7(1987), aliases and source
+    .. :tindex ECMA-118
+    .. :tindex ELOT_928
+    .. :tindex ISO-8859-7
+    .. :tindex ISO_8859-7
+    .. :tindex greek
+    .. :tindex greek8
+    .. :tindex iso-ir-126
+
+    :charset:`ECMA-118`, :charset:`ELOT_928`, :charset:`ISO-8859-7`, :charset:`ISO_8859-7`, :charset:`greek`, :charset:`greek8` and :charset:`iso-ir-126` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_8859-8:1988`
+
+    .. :tindex ISO_8859-8(1988), aliases and source
+    .. :tindex ISO-8859-8
+    .. :tindex ISO_8859-8
+    .. :tindex hebrew
+    .. :tindex iso-ir-138
+
+    :charset:`ISO-8859-8`, :charset:`ISO_8859-8`, :charset:`hebrew` and :charset:`iso-ir-138` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_8859-9:1989`
+
+    .. :tindex ISO_8859-9(1989), aliases and source
+    .. :tindex ISO-8859-9
+    .. :tindex ISO_8859-9
+    .. :tindex iso-ir-148
+    .. :tindex l5
+    .. :tindex latin5
+
+    :charset:`ISO-8859-9`, :charset:`ISO_8859-9`, :charset:`iso-ir-148`, :charset:`l5` and :charset:`latin5` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`ISO_8859-supp`
+
+    .. :tindex ISO_8859-supp, aliases and source
+    .. :tindex iso-ir-154
+    .. :tindex latin1-2-5
+
+    :charset:`iso-ir-154` and :charset:`latin1-2-5` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`IT`
+
+    .. :tindex IT, aliases and source
+    .. :tindex ISO646-IT
+    .. :tindex iso-ir-15
+
+    :charset:`ISO646-IT` and :charset:`iso-ir-15` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`JIS_C6220-1969-jp`
+
+    .. :tindex JIS_C6220-1969-jp, aliases and source
+    .. :tindex JIS_C6220-1969
+    .. :tindex iso-ir-13
+    .. :tindex katakana
+    .. :tindex x0201-7
+
+    :charset:`JIS_C6220-1969`, :charset:`iso-ir-13`, :charset:`katakana` and :charset:`x0201-7` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`JIS_C6220-1969-ro`
+
+    .. :tindex JIS_C6220-1969-ro, aliases and source
+    .. :tindex ISO646-JP
+    .. :tindex iso-ir-14
+    .. :tindex jp
+
+    :charset:`ISO646-JP`, :charset:`iso-ir-14` and :charset:`jp` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`JIS_C6229-1984-a`
+
+    .. :tindex JIS_C6229-1984-a, aliases and source
+    .. :tindex jp-ocr-a
+
+    :charset:`jp-ocr-a` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`JIS_C6229-1984-b`
+
+    .. :tindex JIS_C6229-1984-b, aliases and source
+    .. :tindex ISO646-JP-OCR-B
+    .. :tindex jp-ocr-b
+
+    :charset:`ISO646-JP-OCR-B` and :charset:`jp-ocr-b` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`JIS_C6229-1984-b-add`
+
+    .. :tindex JIS_C6229-1984-b-add, aliases and source
+    .. :tindex iso-ir-93
+    .. :tindex jp-ocr-b-add
+
+    :charset:`iso-ir-93` and :charset:`jp-ocr-b-add` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`JIS_C6229-1984-hand`
+
+    .. :tindex JIS_C6229-1984-hand, aliases and source
+    .. :tindex iso-ir-94
+    .. :tindex jp-ocr-hand
+
+    :charset:`iso-ir-94` and :charset:`jp-ocr-hand` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`JIS_C6229-1984-hand-add`
+
+    .. :tindex JIS_C6229-1984-hand-add, aliases and source
+    .. :tindex iso-ir-95
+    .. :tindex jp-ocr-hand-add
+
+    :charset:`iso-ir-95` and :charset:`jp-ocr-hand-add` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`JIS_C6229-1984-kana`
+
+    .. :tindex JIS_C6229-1984-kana, aliases and source
+    .. :tindex iso-ir-96
+
+    :charset:`iso-ir-96` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`JIS_X0201`
+
+    .. :tindex JIS_X0201, aliases and source
+    .. :tindex X0201
+
+    :charset:`X0201` is an alias for this charset.
+
+  :charset:`JUS_I.B1.002`
+
+    .. :tindex JUS_I.B1.002, aliases and source
+    .. :tindex ISO646-YU
+    .. :tindex iso-ir-141
+    .. :tindex js
+    .. :tindex yu
+
+    :charset:`ISO646-YU`, :charset:`iso-ir-141`, :charset:`js` and :charset:`yu` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`JUS_I.B1.003-mac`
+
+    .. :tindex JUS_I.B1.003-mac, aliases and source
+    .. :tindex iso-ir-147
+    .. :tindex macedonian
+
+    :charset:`iso-ir-147` and :charset:`macedonian` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`JUS_I.B1.003-serb`
+
+    .. :tindex JUS_I.B1.003-serb, aliases and source
+    .. :tindex iso-ir-146
+    .. :tindex serbian
+
+    :charset:`iso-ir-146` and :charset:`serbian` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`KSC5636`
+
+    .. :tindex KSC5636, aliases and source
+    .. :tindex ISO646-KR
+
+    :charset:`ISO646-KR` is an alias for this charset.
+
+  :charset:`Latin-greek-1`
+
+    .. :tindex Latin-greek-1, aliases and source
+    .. :tindex iso-ir-27
+
+    :charset:`iso-ir-27` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`MSZ_7795.3`
+
+    .. :tindex MSZ_7795.3, aliases and source
+    .. :tindex ISO646-HU
+    .. :tindex hu
+    .. :tindex iso-ir-86
+
+    :charset:`ISO646-HU`, :charset:`hu` and :charset:`iso-ir-86` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`NATS-DANO`
+
+    .. :tindex NATS-DANO, aliases and source
+    .. :tindex iso-ir-9-1
+
+    :charset:`iso-ir-9-1` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`NATS-DANO-ADD`
+
+    .. :tindex NATS-DANO-ADD, aliases and source
+    .. :tindex iso-ir-9-2
+
+    :charset:`iso-ir-9-2` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`NATS-SEFI`
+
+    .. :tindex NATS-SEFI, aliases and source
+    .. :tindex iso-ir-8-1
+
+    :charset:`iso-ir-8-1` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`NATS-SEFI-ADD`
+
+    .. :tindex NATS-SEFI-ADD, aliases and source
+    .. :tindex iso-ir-8-2
+
+    :charset:`iso-ir-8-2` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`NC_NC00-10:81`
+
+    .. :tindex NC_NC00-10(81), aliases and source
+    .. :tindex ISO646-CU
+    .. :tindex cuba
+    .. :tindex iso-ir-151
+
+    :charset:`ISO646-CU`, :charset:`cuba` and :charset:`iso-ir-151` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`NF_Z_62-010`
+
+    .. :tindex NF_Z_62-010, aliases and source
+    .. :tindex ISO646-FR
+    .. :tindex fr
+    .. :tindex iso-ir-69
+
+    :charset:`ISO646-FR`, :charset:`fr` and :charset:`iso-ir-69` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`NF_Z_62-010_(1973)`
+
+    .. :tindex NF_Z_62-010_(1973), aliases and source
+    .. :tindex ISO646-FR1
+    .. :tindex iso-ir-25
+
+    :charset:`ISO646-FR1` and :charset:`iso-ir-25` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`NS_4551-1`
+
+    .. :tindex NS_4551-1, aliases and source
+    .. :tindex ISO646-NO
+    .. :tindex iso-ir-60
+    .. :tindex no
+
+    :charset:`ISO646-NO`, :charset:`iso-ir-60` and :charset:`no` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`NS_4551-2`
+
+    .. :tindex NS_4551-2, aliases and source
+    .. :tindex ISO646-NO2
+    .. :tindex iso-ir-61
+    .. :tindex no2
+
+    :charset:`ISO646-NO2`, :charset:`iso-ir-61` and :charset:`no2` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`PT`
+
+    .. :tindex PT, aliases and source
+    .. :tindex ISO646-PT
+    .. :tindex iso-ir-16
+
+    :charset:`ISO646-PT` and :charset:`iso-ir-16` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`PT2`
+
+    .. :tindex PT2, aliases and source
+    .. :tindex ISO646-PT2
+    .. :tindex iso-ir-84
+
+    :charset:`ISO646-PT2` and :charset:`iso-ir-84` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`SEN_850200_B`
+
+    .. :tindex SEN_850200_B, aliases and source
+    .. :tindex FI
+    .. :tindex ISO646-FI
+    .. :tindex ISO646-SE
+    .. :tindex iso-ir-10
+    .. :tindex se
+
+    :charset:`FI`, :charset:`ISO646-FI`, :charset:`ISO646-SE`, :charset:`iso-ir-10` and :charset:`se` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`SEN_850200_C`
+
+    .. :tindex SEN_850200_C, aliases and source
+    .. :tindex ISO646-SE2
+    .. :tindex iso-ir-11
+    .. :tindex se2
+
+    :charset:`ISO646-SE2`, :charset:`iso-ir-11` and :charset:`se2` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`T.61-7bit`
+
+    .. :tindex T.61-7bit, aliases and source
+    .. :tindex iso-ir-102
+
+    :charset:`iso-ir-102` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`greek-ccitt`
+
+    .. :tindex greek-ccitt, aliases and source
+    .. :tindex iso-ir-150
+
+    :charset:`iso-ir-150` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`greek7`
+
+    .. :tindex greek7, aliases and source
+    .. :tindex iso-ir-88
+
+    :charset:`iso-ir-88` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`greek7-old`
+
+    .. :tindex greek7-old, aliases and source
+    .. :tindex iso-ir-18
+
+    :charset:`iso-ir-18` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`hp-roman8`
+
+    .. :tindex hp-roman8, aliases and source
+    .. :tindex r8
+    .. :tindex roman8
+
+    :charset:`r8` and :charset:`roman8` are aliases for this charset.
+    Source: LaserJet IIP Printer User's Manual,.
+    HP part no 33471-90901, Hewlet-Packard, June 1989.
+
+  :charset:`latin-greek`
+
+    .. :tindex latin-greek, aliases and source
+    .. :tindex iso-ir-19
+
+    :charset:`iso-ir-19` is an alias for this charset.
+    Source: ECMA registry.
+
+  :charset:`latin-lap`
+
+    .. :tindex latin-lap, aliases and source
+    .. :tindex iso-ir-158
+    .. :tindex lap
+
+    :charset:`iso-ir-158` and :charset:`lap` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`latin6`
+
+    .. :tindex latin6, aliases and source
+    .. :tindex iso-ir-157
+    .. :tindex l6
+
+    :charset:`iso-ir-157` and :charset:`l6` are aliases for this charset.
+    Source: ECMA registry.
+
+  :charset:`macintosh`
+
+    .. :tindex macintosh, aliases and source
+    .. :tindex mac
+
+    :charset:`mac` is an alias for this charset.
+    Source: The Unicode Standard ver1.0, ISBN 0-201-56788-1, Oct 1991.

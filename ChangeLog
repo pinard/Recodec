@@ -1,0 +1,177 @@
+2005-07-08  François Pinard  <pinard@iro.umontreal.ca>
+
+	* tools/inc-iconv-txt.py, tools/tables-py.py: More clean up.
+
+2005-07-01  François Pinard  <pinard@iro.umontreal.ca>
+
+	* main.aap: New file.
+	* tools/inc-iconv-txt.py, tools/tables-py.py: Clean up and debugging.
+	* data/rfc1345.txt: Remove a spurious line in IBM424.
+
+2004-10-11  François Pinard  <pinard@iro.umontreal.ca>
+
+	* Makefile (publish): Revise goal.
+
+2004-10-02  François Pinard  <pinard@iro.umontreal.ca>
+
+	* tools/preset-py.py: Add -v option.
+
+	* Recode/latex.py: Move from Latin-1 to Unicode.
+	Reported by Frédéric Gobry.
+
+2004-03-21  François Pinard  <pinard@iro.umontreal.ca>
+
+	* Recode/texinfo.py: Add more Texinfo translations.
+	Reported by Karl Heinz Marbaise.
+
+2004-01-18  François Pinard  <pinard@iro.umontreal.ca>
+
+	* Recode/*.py: Declare coding for Python 2.3.
+
+2002-10-28  François Pinard  <pinard@iro.umontreal.ca>
+
+	* test/common.py (Test.__str__): Better align test names.
+
+2002-10-04  François Pinard  <pinard@iro.umontreal.ca>
+
+	* Recode/main.py (__doc__): Comments were wrongly suggesting that
+	some arguments are optional, but none are.
+	(Main.decode_program_options): Use an equal sign after all long
+	options requiring an argument.
+	(die, warn): New functions.  Use them, and in particular, instead
+	of assert statements, when the error may originate from the user.
+	Reported by Detlef Lannert.
+
+	* test/common.py (Test.__str__): Include test counts.
+	(Test.__init__): Increase test count.
+
+	* Recode/main.py (resolve): New, moved over from Recode/recode.py.
+	(main): Adjust callers.
+
+	* Recode/recode.py: Remove a spurious import of pprint.
+
+	* Recode/java.c: Reorganise and simplify code a bit.
+	(Java.encode): Avoid generating a spurious digit.
+	(Java.decode): Call proper helper.
+	* test/t_minisuite.py (Tests.test_ue2): New test.
+	Reported by Frédéric Kayser.
+
+	* Recode/recode.py (IMPLIED_CODING): New name for IMPLIED_ALIAS.
+	(segments_from_request): Accept whitespace between tokens.
+
+2002-10-03  François Pinard  <pinard@iro.umontreal.ca>
+
+	* : Release 0.2.
+
+	* Recode/recode.py (StripStep.decode): Variable strip_pool has
+	been replaced with variable data, some occurrences were forgotten.
+	* test/t_minisuite.py (Tests.test_mac): New.
+	Reported by Frédéric Kayser.
+
+	* Recode/bangbang.py, Recode/cdcnos.py: Accept both upper and
+	lower case after an escape, and prefer upper.
+
+	* Recode/main.py (__doc__): Write some contents for --help.
+	(Main.decode_program_options): Call write_help properly.
+	(Main.write_help): Output __doc__.
+	Reported by Frédéric Kayser.
+
+	* Recode/main.py (Main.recode_all_files): Correct a few problems
+	when recoding files over themselves.
+	Reported by Frédéric Kayser.
+
+	* Recode/recode.py (sequence_from_segments): Special cases for speed.
+
+	* Recode/recode.py (Aliases): New class, for speed.
+	(Registry.aliases): Make it an Aliases object.
+	(Registry.__init__): Initialise Registry.aliases from preset.
+	(Registry.unalias): Deleted.  All callers to use registry.aliases.
+	(cleaned_alias): Replacement for clean_alias.
+	(segments_from_request): Handle IMPLIED_ALIAS.
+
+	* Recode/main.py: Remove -T option.
+	* test/t_names.py: Remove test for -T option.
+	* tools/subsets.py: New.
+	* tools/common.py (all_strip_data): New, from Recode.listings.
+	* Recode/listings.py (list_all_subsets, all_strip_data): Deleted.
+
+2002-10-02  François Pinard  <pinard@iro.umontreal.ca>
+
+	* Recode/ibmpc.py: Add QNX-4 and q4 as aliases for IBM437.
+	* test/t_names.py (Tests.test_codings): Adjusted.
+	Reported by Robert Lachance.
+
+	* Recode/qnx.py: Correct typo.  It was not included in preset.py.
+
+	* Recode/listings.py (all_strip_data): Handle already loaded methods.
+
+	* Makefile (profile): New goal.
+	* test/suite.py: Add -p option.  Restructure a bit.
+
+	* Recode/version.py: New file.
+	* Makefile, setup.py, Recode/main.py: Use it.
+
+2002-10-01  François Pinard  <pinard@iro.umontreal.ca>
+
+	* : Release 0.1.
+
+	* test/t_names.py: Activate both tests.
+	* test/suite.py: Add -b option.
+	* Makefile (check, distcheck): Use -b.
+
+	* Recode/listings.py (list_all_codings): Add handy, short aliases.
+
+	* Recode/main.py (Main.write_listing): Process subsets.
+	* Recode/listings.py (list_all_subsets, all_strip_data): New.
+	* tools/strip-c.py (Main.main): Use listings.all_strip_data.
+
+	* test/bigauto.py: Rewritten.
+	* test/bigauto.py-output: Added.
+
+	* test/t_minisuite.py: New file.
+	* test/suite.py (make_suite): Do minisuite just after surfaces.
+
+2002-09-30  François Pinard  <pinard@iro.umontreal.ca>
+
+	* Recode/java.py: New file.
+	Reported by Frédéric Kayser.
+
+	* Makefile (distcheck): New goal, use neither -q nor -v.
+	(check, PYTHONTOOL): Use -S calling the Python interpreter.
+	* test/suite.py (main): Add options -i, -q and -v.
+	* Makefile (check): Use -v.
+
+	* tools/builtin-py.py, tools/preset-py, tools/tables-py.py:
+	Renamed from make-builtin.py, make-preset.py and make-tables.py.
+	* tools/common.py: New file.  Use it in various makers.
+	* Makefile: Adjusted.
+
+	* tools/charname-h.py, tools/libiconv-h.py: New files.
+	* tools/rfc1345-h.py, tools/strip-c.py: New files.
+	* tools/tables-py.py: Simplified, a bit.
+	* Makefile: Adjusted.
+
+2002-09-29  François Pinard  <pinard@iro.umontreal.ca>
+
+	* Recode/recode.py (encode_methods, decode_methods): Replacing
+	encode_sequence and decode_sequence, hold methods instead of arcs.
+	(methods_from_sequence): Replacing import_sequence, return methods.
+	(Recodec.decoding_arcs, Recodec.encoding_arcs): New functions.
+	* Recode/recode.py, Recode/listing.py: Ajusted.
+
+2002-09-27  François Pinard  <pinard@iro.umontreal.ca>
+
+	* Recode/main.py (Main.recode_all_files): Number echoed steps.
+
+	* Recode/flat.py: Added, translated from Recode.
+	* test/t_flat.py: New.
+	Relate to Unicode instead of ASCII-BS.
+	Reported by Frantisek Hanzlik, Martin Jaburek and Yann Dirson.
+
+	* Recode/varia.py: Added, translated from Recode.
+
+	* Recode/texinfo.py: Relate to Unicode instead of Latin-1.
+
+2002-09-26  François Pinard  <pinard@iro.umontreal.ca>
+
+	* : Release 0.0.

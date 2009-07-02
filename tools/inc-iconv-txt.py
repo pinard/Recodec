@@ -19,7 +19,8 @@ def main(*arguments):
                   '%s  :charset:`%s`\n'
                   % (margin, charset))
             if aliases:
-                write('%s    .. :tindex %s, aliases\n'
+                write('\n'
+                      '%s    .. :tindex %s, aliases\n'
                       % (margin, re.sub(':([0-9]+)', r'(\1)', charset)))
                 for alias in aliases:
                     write('%s    .. :tindex %s\n'
@@ -34,8 +35,9 @@ def main(*arguments):
                           % (margin, '`, :charset:`'.join(aliases[:-1]),
                              aliases[-1]))
             else:
-                write('%s    .. :tindex %s\n'
-                       % (margin, re.sub(':([0-9]+)', r'(\1)', charset)))
+                write('\n'
+                      '%s    .. :tindex %s\n'
+                      % (margin, re.sub(':([0-9]+)', r'(\1)', charset)))
 
 if __name__ == '__main__':
     import sys

@@ -1,15 +1,15 @@
-====================
-README for |package|
-====================
+==============================
+README for |package| |version|
+==============================
 
-.. include:: /home/pinard/codes/recodec/doc/common.txt
+.. include:: /home/pinard/entretien/codes/recodec/doc/common.txt
 .. |Recode| replace:: Free :code:`recode`
 
 Here is |package| |version|, a clone of |Recode| meant for prototyping,
 experimenting, and preparing what |Recode| version 4.X will
 be.  You may find a manual for |package|, including installation
 instructions, migration plans, and many other things as well, at
-http://recodec.progiciels-bpi.ca/showfile.html?name=web/recodec.html .
+http://recodec.progiciels-bpi.ca/recodec.html .
 
 I'm currently concentrating on TeX-related matters: that is, exploring
 what are the differences between TeX, old LaTeX and LaTeX2e, and maybe
@@ -24,6 +24,3 @@ This series of snapshots link the TeX (or LaTeX) charset to Unicode
 instead of Latin-1.  Note that the ``t_names`` test still fails, this
 failure does not need to be reported.  See the :file:`ChangeLog` in the
 distribution for further details.
-
-
-

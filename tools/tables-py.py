@@ -27,8 +27,8 @@ Usage: python tables.py [OPTION]... DATA-FILE...
   -m  Python inclusion file for short RFC 1345 mnemonics (rfc1345.py).
   -n  Python inclusion file for character names (charname.py).
   -p  Python source files for strip data (strip.py).
-  -s  ReST inclusion file for libiconv (libiconv.txt).
-  -t  ReST inclusion file for RFC 1345 (rfc1345.txt).
+  -s  ReST inclusion file for libiconv (inc-iconv.txt).
+  -t  ReST inclusion file for RFC 1345 (inc-rfc1345.txt).
 
 Option `-F' should appear first.  When `-F' and `-n' are used, process
 Alain's tables.  DATA-FILEs may be rfc1345.txt, mnemonic[.,]ds, Unicode
@@ -368,7 +368,7 @@ class Charnames(Options):
 
 class Libiconv(Options):
     SOURCES = 'libiconv.py'
-    REST = 'libiconv.txt'
+    REST = 'inc-iconv.txt'
 
     data = []
 
@@ -613,7 +613,7 @@ class Mnemonics(Options):
 
 class Strips(Options):
     STRIP = 'strip.py'
-    REST = 'rfc1345.txt'
+    REST = 'inc-rfc1345.txt'
 
     # Change STRIP_SIZE in `src/recode.h' if you change the value here.
     # See the accompanying documentation there, as needed.
@@ -798,6 +798,7 @@ class Strips(Options):
                 elif token == '__':
                     self.table[code] = ord(REPLACEMENT_CHARACTER)
                 elif token in mnemonics.unicode_map:
+                    # FIXME: IBM423 uses 17 lines instead of 16!
                     self.table[code] = mnemonics.unicode_map[token]
                     if len(token) > codedim:
                         codedim = len(token)
@@ -992,34 +993,46 @@ class Strips(Options):
     def complete_rest(self):
         margin = '  '
         if run.french_mode:
-            write = common.Output('fr-%s' % self.REST).write
+            write = common.Output('fr-%s' % self.REST, 'ReST', margin=margin).write
+            write('\n'
+                  '%s+ *Charsets provenant de RFC 1345*\n'
+                  % margin)
         else:
-            write = common.Output(self.REST).write
+            write = common.Output(self.REST, 'ReST', margin=margin).write
+            write('\n'
+                  '%s+ *Charsets described within RFC 1345*\n'
+                  % margin)
         charsets = self.remark_map.keys()
         charsets.sort()
         for charset in charsets:
             write('\n'
                   '%s:charset:`%s`\n'
+                  % (margin, charset))
+            write('\n'
                   '%s  .. :tindex %s, aliases and source\n'
-                  % (margin, charset, re.sub(':([0-9]+)', r'(\1)', charset)))
+                  % (margin, re.sub(':([0-9]+)', r'(\1)', charset)))
             aliases = self.aliases_map[charset]
             if aliases:
                 if len(aliases) == 1:
                     if aliases[0]:      # FIXME: pourquoi parfois vide ??
                         write('%s  .. :tindex %s\n'
+                              % (margin, re.sub(':([0-9]+)', r'(\1)',
+                                                aliases[0])))
+                        write('\n'
                               '%s  :charset:`%s` is an alias'
                               ' for this charset.\n'
-                              % (margin, re.sub(':([0-9]+)', r'(\1)',
-                                                aliases[0]),
-                                 aliases[0]))
+                              % (margin, aliases[0]))
                 else:
                     for alias in aliases:
                         write('%s  .. :tindex %s\n'
                               % (margin, re.sub(':([0-9]+)', r'(\1)', alias)))
-                    write('%s  :charset:`%s` and :charset:`%s` are aliases'
+                    write('\n'
+                          '%s  :charset:`%s` and :charset:`%s` are aliases'
                           ' for this charset.\n'
                           % (margin, '`, :charset:`'.join(aliases[:-1]),
                              aliases[-1]))
+            else:
+                write('\n')
             for line in self.remark_map[charset]:
                 if line[0].islower():
                     line = line[0].upper() + line[1:]

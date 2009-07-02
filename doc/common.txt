@@ -1,0 +1,10 @@
+.. role:: charset(strong)
+.. role:: code(strong)
+.. role:: dfn(emphasis)
+.. role:: file(literal)
+.. role:: kbd(literal)
+.. role:: key(strong)
+.. role:: var(emphasis)
+
+.. include:: inc-stamp.txt
+

@@ -5023,7 +5023,6 @@ RFC 1345          Character Mnemonics & Character Sets         June 1992
   O: j  k  l  m  n  o  p  q  r  y* h* i* k* l* m*
   U: ': s  t  u  v  w  x  y  z  n* c* o* p* r* *s
   ?? a% e% y% j* i% o% u% v* w% s* t* u* f* x* q*
-  %' y= z= s% je sc c% =' JU A= B= C= D= E= F= G=
   ', A  B  C  D  E  F  G  H  I  ?? w* A> a! a: e>
   '' J  K  L  M  N  O  P  Q  R  +- e' e! e: i> i:
   DG ?? S  T  U  V  W  X  Y  Z  12 o: o> u> u! u:

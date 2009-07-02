@@ -43,6 +43,7 @@ Here is a list of those HTML variants which |package| supports.
 Some notes have been provided by François Yergeau <yergeau@alis.com>.
 
   :charset:`XML-standalone`
+
     .. :tindex h0
     .. :tindex XML-standalone
 
@@ -52,6 +53,7 @@ Some notes have been provided by François Yergeau <yergeau@alis.com>.
     only knows ``&amp;``, ``&gt;``, ``&lt;``, ``&quot;`` and ``&apos;``.
 
   :charset:`HTML_1.1`
+
     .. :tindex HTML_1.1
     .. :tindex h1
 
@@ -60,6 +62,7 @@ Some notes have been provided by François Yergeau <yergeau@alis.com>.
     was never really documented.
 
   :charset:`HTML_2.0`
+
     .. :tindex HTML_2.0
     .. :tindex RFC1866
     .. :tindex 1866
@@ -74,6 +77,7 @@ Some notes have been provided by François Yergeau <yergeau@alis.com>.
     ``&lt;`` and ``&quot;``.
 
   :charset:`HTML-i18n`
+
     .. :tindex HTML-i18n
     .. :tindex RFC2070
     .. :tindex 2070
@@ -88,6 +92,7 @@ Some notes have been provided by François Yergeau <yergeau@alis.com>.
     (``&#8207;``).
 
   :charset:`HTML_3.2`
+
     .. :tindex HTML_3.2
     .. :tindex h3
 
@@ -98,6 +103,7 @@ Some notes have been provided by François Yergeau <yergeau@alis.com>.
     RFC 2070.
 
   :charset:`HTML_4.0`
+
     .. :tindex h4
     .. :tindex h
 
@@ -180,6 +186,7 @@ a few character sets and transliterated forms to handle the Vietnamese
 language.  They are quite briefly summarised, here.
 
   :charset:`TCVN`
+
     .. :tindex TCVN, for Vienamese
     .. :tindex VN1, maybe not available
     .. :tindex VN2, maybe not available
@@ -191,23 +198,27 @@ language.  They are quite briefly summarised, here.
     clarified.
 
   :charset:`VISCII`
+
     .. :tindex VISCII
 
     This is an 8-bit character set which seems to be rather popular for
     writing Vietnamese.
 
   :charset:`VPS`
+
     .. :tindex VPS
 
     This is an 8-bit character set for Vietnamese.  No much reference.
 
   :charset:`VIQR`
+
     .. :tindex VIQR
 
     The VIQR convention is a 7-bit, :charset:`ASCII` transliteration for
     Vietnamese.
 
   :charset:`VNI`
+
     .. :tindex VNI
 
     The VNI convention is a 8-bit, :charset:`Latin-1` transliteration for
@@ -304,6 +315,7 @@ the long run, these charsets will be covered in Keld Simonsen's works to
 the satisfaction of everybody, and this section will merely disappear.
 
   :charset:`KEYBCS2`
+
     .. :tindex KEYBCS2
     .. :tindex Kamenicky
 
@@ -311,6 +323,7 @@ the satisfaction of everybody, and this section will merely disappear.
     :charset:`Kamenicky` as an accepted alias.
 
   :charset:`CORK`
+
     .. :tindex CORK
     .. :tindex T1
 
@@ -318,6 +331,7 @@ the satisfaction of everybody, and this section will merely disappear.
     as an accepted alias.
 
   :charset:`KOI-8_CS2`
+
     .. :tindex KOI-8_CS2
 
     This charset is available under the name :charset:`KOI-8_CS2`.

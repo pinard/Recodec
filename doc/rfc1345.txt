@@ -20,6 +20,7 @@ implements most of RFC 1345, however:
   + It does not recognise those charsets which overload character positions:
     :charset:`dk-us` and :charset:`us-dk`.  However, see `Using mixed charset
     input`_.
+
     .. :tindex dk-us, not recognised by recode
     .. :tindex us-dk, not recognised by recode
 
@@ -27,6 +28,7 @@ implements most of RFC 1345, however:
     representing a third: :charset:`ANSI_X3.110-1983`,
     :charset:`ISO_6937-2-add`, :charset:`T.101-G2`, :charset:`T.61-8bit`,
     :charset:`iso-ir-90` and :charset:`videotex-suppl`.
+
     .. :tindex ANSI_X3.110-1983, not recognised by recode
     .. :tindex ISO_6937-2-add, not recognised by recode
     .. :tindex T.101-G2, not recognised by recode
@@ -36,6 +38,7 @@ implements most of RFC 1345, however:
   + It does not recognise 16-bits charsets: :charset:`GB_2312-80`,
     :charset:`JIS_C6226-1978`, :charset:`JIS_C6226-1983`,
     :charset:`JIS_X0212-1990` and :charset:`KS_C_5601-1987`.
+
     .. :tindex GB_2312-80, not recognised by recode
     .. :tindex JIS_C6226-1978, not recognised by recode
     .. :tindex JIS_X0212-1990, not recognised by recode
@@ -47,6 +50,7 @@ implements most of RFC 1345, however:
     :charset:`NATS-DANO-ADD` (alias :charset:`iso-ir-9-2`), *not* as
     :charset:`JIS_C6229-1984-b` (alias :charset:`iso-ir-92`).  It might be
     better just avoiding these two alias names.
+
     .. :tindex isoir91
     .. :tindex isoir92
 

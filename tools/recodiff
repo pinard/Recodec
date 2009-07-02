@@ -1,0 +1,9 @@
+#!/bin/sh
+# List the differences between two charsets.
+# Copyright © 1995 Progiciels Bourbeau-Pinard inc.
+# François Pinard <pinard@iro.umontreal.ca>, April 1995.
+
+recode -lf $1 > /tmp/$$.a
+recode -lf $2 > /tmp/$$.b
+diff -u /tmp/$$.a /tmp/$$.b
+rm /tmp/$$.a /tmp/$$.b

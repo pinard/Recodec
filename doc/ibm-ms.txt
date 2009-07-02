@@ -12,8 +12,6 @@ the |package| program itself is through the command::
 
 But also, see few special charsets presented in the incoming sections.
 
-
-
 EBCDIC code
 -----------
 
@@ -24,6 +22,7 @@ Coding.  This is an eight bits code.  The following three variants were
 implemented in |package| independently of RFC 1345:
 
   :charset:`EBCDIC`
+
     .. :tindex EBCDIC, a charset
 
     In |package|, the :code:`us..ebcdic` conversion is identical to
@@ -33,6 +32,7 @@ implemented in |package| independently of RFC 1345:
     EBCDIC to 8-bits ASCII.
 
   :charset:`EBCDIC-CCC`
+
     .. :tindex EBCDIC-CCC
 
     In |package|, the :code:`us..ebcdic-ccc` or
@@ -41,6 +41,7 @@ implemented in |package| independently of RFC 1345:
     8-bits ASCII.
 
   :charset:`EBCDIC-IBM`
+
     .. :tindex EBCDIC-IBM
 
     In |package|, the :code:`us..ebcdic-ibm` conversion is *almost*

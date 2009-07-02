@@ -1,20 +1,20 @@
 # DO NOT MODIFY THIS FILE!  It was automatically generated.
-# -*- coding: Latin-1 -*-
+# -*- coding: UTF-8 -*-
 
 # Conversion between different charsets, surfaces and structures.
-# Copyright © 1993, 1997, 1999, 2002 Free Software Foundation, Inc.
+# Copyright © 1993, 1997, 1999, 2002, 2004 Free Software Foundation, Inc.
 # Contributed by François Pinard <pinard@iro.umontreal.ca>, 1993.
-#
+
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License
 # as published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
-#
+
 # This library is distributed in the hope that it will be
 # useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 # of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-#
+
 # You should have received a copy of the GNU Lesser General Public
 # License along with the `recode' Library; see the file `COPYING.LIB'.
 # If not, write to the Free Software Foundation, Inc., 59 Temple Place -

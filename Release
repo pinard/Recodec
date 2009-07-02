@@ -1,0 +1,21 @@
+Hello, everybody.
+
+Recodec is a Python (2.2.1 or better) clone of Free `recode', and as such,
+it converts strings or files between character sets and usages.  Version
+0.3 is now at http://www.iro.umontreal.ca/~pinard/recodec/Recodec.tar.gz.
+See http://www.iro.umontreal.ca/~pinard/recodec/ for a copy of `README'.
+
+Pretesters may gently report problems, suggestions or other comments
+to mailto:pinard@iro.umontreal.ca.  `recode'-related discussions go to
+mailto:recode-forum@iro.umontreal.ca, opened to subscribers only.
+Python specific discussions might go to mailto:python-list@python.org.
+
+User visible changes since last release:
+
+.. `--help' option added, better some documentation than none!
+.. `--find-subsets' (`-T') option deleted, now a separate program.
+.. New aliases `q4' and `QNX-4' for `IBM437'.
+
+A few bugs have been corrected.  After profiling the test suite, I got
+a 4x speed-up through quicker alias disambiguation, and also by special
+casing common cases to avoid finding the shortest path in graph of steps.

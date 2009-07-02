@@ -1,3 +1,4 @@
+  .. role:: charset(strong)
   ..
      DO NOT MODIFY THIS FILE!  It was automatically generated.
      -*- coding: UTF-8 -*-
@@ -24,7 +25,6 @@
   + *General character sets*
 
     :charset:`US-ASCII`
-
       .. :tindex US-ASCII, aliases
       .. :tindex ASCII
       .. :tindex ISO646-US
@@ -43,14 +43,12 @@
   + *General multi-byte encodings*
 
     :charset:`UTF-8`
-
       .. :tindex UTF-8, aliases
       .. :tindex UTF8
 
       :charset:`UTF8` is an alias for this charset.
 
     :charset:`UCS-2`
-
       .. :tindex UCS-2, aliases
       .. :tindex ISO-10646-UCS-2
       .. :tindex csUnicode
@@ -58,7 +56,6 @@
       :charset:`ISO-10646-UCS-2` and :charset:`csUnicode` are aliases for this charset.
 
     :charset:`UCS-2BE`
-
       .. :tindex UCS-2BE, aliases
       .. :tindex UNICODEBIG
       .. :tindex UNICODE-1-1
@@ -67,14 +64,12 @@
       :charset:`UNICODEBIG`, :charset:`UNICODE-1-1` and :charset:`csUnicode11` are aliases for this charset.
 
     :charset:`UCS-2LE`
-
       .. :tindex UCS-2LE, aliases
       .. :tindex UNICODELITTLE
 
       :charset:`UNICODELITTLE` is an alias for this charset.
 
     :charset:`UCS-4`
-
       .. :tindex UCS-4, aliases
       .. :tindex ISO-10646-UCS-4
       .. :tindex csUCS4
@@ -82,39 +77,30 @@
       :charset:`ISO-10646-UCS-4` and :charset:`csUCS4` are aliases for this charset.
 
     :charset:`UCS-4BE`
-
       .. :tindex UCS-4BE
 
     :charset:`UCS-4LE`
-
       .. :tindex UCS-4LE
 
     :charset:`UTF-16`
-
       .. :tindex UTF-16
 
     :charset:`UTF-16BE`
-
       .. :tindex UTF-16BE
 
     :charset:`UTF-16LE`
-
       .. :tindex UTF-16LE
 
     :charset:`UTF-32`
-
       .. :tindex UTF-32
 
     :charset:`UTF-32BE`
-
       .. :tindex UTF-32BE
 
     :charset:`UTF-32LE`
-
       .. :tindex UTF-32LE
 
     :charset:`UTF-7`
-
       .. :tindex UTF-7, aliases
       .. :tindex UNICODE-1-1-UTF-7
       .. :tindex csUnicode11UTF7
@@ -122,29 +108,23 @@
       :charset:`UNICODE-1-1-UTF-7` and :charset:`csUnicode11UTF7` are aliases for this charset.
 
     :charset:`UCS-2-INTERNAL`
-
       .. :tindex UCS-2-INTERNAL
 
     :charset:`UCS-2-SWAPPED`
-
       .. :tindex UCS-2-SWAPPED
 
     :charset:`UCS-4-INTERNAL`
-
       .. :tindex UCS-4-INTERNAL
 
     :charset:`UCS-4-SWAPPED`
-
       .. :tindex UCS-4-SWAPPED
 
     :charset:`JAVA`
-
       .. :tindex JAVA
 
   + *Standard 8-bit encodings*
 
     :charset:`ISO-8859-1`
-
       .. :tindex ISO-8859-1, aliases
       .. :tindex ISO_8859-1
       .. :tindex ISO_8859-1(1987)
@@ -160,7 +140,6 @@
       :charset:`ISO_8859-1`, :charset:`ISO_8859-1:1987`, :charset:`ISO-IR-100`, :charset:`CP819`, :charset:`IBM819`, :charset:`LATIN1`, :charset:`L1`, :charset:`csISOLatin1`, :charset:`ISO8859-1` and :charset:`ISO8859_1` are aliases for this charset.
 
     :charset:`ISO-8859-2`
-
       .. :tindex ISO-8859-2, aliases
       .. :tindex ISO_8859-2
       .. :tindex ISO_8859-2(1987)
@@ -174,7 +153,6 @@
       :charset:`ISO_8859-2`, :charset:`ISO_8859-2:1987`, :charset:`ISO-IR-101`, :charset:`LATIN2`, :charset:`L2`, :charset:`csISOLatin2`, :charset:`ISO8859-2` and :charset:`ISO8859_2` are aliases for this charset.
 
     :charset:`ISO-8859-3`
-
       .. :tindex ISO-8859-3, aliases
       .. :tindex ISO_8859-3
       .. :tindex ISO_8859-3(1988)
@@ -188,7 +166,6 @@
       :charset:`ISO_8859-3`, :charset:`ISO_8859-3:1988`, :charset:`ISO-IR-109`, :charset:`LATIN3`, :charset:`L3`, :charset:`csISOLatin3`, :charset:`ISO8859-3` and :charset:`ISO8859_3` are aliases for this charset.
 
     :charset:`ISO-8859-4`
-
       .. :tindex ISO-8859-4, aliases
       .. :tindex ISO_8859-4
       .. :tindex ISO_8859-4(1988)
@@ -202,7 +179,6 @@
       :charset:`ISO_8859-4`, :charset:`ISO_8859-4:1988`, :charset:`ISO-IR-110`, :charset:`LATIN4`, :charset:`L4`, :charset:`csISOLatin4`, :charset:`ISO8859-4` and :charset:`ISO8859_4` are aliases for this charset.
 
     :charset:`ISO-8859-5`
-
       .. :tindex ISO-8859-5, aliases
       .. :tindex ISO_8859-5
       .. :tindex ISO_8859-5(1988)
@@ -215,7 +191,6 @@
       :charset:`ISO_8859-5`, :charset:`ISO_8859-5:1988`, :charset:`ISO-IR-144`, :charset:`CYRILLIC`, :charset:`csISOLatinCyrillic`, :charset:`ISO8859-5` and :charset:`ISO8859_5` are aliases for this charset.
 
     :charset:`ISO-8859-6`
-
       .. :tindex ISO-8859-6, aliases
       .. :tindex ISO_8859-6
       .. :tindex ISO_8859-6(1987)
@@ -230,7 +205,6 @@
       :charset:`ISO_8859-6`, :charset:`ISO_8859-6:1987`, :charset:`ISO-IR-127`, :charset:`ECMA-114`, :charset:`ASMO-708`, :charset:`ARABIC`, :charset:`csISOLatinArabic`, :charset:`ISO8859-6` and :charset:`ISO8859_6` are aliases for this charset.
 
     :charset:`ISO-8859-7`
-
       .. :tindex ISO-8859-7, aliases
       .. :tindex ISO_8859-7
       .. :tindex ISO_8859-7(1987)
@@ -246,7 +220,6 @@
       :charset:`ISO_8859-7`, :charset:`ISO_8859-7:1987`, :charset:`ISO-IR-126`, :charset:`ECMA-118`, :charset:`ELOT_928`, :charset:`GREEK8`, :charset:`GREEK`, :charset:`csISOLatinGreek`, :charset:`ISO8859-7` and :charset:`ISO8859_7` are aliases for this charset.
 
     :charset:`ISO-8859-8`
-
       .. :tindex ISO-8859-8, aliases
       .. :tindex ISO_8859-8
       .. :tindex ISO_8859-8(1988)
@@ -259,7 +232,6 @@
       :charset:`ISO_8859-8`, :charset:`ISO_8859-8:1988`, :charset:`ISO-IR-138`, :charset:`HEBREW`, :charset:`csISOLatinHebrew`, :charset:`ISO8859-8` and :charset:`ISO8859_8` are aliases for this charset.
 
     :charset:`ISO-8859-9`
-
       .. :tindex ISO-8859-9, aliases
       .. :tindex ISO_8859-9
       .. :tindex ISO_8859-9(1989)
@@ -273,7 +245,6 @@
       :charset:`ISO_8859-9`, :charset:`ISO_8859-9:1989`, :charset:`ISO-IR-148`, :charset:`LATIN5`, :charset:`L5`, :charset:`csISOLatin5`, :charset:`ISO8859-9` and :charset:`ISO8859_9` are aliases for this charset.
 
     :charset:`ISO-8859-10`
-
       .. :tindex ISO-8859-10, aliases
       .. :tindex ISO_8859-10
       .. :tindex ISO_8859-10(1992)
@@ -286,7 +257,6 @@
       :charset:`ISO_8859-10`, :charset:`ISO_8859-10:1992`, :charset:`ISO-IR-157`, :charset:`LATIN6`, :charset:`L6`, :charset:`csISOLatin6` and :charset:`ISO8859-10` are aliases for this charset.
 
     :charset:`ISO-8859-13`
-
       .. :tindex ISO-8859-13, aliases
       .. :tindex ISO_8859-13
       .. :tindex ISO-IR-179
@@ -297,7 +267,6 @@
       :charset:`ISO_8859-13`, :charset:`ISO-IR-179`, :charset:`LATIN7`, :charset:`L7` and :charset:`ISO8859-13` are aliases for this charset.
 
     :charset:`ISO-8859-14`
-
       .. :tindex ISO-8859-14, aliases
       .. :tindex ISO_8859-14
       .. :tindex ISO_8859-14(1998)
@@ -310,7 +279,6 @@
       :charset:`ISO_8859-14`, :charset:`ISO_8859-14:1998`, :charset:`ISO-IR-199`, :charset:`LATIN8`, :charset:`L8`, :charset:`ISO-CELTIC` and :charset:`ISO8859-14` are aliases for this charset.
 
     :charset:`ISO-8859-15`
-
       .. :tindex ISO-8859-15, aliases
       .. :tindex ISO_8859-15
       .. :tindex ISO_8859-15(1998)
@@ -320,7 +288,6 @@
       :charset:`ISO_8859-15`, :charset:`ISO_8859-15:1998`, :charset:`ISO-IR-203` and :charset:`ISO8859-15` are aliases for this charset.
 
     :charset:`ISO-8859-16`
-
       .. :tindex ISO-8859-16, aliases
       .. :tindex ISO_8859-16
       .. :tindex ISO_8859-16(2000)
@@ -330,24 +297,20 @@
       :charset:`ISO_8859-16`, :charset:`ISO_8859-16:2000`, :charset:`ISO-IR-226` and :charset:`ISO8859-16` are aliases for this charset.
 
     :charset:`KOI8-R`
-
       .. :tindex KOI8-R, aliases
       .. :tindex csKOI8R
 
       :charset:`csKOI8R` is an alias for this charset.
 
     :charset:`KOI8-U`
-
       .. :tindex KOI8-U
 
     :charset:`KOI8-RU`
-
       .. :tindex KOI8-RU
 
   + *Windows 8-bit encodings*
 
     :charset:`CP1250`
-
       .. :tindex CP1250, aliases
       .. :tindex WINDOWS-1250
       .. :tindex MS-EE
@@ -355,7 +318,6 @@
       :charset:`WINDOWS-1250` and :charset:`MS-EE` are aliases for this charset.
 
     :charset:`CP1251`
-
       .. :tindex CP1251, aliases
       .. :tindex WINDOWS-1251
       .. :tindex MS-CYRL
@@ -363,7 +325,6 @@
       :charset:`WINDOWS-1251` and :charset:`MS-CYRL` are aliases for this charset.
 
     :charset:`CP1252`
-
       .. :tindex CP1252, aliases
       .. :tindex WINDOWS-1252
       .. :tindex MS-ANSI
@@ -371,7 +332,6 @@
       :charset:`WINDOWS-1252` and :charset:`MS-ANSI` are aliases for this charset.
 
     :charset:`CP1253`
-
       .. :tindex CP1253, aliases
       .. :tindex WINDOWS-1253
       .. :tindex MS-GREEK
@@ -379,7 +339,6 @@
       :charset:`WINDOWS-1253` and :charset:`MS-GREEK` are aliases for this charset.
 
     :charset:`CP1254`
-
       .. :tindex CP1254, aliases
       .. :tindex WINDOWS-1254
       .. :tindex MS-TURK
@@ -387,7 +346,6 @@
       :charset:`WINDOWS-1254` and :charset:`MS-TURK` are aliases for this charset.
 
     :charset:`CP1255`
-
       .. :tindex CP1255, aliases
       .. :tindex WINDOWS-1255
       .. :tindex MS-HEBR
@@ -395,7 +353,6 @@
       :charset:`WINDOWS-1255` and :charset:`MS-HEBR` are aliases for this charset.
 
     :charset:`CP1256`
-
       .. :tindex CP1256, aliases
       .. :tindex WINDOWS-1256
       .. :tindex MS-ARAB
@@ -403,7 +360,6 @@
       :charset:`WINDOWS-1256` and :charset:`MS-ARAB` are aliases for this charset.
 
     :charset:`CP1257`
-
       .. :tindex CP1257, aliases
       .. :tindex WINDOWS-1257
       .. :tindex WINBALTRIM
@@ -411,7 +367,6 @@
       :charset:`WINDOWS-1257` and :charset:`WINBALTRIM` are aliases for this charset.
 
     :charset:`CP1258`
-
       .. :tindex CP1258, aliases
       .. :tindex WINDOWS-1258
 
@@ -420,7 +375,6 @@
   + *DOS 8-bit encodings*
 
     :charset:`CP850`
-
       .. :tindex CP850, aliases
       .. :tindex IBM850
       .. :tindex 850
@@ -429,7 +383,6 @@
       :charset:`IBM850`, :charset:`850` and :charset:`csPC850Multilingual` are aliases for this charset.
 
     :charset:`CP862`
-
       .. :tindex CP862, aliases
       .. :tindex IBM862
       .. :tindex 862
@@ -438,7 +391,6 @@
       :charset:`IBM862`, :charset:`862` and :charset:`csPC862LatinHebrew` are aliases for this charset.
 
     :charset:`CP866`
-
       .. :tindex CP866, aliases
       .. :tindex IBM866
       .. :tindex 866
@@ -449,7 +401,6 @@
   + *Macintosh 8-bit encodings*
 
     :charset:`MacRoman`
-
       .. :tindex MacRoman, aliases
       .. :tindex Macintosh
       .. :tindex MAC
@@ -458,53 +409,41 @@
       :charset:`Macintosh`, :charset:`MAC` and :charset:`csMacintosh` are aliases for this charset.
 
     :charset:`MacCentralEurope`
-
       .. :tindex MacCentralEurope
 
     :charset:`MacIceland`
-
       .. :tindex MacIceland
 
     :charset:`MacCroatian`
-
       .. :tindex MacCroatian
 
     :charset:`MacRomania`
-
       .. :tindex MacRomania
 
     :charset:`MacCyrillic`
-
       .. :tindex MacCyrillic
 
     :charset:`MacUkraine`
-
       .. :tindex MacUkraine
 
     :charset:`MacGreek`
-
       .. :tindex MacGreek
 
     :charset:`MacTurkish`
-
       .. :tindex MacTurkish
 
     :charset:`MacHebrew`
-
       .. :tindex MacHebrew
 
     :charset:`MacArabic`
-
       .. :tindex MacArabic
 
     :charset:`MacThai`
-
       .. :tindex MacThai
 
   + *Other platform specific 8-bit encodings*
 
     :charset:`HP-ROMAN8`
-
       .. :tindex HP-ROMAN8, aliases
       .. :tindex ROMAN8
       .. :tindex R8
@@ -513,36 +452,29 @@
       :charset:`ROMAN8`, :charset:`R8` and :charset:`csHPRoman8` are aliases for this charset.
 
     :charset:`NEXTSTEP`
-
       .. :tindex NEXTSTEP
 
   + *Regional 8-bit encodings used for a single language*
 
     :charset:`ARMSCII-8`
-
       .. :tindex ARMSCII-8
 
     :charset:`Georgian-Academy`
-
       .. :tindex Georgian-Academy
 
     :charset:`Georgian-PS`
-
       .. :tindex Georgian-PS
 
     :charset:`MuleLao-1`
-
       .. :tindex MuleLao-1
 
     :charset:`CP1133`
-
       .. :tindex CP1133, aliases
       .. :tindex IBM-CP1133
 
       :charset:`IBM-CP1133` is an alias for this charset.
 
     :charset:`TIS-620`
-
       .. :tindex TIS-620, aliases
       .. :tindex TIS620
       .. :tindex TIS620-0
@@ -554,14 +486,12 @@
       :charset:`TIS620`, :charset:`TIS620-0`, :charset:`TIS620.2529-1`, :charset:`TIS620.2533-0`, :charset:`TIS620.2533-1` and :charset:`ISO-IR-166` are aliases for this charset.
 
     :charset:`CP874`
-
       .. :tindex CP874, aliases
       .. :tindex WINDOWS-874
 
       :charset:`WINDOWS-874` is an alias for this charset.
 
     :charset:`VISCII`
-
       .. :tindex VISCII, aliases
       .. :tindex VISCII1.1-1
       .. :tindex csVISCII
@@ -569,7 +499,6 @@
       :charset:`VISCII1.1-1` and :charset:`csVISCII` are aliases for this charset.
 
     :charset:`TCVN`
-
       .. :tindex TCVN, aliases
       .. :tindex TCVN-5712
       .. :tindex TCVN5712-1
@@ -580,7 +509,6 @@
   + *CJK character sets (not documented)*
 
     :charset:`JIS_C6220-1969-RO`
-
       .. :tindex JIS_C6220-1969-RO, aliases
       .. :tindex ISO646-JP
       .. :tindex ISO-IR-14
@@ -590,7 +518,6 @@
       :charset:`ISO646-JP`, :charset:`ISO-IR-14`, :charset:`JP` and :charset:`csISO14JISC6220ro` are aliases for this charset.
 
     :charset:`JIS_X0201`
-
       .. :tindex JIS_X0201, aliases
       .. :tindex JISX0201-1976
       .. :tindex X0201
@@ -601,7 +528,6 @@
       :charset:`JISX0201-1976`, :charset:`X0201`, :charset:`csHalfWidthKatakana`, :charset:`JISX0201.1976-0` and :charset:`JIS0201` are aliases for this charset.
 
     :charset:`JIS_X0208`
-
       .. :tindex JIS_X0208, aliases
       .. :tindex JIS_X0208-1983
       .. :tindex JIS_X0208-1990
@@ -617,7 +543,6 @@
       :charset:`JIS_X0208-1983`, :charset:`JIS_X0208-1990`, :charset:`JIS0208`, :charset:`X0208`, :charset:`ISO-IR-87`, :charset:`JIS_C6226-1983`, :charset:`csISO87JISX0208`, :charset:`JISX0208.1983-0`, :charset:`JISX0208.1990-0` and :charset:`JIS0208` are aliases for this charset.
 
     :charset:`JIS_X0212`
-
       .. :tindex JIS_X0212, aliases
       .. :tindex JIS_X0212.1990-0
       .. :tindex JIS_X0212-1990
@@ -630,7 +555,6 @@
       :charset:`JIS_X0212.1990-0`, :charset:`JIS_X0212-1990`, :charset:`X0212`, :charset:`ISO-IR-159`, :charset:`csISO159JISX02121990`, :charset:`JISX0212.1990-0` and :charset:`JIS0212` are aliases for this charset.
 
     :charset:`GB_1988-80`
-
       .. :tindex GB_1988-80, aliases
       .. :tindex ISO646-CN
       .. :tindex ISO-IR-57
@@ -640,7 +564,6 @@
       :charset:`ISO646-CN`, :charset:`ISO-IR-57`, :charset:`CN` and :charset:`csISO57GB1988` are aliases for this charset.
 
     :charset:`GB_2312-80`
-
       .. :tindex GB_2312-80, aliases
       .. :tindex ISO-IR-58
       .. :tindex csISO58GB231280
@@ -650,14 +573,12 @@
       :charset:`ISO-IR-58`, :charset:`csISO58GB231280`, :charset:`CHINESE` and :charset:`GB2312.1980-0` are aliases for this charset.
 
     :charset:`ISO-IR-165`
-
       .. :tindex ISO-IR-165, aliases
       .. :tindex CN-GB-ISOIR165
 
       :charset:`CN-GB-ISOIR165` is an alias for this charset.
 
     :charset:`KSC_5601`
-
       .. :tindex KSC_5601, aliases
       .. :tindex KS_C_5601-1987
       .. :tindex KS_C_5601-1989
@@ -672,7 +593,6 @@
   + *CJK encodings*
 
     :charset:`EUC-JP`
-
       .. :tindex EUC-JP, aliases
       .. :tindex EUCJP
       .. :tindex Extended_UNIX_Code_Packed_Format_for_Japanese
@@ -682,7 +602,6 @@
       :charset:`EUCJP`, :charset:`Extended_UNIX_Code_Packed_Format_for_Japanese`, :charset:`csEUCPkdFmtJapanese` and :charset:`EUC_JP` are aliases for this charset.
 
     :charset:`SHIFT_JIS`
-
       .. :tindex SHIFT_JIS, aliases
       .. :tindex SHIFT-JIS
       .. :tindex SJIS
@@ -692,11 +611,9 @@
       :charset:`SHIFT-JIS`, :charset:`SJIS`, :charset:`MS_KANJI` and :charset:`csShiftJIS` are aliases for this charset.
 
     :charset:`CP932`
-
       .. :tindex CP932
 
     :charset:`ISO-2022-JP`
-
       .. :tindex ISO-2022-JP, aliases
       .. :tindex csISO2022JP
       .. :tindex ISO2022JP
@@ -704,18 +621,15 @@
       :charset:`csISO2022JP` and :charset:`ISO2022JP` are aliases for this charset.
 
     :charset:`ISO-2022-JP-1`
-
       .. :tindex ISO-2022-JP-1
 
     :charset:`ISO-2022-JP-2`
-
       .. :tindex ISO-2022-JP-2, aliases
       .. :tindex csISO2022JP2
 
       :charset:`csISO2022JP2` is an alias for this charset.
 
     :charset:`EUC-CN`
-
       .. :tindex EUC-CN, aliases
       .. :tindex EUCCN
       .. :tindex GB2312
@@ -726,18 +640,15 @@
       :charset:`EUCCN`, :charset:`GB2312`, :charset:`CN-GB`, :charset:`csGB2312` and :charset:`EUC_CN` are aliases for this charset.
 
     :charset:`GBK`
-
       .. :tindex GBK, aliases
       .. :tindex CP936
 
       :charset:`CP936` is an alias for this charset.
 
     :charset:`GB18030`
-
       .. :tindex GB18030
 
     :charset:`ISO-2022-CN`
-
       .. :tindex ISO-2022-CN, aliases
       .. :tindex csISO2022CN
       .. :tindex ISO2022CN
@@ -745,18 +656,15 @@
       :charset:`csISO2022CN` and :charset:`ISO2022CN` are aliases for this charset.
 
     :charset:`ISO-2022-CN-EXT`
-
       .. :tindex ISO-2022-CN-EXT
 
     :charset:`HZ`
-
       .. :tindex HZ, aliases
       .. :tindex HZ-GB-2312
 
       :charset:`HZ-GB-2312` is an alias for this charset.
 
     :charset:`EUC-TW`
-
       .. :tindex EUC-TW, aliases
       .. :tindex EUCTW
       .. :tindex csEUCTW
@@ -765,7 +673,6 @@
       :charset:`EUCTW`, :charset:`csEUCTW` and :charset:`EUC_TW` are aliases for this charset.
 
     :charset:`BIG5`
-
       .. :tindex BIG5, aliases
       .. :tindex BIG-5
       .. :tindex BIG-FIVE
@@ -776,18 +683,15 @@
       :charset:`BIG-5`, :charset:`BIG-FIVE`, :charset:`BIGFIVE`, :charset:`CN-BIG5` and :charset:`csBig5` are aliases for this charset.
 
     :charset:`CP950`
-
       .. :tindex CP950
 
     :charset:`BIG5-HKSCS`
-
       .. :tindex BIG5-HKSCS, aliases
       .. :tindex BIG5HKSCS
 
       :charset:`BIG5HKSCS` is an alias for this charset.
 
     :charset:`EUC-KR`
-
       .. :tindex EUC-KR, aliases
       .. :tindex EUCKR
       .. :tindex csEUCKR
@@ -796,29 +700,43 @@
       :charset:`EUCKR`, :charset:`csEUCKR` and :charset:`EUC_KR` are aliases for this charset.
 
     :charset:`CP949`
-
       .. :tindex CP949, aliases
       .. :tindex UHC
 
       :charset:`UHC` is an alias for this charset.
 
     :charset:`JOHAB`
-
       .. :tindex JOHAB, aliases
       .. :tindex CP1361
 
       :charset:`CP1361` is an alias for this charset.
 
     :charset:`ISO-2022-KR`
-
       .. :tindex ISO-2022-KR, aliases
       .. :tindex csISO2022KR
       .. :tindex ISO2022KR
 
       :charset:`csISO2022KR` and :charset:`ISO2022KR` are aliases for this charset.
 
-    :charset:`CP437`
+    :charset:`CP856`
+      .. :tindex CP856
 
+    :charset:`CP922`
+      .. :tindex CP922
+
+    :charset:`CP943`
+      .. :tindex CP943
+
+    :charset:`CP1046`
+      .. :tindex CP1046
+
+    :charset:`CP1124`
+      .. :tindex CP1124
+
+    :charset:`CP1129`
+      .. :tindex CP1129
+
+    :charset:`CP437`
       .. :tindex CP437, aliases
       .. :tindex IBM437
       .. :tindex 437
@@ -827,7 +745,6 @@
       :charset:`IBM437`, :charset:`437` and :charset:`csPC8CodePage437` are aliases for this charset.
 
     :charset:`CP775`
-
       .. :tindex CP775, aliases
       .. :tindex IBM775
       .. :tindex csPC775Baltic
@@ -835,7 +752,6 @@
       :charset:`IBM775` and :charset:`csPC775Baltic` are aliases for this charset.
 
     :charset:`CP852`
-
       .. :tindex CP852, aliases
       .. :tindex IBM852
       .. :tindex 852
@@ -844,7 +760,6 @@
       :charset:`IBM852`, :charset:`852` and :charset:`csPCp852` are aliases for this charset.
 
     :charset:`CP855`
-
       .. :tindex CP855, aliases
       .. :tindex IBM855
       .. :tindex 855
@@ -853,7 +768,6 @@
       :charset:`IBM855`, :charset:`855` and :charset:`csIBM855` are aliases for this charset.
 
     :charset:`CP857`
-
       .. :tindex CP857, aliases
       .. :tindex IBM857
       .. :tindex 857
@@ -862,7 +776,6 @@
       :charset:`IBM857`, :charset:`857` and :charset:`csIBM857` are aliases for this charset.
 
     :charset:`CP861`
-
       .. :tindex CP861, aliases
       .. :tindex IBM861
       .. :tindex 861
@@ -872,7 +785,6 @@
       :charset:`IBM861`, :charset:`861`, :charset:`CP-IS` and :charset:`csIBM861` are aliases for this charset.
 
     :charset:`CP864`
-
       .. :tindex CP864, aliases
       .. :tindex IBM864
       .. :tindex csIBM864
@@ -880,7 +792,6 @@
       :charset:`IBM864` and :charset:`csIBM864` are aliases for this charset.
 
     :charset:`CP865`
-
       .. :tindex CP865, aliases
       .. :tindex IBM865
       .. :tindex 865
@@ -889,7 +800,6 @@
       :charset:`IBM865`, :charset:`865` and :charset:`csIBM865` are aliases for this charset.
 
     :charset:`CP869`
-
       .. :tindex CP869, aliases
       .. :tindex IBM869
       .. :tindex 869
@@ -898,24 +808,25 @@
 
       :charset:`IBM869`, :charset:`869`, :charset:`CP-GR` and :charset:`csIBM869` are aliases for this charset.
 
-    :charset:`DEC-KANJI`
+    :charset:`CHAR`
+      .. :tindex CHAR
 
+    :charset:`WCHAR_T`
+      .. :tindex WCHAR_T
+
+    :charset:`DEC-KANJI`
       .. :tindex DEC-KANJI
 
     :charset:`DEC-HANYU`
-
       .. :tindex DEC-HANYU
 
     :charset:`CP737`
-
       .. :tindex CP737
 
     :charset:`CP853`
-
       .. :tindex CP853
 
     :charset:`CP860`
-
       .. :tindex CP860, aliases
       .. :tindex IBM860
       .. :tindex 860
@@ -924,7 +835,6 @@
       :charset:`IBM860`, :charset:`860` and :charset:`csIBM860` are aliases for this charset.
 
     :charset:`CP863`
-
       .. :tindex CP863, aliases
       .. :tindex IBM863
       .. :tindex 863
@@ -933,56 +843,19 @@
       :charset:`IBM863`, :charset:`863` and :charset:`csIBM863` are aliases for this charset.
 
     :charset:`TDS565`
-
       .. :tindex TDS565, aliases
       .. :tindex ISO-IR-230
 
       :charset:`ISO-IR-230` is an alias for this charset.
 
     :charset:`RISCOS-LATIN1`
-
       .. :tindex RISCOS-LATIN1
 
     :charset:`T.50-IRA`
-
       .. :tindex T.50-IRA
 
     :charset:`GSM-03.38`
-
       .. :tindex GSM-03.38
 
     :charset:`GSM-ERICSSON`
-
       .. :tindex GSM-ERICSSON
-
-    :charset:`CHAR`
-
-      .. :tindex CHAR
-
-    :charset:`WCHAR_T`
-
-      .. :tindex WCHAR_T
-
-    :charset:`CP856`
-
-      .. :tindex CP856
-
-    :charset:`CP922`
-
-      .. :tindex CP922
-
-    :charset:`CP943`
-
-      .. :tindex CP943
-
-    :charset:`CP1046`
-
-      .. :tindex CP1046
-
-    :charset:`CP1124`
-
-      .. :tindex CP1124
-
-    :charset:`CP1129`
-
-      .. :tindex CP1129

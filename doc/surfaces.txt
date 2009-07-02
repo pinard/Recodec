@@ -77,6 +77,7 @@ remaining bytes are nevertheless permuted as *321* if there are three
 bytes, *21* if there are two bytes, or merely copied otherwise.
 
   + :charset:`21`
+
     .. :tindex 21-Permutation
     .. :tindex swabytes
 
@@ -84,6 +85,7 @@ bytes, *21* if there are two bytes, or merely copied otherwise.
     :charset:`21-Permutation` and has :charset:`swabytes` for an alias.
 
   + :charset:`4321`
+
     .. :tindex 4321-Permutation
 
     This surface is available in |package| under the name
@@ -101,6 +103,7 @@ Other conventions for representing end of lines are available through
 surfaces.
 
   + :charset:`CR`
+
     .. :tindex CR, a surface
 
     This convention is popular on Apple's Macintosh machines.  When this
@@ -117,6 +120,7 @@ surfaces.
     surface for the Apple Macintosh related charsets.
 
   + :charset:`CR-LF`
+
     .. :tindex CR-LF, a surface
 
     This convention is popular on Microsoft systems running on IBM
@@ -157,6 +161,7 @@ case the lower 128 characters of the underlying charset coincide with
 ASCII.
 
   + :charset:`Base64`
+
     .. :tindex Base64
     .. :tindex b64
     .. :tindex 64
@@ -166,6 +171,7 @@ ASCII.
     aliases.
 
   + :charset:`Quoted-Printable`
+
     .. :tindex Quoted-Printable
     .. :tindex quote-printable
     .. :tindex QP
@@ -209,6 +215,7 @@ properly within a C initialiser, as all members of an array share a
 single type, and so, have identical sizes.
 
   + :charset:`Octal-1`
+
     .. :tindex Octal-1
     .. :tindex o1
 
@@ -218,6 +225,7 @@ single type, and so, have identical sizes.
     with :charset:`o1` and :charset:`o` as acceptable aliases.
 
   + :charset:`Octal-2`
+
     .. :tindex Octal-2
     .. :tindex o2
 
@@ -228,6 +236,7 @@ single type, and so, have identical sizes.
     and has :charset:`o2` for an alias.
 
   + :charset:`Octal-4`
+
     .. :tindex Octal-4
     .. :tindex o4
 
@@ -238,6 +247,7 @@ single type, and so, have identical sizes.
     and has :charset:`o4` for an alias.
 
   + :charset:`Decimal-1`
+
     .. :tindex Decimal-1
     .. :tindex d1
 
@@ -247,6 +257,7 @@ single type, and so, have identical sizes.
     with :charset:`d1` and :charset:`d` as acceptable aliases.
 
   + :charset:`Decimal-2`
+
     .. :tindex Decimal-2
     .. :tindex d2
 
@@ -257,6 +268,7 @@ single type, and so, have identical sizes.
     and has :charset:`d2` for an alias.
 
   + :charset:`Decimal-4`
+
     .. :tindex Decimal-4
     .. :tindex d4
 
@@ -267,6 +279,7 @@ single type, and so, have identical sizes.
     and has :charset:`d4` for an alias.
 
   + :charset:`Hexadecimal-1`
+
     .. :tindex Hexadecimal-1
     .. :tindex x1
 
@@ -276,6 +289,7 @@ single type, and so, have identical sizes.
     with :charset:`x1` and :charset:`x` as acceptable aliases.
 
   + :charset:`Hexadecimal-2`
+
     .. :tindex Hexadecimal-2
     .. :tindex x2
 
@@ -286,6 +300,7 @@ single type, and so, have identical sizes.
     with :charset:`x2` for an alias.
 
   + :charset:`Hexadecimal-4`
+
     .. :tindex Hexadecimal-4
     .. :tindex x4
 
@@ -336,6 +351,7 @@ previous.  In any case, any real input data gets appended after what was
 generated.
 
   + :charset:`test7`
+
     .. :tindex test7
 
     When removed, this surface produces 128 single bytes, the first
@@ -343,6 +359,7 @@ generated.
     128 values have been generated.
 
   + :charset:`test8`
+
     .. :tindex test8
 
     When removed, this surface produces 256 single bytes, the first
@@ -350,6 +367,7 @@ generated.
     256 values have been generated.
 
   + :charset:`test15`
+
     .. :tindex test15
 
     When removed, this surface produces 64509 double bytes, the first
@@ -360,6 +378,7 @@ generated.
     :charset:`UCS-2`.
 
   + :charset:`test16`
+
     .. :tindex test16
 
     When removed, this surface produces 65536 double bytes, the first

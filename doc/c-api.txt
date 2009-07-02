@@ -1,0 +1,893 @@
+
+A recoding library
+==================
+
+.. :cindex recoding library
+
+The program named :code:`recode` is just an application of its recoding
+library.  The recoding library is available separately for other C
+programs.  A good way to acquire some familiarity with the recoding
+library is to get acquainted with the :code:`recode` program itself.
+
+To use the recoding library once it is installed, a C program needs to
+have a line::
+
+  #include <recode.h>
+
+near its beginning, and the user should have ``-lrecode`` on the
+linking call, so modules from the recoding library are found.
+
+The library is still under development.  As it stands, it contains four
+identifiable sets of routines: the outer level functions, the request
+level functions, the task level functions and the charset level functions.
+There are discussed in separate sections.
+
+For effectively using the recoding library in most applications, it should
+be rarely needed to study anything beyond the main initialisation function
+at outer level, and then, various functions at request level.
+
+Outer level functions
+---------------------
+
+.. :cindex outer level functions
+
+The outer level functions mainly prepare the whole recoding library for
+use, or do actions which are unrelated to specific recodings.  Here is
+an example of a program which does not really make anything useful::
+
+  #include <stdbool.h>
+  #include <recode.h>
+
+  const char *program_name;
+
+  int
+  main (int argc, char *const *argv)
+  {
+    program_name = argv[0];
+    RECODE_OUTER outer = recode_new_outer (true);
+
+    recode_delete_outer (outer);
+    exit (0);
+  }
+
+.. :vindex RECODE_OUTER structure
+
+The header file :code:`<recode.h>` declares an opaque :code:`RECODE_OUTER`
+structure, which the programmer should use for allocating a variable in
+his program (let's assume the programmer is a male, here, no prejudice
+intended).  This ``outer`` variable is given as a first argument to
+all outer level functions.
+
+.. :cindex :code:`stdbool.h` header
+.. :cindex :code:`bool` data type
+
+The :code:`<recode.h>` header file uses the Boolean type setup by the
+system header file :code:`<stdbool.h>`.  But this header file is still
+fairly new in C standards, and likely does not exist everywhere.  If you
+system does not offer this system header file yet, the proper compilation
+of the :code:`<recode.h>` file could be guaranteed through the replacement
+of the inclusion line by::
+
+  typedef enum {false = 0, true = 1} bool;
+
+People wanting wider portability, or Autoconf lovers, might arrange their
+:file:`configure.in` for being able to write something more general, like::
+
+  #if STDC_HEADERS
+  # include <stdlib.h>
+  #endif
+
+  /* Some systems do not define EXIT_*, even with STDC_HEADERS.  */
+  #ifndef EXIT_SUCCESS
+  # define EXIT_SUCCESS 0
+  #endif
+  #ifndef EXIT_FAILURE
+  # define EXIT_FAILURE 1
+  #endif
+  /* The following test is to work around the gross typo in systems like Sony
+     NEWS-OS Release 4.0C, whereby EXIT_FAILURE is defined to 0, not 1.  */
+  #if !EXIT_FAILURE
+  # undef EXIT_FAILURE
+  # define EXIT_FAILURE 1
+  #endif
+
+  #if HAVE_STDBOOL_H
+  # include <stdbool.h>
+  #else
+  typedef enum {false = 0, true = 1} bool;
+  #endif
+
+  #include <recode.h>
+
+  const char *program_name;
+
+  int
+  main (int argc, char *const *argv)
+  {
+    program_name = argv[0];
+    RECODE_OUTER outer = recode_new_outer (true);
+
+    recode_term_outer (outer);
+    exit (EXIT_SUCCESS);
+  }
+
+but we will not insist on such details in the examples to come.
+
+  +  Initialisation functions
+    .. :cindex initialisation functions, outer
+
+    ::
+
+      RECODE_OUTER recode_new_outer (:var:`auto_abort`);
+      bool recode_delete_outer (:var:`outer`);
+
+    .. :findex recode_new_outer
+    .. :findex recode_delete_outer
+
+    The recoding library absolutely needs to be initialised before being used,
+    and :code:`recode_new_outer` has to be called once, first.  Besides the
+    :var:`outer` it is meant to initialise, the function accepts a Boolean
+    argument whether or not the library should automatically issue diagnostics
+    on standard and abort the whole program on errors.  When :var:`auto_abort`
+    is :code:`true`, the library later conveniently issues diagnostics itself,
+    and aborts the calling program on errors.  This is merely a convenience,
+    because if this parameter was :code:`false`, the calling program should always
+    take care of checking the return value of all other calls to the recoding
+    library functions, and when any error is detected, issue a diagnostic and
+    abort processing itself.
+
+    Regardless of the setting of :var:`auto_abort`, all recoding library
+    functions return a success status.  Most functions are geared for returning
+    :code:`false` for an error, and :code:`true` if everything went fine.
+    Functions returning structures or strings return :code:`NULL` instead
+    of the result, when the result cannot be produced.  If :var:`auto_abort`
+    is selected, functions either return :code:`true`, or do not return at all.
+
+    As in the example above, :code:`recode_new_outer` is called only once in
+    most cases.  Calling :code:`recode_new_outer` implies some overhead, so
+    calling it more than once should preferably be avoided.
+
+    The termination function :code:`recode_delete_outer` reclaims the memory
+    allocated by :code:`recode_new_outer` for a given :var:`outer` variable.
+    Calling :code:`recode_delete_outer` prior to program termination is more
+    aesthetic then useful, as all memory resources are automatically reclaimed
+    when the program ends.  You may spare this terminating call if you prefer.
+
+  +  The :code:`program_name` declaration
+
+    .. :cindex :code:`program_name` variable
+
+    As we just explained, the user may set the :code:`recode` library so that,
+    in case of problems error, it issues the diagnostic itself and aborts the
+    whole processing.  This capability may be quite convenient.  When this
+    feature is used, the aborting routine includes the name of the running
+    program in the diagnostic.  On the other hand, when this feature is not
+    used, the library merely return error codes, giving the library user fuller
+    control over all this.  This behaviour is more like what usual libraries
+    do: they return codes and never abort.  However, I would rather not force
+    library users to necessarily check all return codes themselves, by leaving
+    no other choice.  In most simple applications, letting the library diagnose
+    and abort is much easier, and quite welcome.  This is precisely because
+    both possibilities exist that the :code:`program_name` variable is needed: it
+    may be used by the library *when* the user sets it to diagnose itself.
+
+Request level functions
+-----------------------
+
+.. :cindex request level functions
+
+The request level functions are meant to cover most recoding needs
+programmers may have; they should provide all usual functionality.
+Their API is almost stable by now.  To get started with request level
+functions, here is a full example of a program which sole job is to filter
+:code:`ibmpc` code on its standard input into :code:`latin1` code on its
+standard output.
+
+::
+
+  #include <stdio.h>
+  #include <stdbool.h>
+  #include <recode.h>
+
+  const char *program_name;
+
+  int
+  main (int argc, char *const *argv)
+  {
+    program_name = argv[0];
+    RECODE_OUTER outer = recode_new_outer (true);
+    RECODE_REQUEST request = recode_new_request (outer);
+    bool success;
+
+    recode_scan_request (request, "ibmpc..latin1");
+
+    success = recode_file_to_file (request, stdin, stdout);
+
+    recode_delete_request (request);
+    recode_delete_outer (outer);
+
+    exit (success ? 0 : 1);
+  }
+
+.. :vindex RECODE_REQUEST structure
+
+The header file :code:`<recode.h>` declares a :code:`RECODE_REQUEST` structure,
+which the programmer should use for allocating a variable in his program.
+This :var:`request` variable is given as a first argument to all request
+level functions, and in most cases, may be considered as opaque.
+
+  +  Initialisation functions
+    .. :cindex initialisation functions, request
+
+    ::
+
+      RECODE_REQUEST recode_new_request (:var:`outer`);
+      bool recode_delete_request (:var:`request`);
+
+    .. :findex recode_new_request
+    .. :findex recode_delete_request
+
+    No :var:`request` variable may not be used in other request level
+    functions of the recoding library before having been initialised by
+    :code:`recode_new_request`.  There may be many such :var:`request`
+    variables, in which case, they are independent of one another and
+    they all need to be initialised separately.  To avoid memory leaks, a
+    :var:`request` variable should not be initialised a second time without
+    calling :code:`recode_delete_request` to *un-initialise* it.
+
+    Like for :code:`recode_delete_outer`, calling :code:`recode_delete_request`
+    prior to program termination, in the example above, may be left out.
+
+  +  Fields of :code:`struct recode_request`
+    .. :vindex recode_request structure
+
+    Here are the fields of a :code:`struct recode_request` which may be
+    meaningfully changed, once a :var:`request` has been initialised by
+    :code:`recode_new_request`, but before it gets used.  It is not very frequent,
+    in practice, that these fields need to be changed.  To access the fields,
+    you need to include :file:`recodext.h` *instead* of :file:`recode.h`,
+    in which case there also is a greater chance that you need to recompile
+    your programs if a new version of the recoding library gets installed.
+
+    @table @code
+  +  verbose_flag
+    .. :vindex verbose_flag
+
+    This field is initially :code:`false`.  When set to :code:`true`, the
+    library will echo to stderr the sequence of elementary recoding steps
+    needed to achieve the requested recoding.
+
+  +  diaeresis_char
+    .. :vindex diaeresis_char
+
+    This field is initially the ASCII value of a double quote :kbd:`"`,
+    but it may also be the ASCII value of a colon :kbd:`:`.  In :code:`texte`
+    charset, some countries use double quotes to mark diaeresis, while other
+    countries prefer colons.  This field contains the diaeresis character
+    for the :code:`texte` charset.
+
+  +  make_header_flag
+    .. :vindex make_header_flag
+
+    This field is initially :code:`false`.  When set to :code:`true`, it
+    indicates that the program is merely trying to produce a recoding table in
+    source form rather than completing any actual recoding.  In such a case,
+    the optimisation of step sequence can be attempted much more aggressively.
+    If the step sequence cannot be reduced to a single step, table production
+    will fail.
+
+  +  diacritics_only
+    .. :vindex diacritics_only
+
+    This field is initially :code:`false`.  For :code:`HTML` and :code:`LaTeX`
+    charset, it is often convenient to recode the diacriticized characters
+    only, while just not recoding other HTML code using ampersands or angular
+    brackets, or La@TeX{} code using backslashes.  Set the field to :code:`true`
+    for getting this behaviour.  In the other charset, one can edit text as
+    well as HTML or La@TeX{} directives.
+
+  +  ascii_graphics
+    .. :vindex ascii_graphics
+
+    This field is initially :code:`false`, and relate to characters 176 to
+    223 in the :code:`ibmpc` charset, which are use to draw boxes.  When set
+    to :code:`true`, while getting out of :code:`ibmpc`, ASCII characters are
+    selected so to graphically approximate these boxes.
+    @end table
+
+  +  Study of request strings
+
+    ::
+
+      bool recode_scan_request (:var:`request`, ":var:`string`");
+
+    .. :findex recode_scan_request
+
+    The main role of a :var:`request` variable is to describe a set of
+    recoding transformations.  Function :code:`recode_scan_request` studies
+    the given :var:`string`, and stores an internal representation of it into
+    :var:`request`.  Note that :var:`string` may be a full-fledged :code:`recode`
+    request, possibly including surfaces specifications, intermediary
+    charsets, sequences, aliases or abbreviations (@pxref{Requests}).
+
+    The internal representation automatically receives some pre-conditioning
+    and optimisation, so the :var:`request` may then later be used many times
+    to achieve many actual recodings.  It would not be efficient calling
+    :code:`recode_scan_request` many times with the same :var:`string`, it is
+    better having many :var:`request` variables instead.
+
+  +  Actual recoding jobs
+
+    Once the :var:`request` variable holds the description of a recoding
+    transformation, a few functions use it for achieving an actual recoding.
+    Either input or output of a recoding may be string, an in-memory buffer,
+    or a file.
+
+    Functions with names like
+    :code:`recode_@var{input-type`_to_:var:`output-type`} request an actual
+    recoding, and are described below.  It is easy to remember which arguments
+    each function accepts, once grasped some simple principles for each
+    possible :var:`type`.  However, one of the recoding function escapes these
+    principles and is discussed separately, first.
+
+    ::
+
+      recode_string (:var:`request`, :var:`string`);
+
+    .. :findex recode_string
+
+    The function :code:`recode_string` recodes :var:`string` according
+    to :var:`request`, and directly returns the resulting recoded string
+    freshly allocated, or :code:`NULL` if the recoding could not succeed for
+    some reason.  When this function is used, it is the responsibility of
+    the programmer to ensure that the memory used by the returned string is
+    later reclaimed.
+
+    .. :findex recode_string_to_buffer
+    .. :findex recode_string_to_file
+    .. :findex recode_buffer_to_buffer
+    .. :findex recode_buffer_to_file
+    .. :findex recode_file_to_buffer
+    .. :findex recode_file_to_file
+
+    ::
+
+      char *recode_string_to_buffer (:var:`request`,
+        :var:`input_string`,
+        &:var:`output_buffer`, &:var:`output_length`, &:var:`output_allocated`);
+      bool recode_string_to_file (:var:`request`,
+        :var:`input_file`,
+        :var:`output_file`);
+      bool recode_buffer_to_buffer (:var:`request`,
+        :var:`input_buffer`, :var:`input_length`,
+        &:var:`output_buffer`, &:var:`output_length`, &:var:`output_allocated`);
+      bool recode_buffer_to_file (:var:`request`,
+        :var:`input_buffer`, :var:`input_length`,
+        :var:`output_file`);
+      bool recode_file_to_buffer (:var:`request`,
+        :var:`input_file`,
+        &:var:`output_buffer`, &:var:`output_length`, &:var:`output_allocated`);
+      bool recode_file_to_file (:var:`request`,
+        :var:`input_file`,
+        :var:`output_file`);
+
+    All these functions return a :code:`bool` result, :code:`false` meaning that
+    the recoding was not successful, often because of reversibility issues.
+    The name of the function well indicates on which types it reads and which
+    type it produces.  Let's discuss these three types in turn.
+
+    @table @asis
+  +  string
+
+    A string is merely an in-memory buffer which is terminated by a :code:`NUL`
+    character (using as many bytes as needed), instead of being described
+    by a byte length.  For input, a pointer to the buffer is given through
+    one argument.
+
+    It is notable that there is no :code:`to_string` functions.  Only one
+    function recodes into a string, and it is :code:`recode_string`, which
+    has already been discussed separately, above.
+
+  +  buffer
+
+    A buffer is a sequence of bytes held in computer memory.  For input, two
+    arguments provide a pointer to the start of the buffer and its byte size.
+    Note that for charsets using many bytes per character, the size is given
+    in bytes, not in characters.
+
+    For output, three arguments provide the address of three variables, which
+    will receive the buffer pointer, the used buffer size in bytes, and the
+    allocated buffer size in bytes.  If at the time of the call, the buffer
+    pointer is :code:`NULL`, then the allocated buffer size should also be zero,
+    and the buffer will be allocated afresh by the recoding functions.  However,
+    if the buffer pointer is not :code:`NULL`, it should be already allocated,
+    the allocated buffer size then gives its size.  If the allocated size
+    gets exceeded while the recoding goes, the buffer will be automatically
+    reallocated bigger, probably elsewhere, and the allocated buffer size will
+    be adjusted accordingly.
+
+    The second variable, giving the in-memory buffer size, will receive the
+    exact byte size which was needed for the recoding.  A :code:`NUL` character
+    is guaranteed at the end of the produced buffer, but is not counted in the
+    byte size of the recoding.  Beyond that :code:`NUL`, there might be some
+    extra space after the recoded data, extending to the allocated buffer size.
+
+  +  file
+
+    .. :findex recode_filter_open@r{, not available}
+    .. :findex recode_filter_close@r{, not available}
+
+    A file is a sequence of bytes held outside computer memory, but
+    buffered through it.  For input, one argument provides a pointer to a
+    file already opened for read.  The file is then read and recoded from its
+    current position until the end of the file, effectively swallowing it in
+    memory if the destination of the recoding is a buffer.  For reading a file
+    filtered through the recoding library, but only a little bit at a time, one
+    should rather use :code:`recode_filter_open` and :code:`recode_filter_close`
+    (these two functions are not yet available).
+
+    For output, one argument provides a pointer to a file already opened
+    for write.  The result of the recoding is written to that file starting
+    at its current position.
+    @end table
+@end itemize
+
+.. :findex recode_format_table
+
+The following special function is still subject to change::
+
+  void recode_format_table (:var:`request`, :var:`language`, ":var:`name`");
+
+and is not documented anymore for now.
+
+Task level functions
+--------------------
+.. :cindex task level functions
+
+
+The task level functions are used internally by the request level
+functions, they allow more explicit control over files and memory
+buffers holding input and output to recoding processes.  The interface
+specification of task level functions is still subject to change a bit.
+
+To get started with task level functions, here is a full example of a
+program which sole job is to filter :code:`ibmpc` code on its standard input
+into :code:`latin1` code on its standard output.  That is, this program has
+the same goal as the one from the previous section, but does its things
+a bit differently.
+
+::
+
+  #include <stdio.h>
+  #include <stdbool.h>
+  #include <recodext.h>
+
+  const char *program_name;
+
+  int
+  main (int argc, char *const *argv)
+  {
+    program_name = argv[0];
+    RECODE_OUTER outer = recode_new_outer (false);
+    RECODE_REQUEST request = recode_new_request (outer);
+    RECODE_TASK task;
+    bool success;
+
+    recode_scan_request (request, "ibmpc..latin1");
+
+    task = recode_new_task (request);
+    task->input.file = "";
+    task->output.file = "";
+    success = recode_perform_task (task);
+
+    recode_delete_task (task);
+    recode_delete_request (request);
+    recode_delete_outer (outer);
+
+    exit (success ? 0 : 1);
+  }
+
+.. :vindex RECODE_TASK structure
+
+The header file :code:`<recode.h>` declares a :code:`RECODE_TASK`
+structure, which the programmer should use for allocating a variable in
+his program.  This :code:`task` variable is given as a first argument to
+all task level functions.  The programmer ought to change and possibly
+consult a few fields in this structure, using special functions.
+
+@itemize @bullet
+@item Initialisation functions
+.. :cindex initialisation functions, task
+
+.. :findex recode_new_task
+.. :findex recode_delete_task
+
+::
+
+  RECODE_TASK recode_new_task (:var:`request`);
+  bool recode_delete_task (:var:`task`);
+
+No :var:`task` variable may be used in other task level functions
+of the recoding library without having first been initialised with
+:code:`recode_new_task`.  There may be many such :var:`task` variables,
+in which case, they are independent of one another and they all need to be
+initialised separately.  To avoid memory leaks, a :var:`task` variable should
+not be initialised a second time without calling :code:`recode_delete_task` to
+``un-initialise`` it.  This function also accepts a :var:`request` argument
+and associates the request to the task.  In fact, a task is essentially
+a set of recoding transformations with the specification for its current
+input and its current output.
+
+The :var:`request` variable may be scanned before or after the call to
+:code:`recode_new_task`, it does not matter so far.  Immediately after
+initialisation, before further changes, the :var:`task` variable associates
+:var:`request` empty in-memory buffers for both input and output.
+The output buffer will later get allocated automatically on the fly,
+as needed, by various task processors.
+
+Even if a call to :code:`recode_delete_task` is not strictly mandatory
+before ending the program, it is cleaner to always include it.  Moreover,
+in some future version of the recoding library, it might become required.
+
+@item Fields of :code:`struct task_request`
+.. :vindex task_request structure
+
+Here are the fields of a :code:`struct task_request` which may be meaningfully
+changed, once a :var:`task` has been initialised by :code:`recode_new_task`.
+In fact, fields are expected to change.  Once again, to access the fields,
+you need to include :file:`recodext.h` *instead* of :file:`recode.h`,
+in which case there also is a greater chance that you need to recompile
+your programs if a new version of the recoding library gets installed.
+
+@table @code
+@item request
+
+The field :code:`request` points to the current recoding request, but may
+be changed as needed between recoding calls, for example when there is
+a need to achieve the construction of a resulting text made up of many
+pieces, each being recoded differently.
+
+@item input.name
+@itemx input.file
+
+If :code:`input.name` is not :code:`NULL` at start of a recoding, this is
+a request that a file by that name be first opened for reading and later
+automatically closed once the whole file has been read. If the file name is
+not :code:`NULL` but an empty string, it means that standard input is to
+be used.  The opened file pointer is then held into :code:`input.file`.
+
+If :code:`input.name` is :code:`NULL` and :code:`input.file` is not, than
+:code:`input.file` should point to a file already opened for read, which
+is meant to be recoded.
+
+@item input.buffer
+@itemx input.cursor
+@itemx input.limit
+
+When both :code:`input.name` and :code:`input.file` are :code:`NULL`, three
+pointers describe an in-memory buffer containing the text to be recoded.
+The buffer extends from :code:`input.buffer` to :code:`input.limit`,
+yet the text to be recoded only extends from :code:`input.cursor` to
+:code:`input.limit`.  In most situations, :code:`input.cursor` starts with
+the value that :code:`input.buffer` has.  (Its value will internally advance
+as the recoding goes, until it reaches the value of :code:`input.limit`.)
+
+@item output.name
+@itemx output.file
+
+If :code:`output.name` is not :code:`NULL` at start of a recoding, this
+is a request that a file by that name be opened for write and later
+automatically closed after the recoding is done.  If the file name is
+not :code:`NULL` but an empty string, it means that standard output is to
+be used.  The opened file pointer is then held into :code:`output.file`.
+If several passes with intermediate files are needed to produce the
+recoding, the :code:`output.name` file is opened only for the final pass.
+
+If :code:`output.name` is :code:`NULL` and :code:`output.file` is not, then
+:code:`output.file` should point to a file already opened for write, which
+will receive the result of the recoding.
+
+@item output.buffer
+@itemx output.cursor
+@itemx output.limit
+
+When both :code:`output.name` and :code:`output.file` are :code:`NULL`, three
+pointers describe an in-memory buffer meant to receive the text, once it
+is recoded.  The buffer is already allocated from :code:`output.buffer`
+to :code:`output.limit`.  In most situations, :code:`output.cursor` starts
+with the value that :code:`output.buffer` has.  Once the recoding is done,
+:code:`output.cursor` will point at the next free byte in the buffer,
+just after the recoded text, so another recoding could be called without
+changing any of these three pointers, for appending new information to it.
+The number of recoded bytes in the buffer is the difference between
+:code:`output.cursor` and :code:`output.buffer`.
+
+Each time :code:`output.cursor` reaches :code:`output.limit`, the buffer
+is reallocated bigger, possibly at a different location in memory, always
+held up-to-date in :code:`output.buffer`.  It is still possible to call a
+task level function with no output buffer at all to start with, in which
+case all three fields should have :code:`NULL` as a value.  This is the
+situation immediately after a call to :code:`recode_new_task`.
+
+@item strategy
+.. :vindex strategy
+.. :vindex RECODE_STRATEGY_UNDECIDED
+
+This field, which is of type :code:`enum recode_sequence_strategy`, tells
+how various recoding steps (passes) will be interconnected.  Its initial
+value is :code:`RECODE_STRATEGY_UNDECIDED`, which is a constant defined in
+the header file :file:`<recodext.h>`.  Other possible values are:
+
+@table @code
+@item RECODE_SEQUENCE_IN_MEMORY
+.. :vindex RECODE_SEQUENCE_IN_MEMORY
+
+Keep intermediate recodings in memory.
+@item RECODE_SEQUENCE_WITH_FILES
+.. :vindex RECODE_SEQUENCE_WITH_FILES
+
+Do not fork, use intermediate files.
+@item RECODE_SEQUENCE_WITH_PIPE
+.. :vindex RECODE_SEQUENCE_WITH_PIPE
+
+Fork processes connected with :code:`pipe(2)`.
+@end table
+
+.. :FIXME
+
+The best for now is to leave this field alone, and let the recoding
+library decide its strategy, as many combinations have not been tested yet.
+
+@item byte_order_mark
+.. :vindex byte_order_mark
+
+This field, which is preset to :code:`true`, indicates that a byte order
+mark is to be expected at the beginning of any canonical :charset:`UCS-2`
+or :charset:`UTF-16` text, and that such a byte order mark should be also
+produced for these charsets.
+
+@item fail_level
+.. :vindex fail_level
+
+This field, which is of type :code:`enum recode_error` (@pxref{Errors}),
+sets the error level at which task level functions should report a failure.
+If an error being detected is equal or greater than :code:`fail_level`,
+the function will eventually return :code:`false` instead of :code:`true`.
+The preset value for this field is :code:`RECODE_NOT_CANONICAL`, that means
+that if not reset to another value, the library will report failure on
+*any* error.
+
+@item abort_level
+.. :vindex abort_level
+.. :vindex RECODE_MAXIMUM_ERROR
+
+This field, which is of type :code:`enum recode_error` (@pxref{Errors}), sets
+the error level at which task level functions should immediately interrupt
+their processing.  If an error being detected is equal or greater than
+:code:`abort_level`, the function returns immediately, but the returned
+value (:code:`true` or :code:`false`) is still is decided from the setting
+of :code:`fail_level`, not :code:`abort_level`.  The preset value for this
+field is :code:`RECODE_MAXIMUM_ERROR`, that means that is not reset to
+another value, the library will never interrupt a recoding task.
+
+@item error_so_far
+.. :vindex error_so_far
+
+This field, which is of type :code:`enum recode_error` (@pxref{Errors}),
+maintains the maximum error level met so far while the recoding task
+was proceeding.  The preset value is :code:`RECODE_NO_ERROR`.
+@end table
+
+@item Task execution
+.. :cindex task execution
+
+.. :findex recode_perform_task
+.. :findex recode_filter_open
+.. :findex recode_filter_close
+
+::
+
+  recode_perform_task (:var:`task`);
+  recode_filter_open (:var:`task`, :var:`file`);
+  recode_filter_close (:var:`task`);
+
+The function :code:`recode_perform_task` reads as much input as possible,
+and recode all of it on prescribed output, given a properly initialised
+:var:`task`.
+
+Functions :code:`recode_filter_open` and :code:`recode_filter_close` are
+only planned for now.  They are meant to read input in piecemeal ways.
+Even if functionality already exists informally in the library, it has
+not been made available yet through such interface functions.
+@end itemize
+
+Charset level functions
+-----------------------
+.. :cindex charset level functions
+
+.. :cindex internal functions
+
+Many functions are internal to the recoding library.  Some of them
+have been made external and available, for the :code:`recode` program
+had to retain all its previous functionality while being transformed
+into a mere application of the recoding library.  These functions are
+not really documented here for the time being, as we hope that many of
+them will vanish over time.  When this set of routines will stabilise,
+it would be convenient to document them as an API for handling charset
+names and contents.
+
+.. :findex find_charset
+.. :findex list_all_charsets
+.. :findex list_concise_charset
+.. :findex list_full_charset
+
+::
+
+  RECODE_CHARSET find_charset (:var:`name`, :var:`cleaning-type`);
+  bool list_all_charsets (:var:`charset`);
+  bool list_concise_charset (:var:`charset`, :var:`list-format`);
+  bool list_full_charset (:var:`charset`);
+
+Handling errors
+---------------
+.. :cindex error handling
+.. :cindex handling errors
+
+.. :cindex error messages
+
+The :code:`recode` program, while using the :code:`recode` library, needs to
+control whether recoding problems are reported or not, and then reflect
+these in the exit status.  The program should also instruct the library
+whether the recoding should be abruptly interrupted when an error is
+met (so sparing processing when it is known in advance that a wrong
+result would be discarded anyway), or if it should proceed nevertheless.
+Here is how the library groups errors into levels, listed here in order
+of increasing severity.
+
+@table @code
+@item RECODE_NO_ERROR
+.. :vindex RECODE_NO_ERROR
+
+No error was met on previous library calls.
+
+@item RECODE_NOT_CANONICAL
+.. :vindex RECODE_NOT_CANONICAL
+.. :cindex non canonical input, error message
+
+The input text was using one of the many alternative codings for some
+phenomenon, but not the one :code:`recode` would have canonically generated.
+So, if the reverse recoding is later attempted, it would produce a text
+having the same *meaning* as the original text, yet not being byte
+identical.
+
+For example, a :code:`Base64` block in which end-of-lines appear elsewhere
+that at every 76 characters is not canonical.  An e-circumflex in @TeX{}
+which is coded as ``\^{e@``} instead of ``\^e`` is not canonical.
+
+@item RECODE_AMBIGUOUS_OUTPUT
+.. :vindex RECODE_AMBIGUOUS_OUTPUT
+.. :cindex ambiguous output, error message
+
+It has been discovered that if the reverse recoding was attempted on
+the text output by this recoding, we would not obtain the original text,
+only because an ambiguity was generated by accident in the output text.
+This ambiguity would then cause the wrong interpretation to be taken.
+
+Here are a few examples.  If the :code:`Latin-1` sequence ``e^``
+is converted to Easy French and back, the result will be interpreted
+as e-circumflex and so, will not reflect the intent of the original two
+characters.  Recoding an :code:`IBM-PC` text to :code:`Latin-1` and back,
+where the input text contained an isolated :kbd:`LF`, will have a spurious
+:kbd:`CR` inserted before the :kbd:`LF`.
+
+Currently, there are many cases in the library where the production of
+ambiguous output is not properly detected, as it is sometimes a difficult
+problem to accomplish this detection, or to do it speedily.
+
+@item RECODE_UNTRANSLATABLE
+.. :vindex RECODE_UNTRANSLATABLE
+.. :cindex untranslatable input, error message
+
+One or more input character could not be recoded, because there is just
+no representation for this character in the output charset.
+
+Here are a few examples.  Non-strict mode often allows :code:`recode` to
+compute on-the-fly mappings for unrepresentable characters, but strict
+mode prohibits such attribution of reversible translations: so strict
+mode might often trigger such an error.  Most :charset:`UCS-2` codes used to
+represent Asian characters cannot be expressed in various Latin charsets.
+
+@item RECODE_INVALID_INPUT
+.. :vindex RECODE_INVALID_INPUT
+.. :cindex invalid input, error message
+
+The input text does not comply with the coding it is declared to hold.  So,
+there is no way by which a reverse recoding would reproduce this text,
+because :code:`recode` should never produce invalid output.
+
+Here are a few examples.  In strict mode, :code:`ASCII` text is not allowed
+to contain characters with the eight bit set.  :charset:`UTF-8` encodings
+ought to be minimal@footnote{The minimality of an :charset:`UTF-8` encoding
+is guaranteed on output, but currently, it is not checked on input.}.
+
+@item RECODE_SYSTEM_ERROR
+.. :vindex RECODE_SYSTEM_ERROR
+.. :cindex system detected problem, error message
+
+The underlying system reported an error while the recoding was going on,
+likely an input/output error.
+(This error symbol is currently unused in the library.)
+
+@item RECODE_USER_ERROR
+.. :vindex RECODE_USER_ERROR
+.. :cindex misuse of recoding library, error message
+
+The programmer or user requested something the recoding library is unable
+to provide, or used the API wrongly.
+(This error symbol is currently unused in the library.)
+
+@item RECODE_INTERNAL_ERROR
+.. :vindex RECODE_INTERNAL_ERROR
+.. :cindex internal recoding bug, error message
+
+Something really wrong, which should normally never happen, was detected
+within the recoding library.  This might be due to genuine bugs in the
+library, or maybe due to un-initialised or overwritten arguments to
+the API.
+(This error symbol is currently unused in the library.)
+
+@item RECODE_MAXIMUM_ERROR
+.. :vindex RECODE_MAXIMUM_ERROR
+
+This error code should never be returned, it is only internally used as
+a sentinel for the list of all possible error codes.
+@end table
+
+.. :cindex error level threshold
+.. :cindex threshold for error reporting
+
+One should be able to set the error level threshold for returning failure
+at end of recoding, and also the threshold for immediate interruption.
+If many errors occur while the recoding proceed, which are not severe
+enough to interrupt the recoding, then the most severe error is retained,
+while others are forgotten@footnote{Another approach would have been
+to define the level symbols as masks instead, and to give masks to
+threshold setting routines, and to retain all errors---yet I never
+met myself such a need in practice, and so I fear it would be overkill.
+On the other hand, it might be interesting to maintain counters about
+how many times each kind of error occurred.}.  So, in case of an error,
+the possible actions currently are:
+
+@itemize @bullet
+@item do nothing and let go, returning success at end of recoding,
+@item just let go for now, but return failure at end of recoding,
+@item interrupt recoding right away and return failure now.
+@end itemize
+
+@noindent
+@xref{Task level}, and particularly the description of the fields
+:code:`fail_level`, :code:`abort_level` and :code:`error_so_far`, for more
+information about how errors are handled.
+
+@ignore
+.. :FIXME: Take a look at these matters, indeed.
+
+A last topic around errors is where the error related fields are kept.
+To work nicely with threads, my feeling is that the main API levels (based
+on either of :code:`struct recode_outer`, :code:`struct recode_request`
+or :code:`struct recode_task`) should each have their error thresholds,
+values, and last explicit message strings.  Thresholds would be inherited
+by requests from outers, and by tasks from requests.  Error values and
+strings would be automatically propagated out from tasks to requests,
+for these request level routines which internally set up and use recoding
+tasks.
+
+One simple way to avoid locking while sparing the initialisation of many
+identical requests, a programmer could prepare the common request before
+splitting threads, and merely *copy* the :code:`struct recode_request`
+so each thread has its own copy---either using a mere assignment or
+:code:`memcpy`.  The same could be said for :code:`struct recode_outer`
+or :code:`struct recode_task` blocks, yet it makes less sense to me to do
+so in practice.
+@end ignore
+

@@ -1,0 +1,205 @@
+The project
+===========
+
+.. |Recode| replace:: Free :code:`recode`
+
+Presentation
+------------
+
+Here is version 0.2 of the |package| program and library.  |package| is a
+Python (2.2.1 or better) clone of |Recode|.  Both convert strings or files
+between various character sets and usages, transliterating between more than
+240 different character sets.  When exact transliteration are not possible,
+they get rid of offending characters or fall back on approximations.
+
+|package| and |Recode| have fairly compatible command calls.  However, they use
+fairly different APIs internally, as |package| extends the concept of Python
+codecs, and is designed to nicely mix with them.
+
+This file is repeated as http://recodec.progiciels-bpi.ca and
+http://recodec.progiciels-bpi.ca/archives/|package|-|version|.tar.gz holds the
+latest snapshot or release.  This is still alpha quality and should not be used
+without caution in a production environment.
+
+Pretesters are welcome.  Please gently report problems, suggestions or other
+comments to mailto:pinard@iro.umontreal.ca.  |package| and |Recode|-related
+discussions might be held on mailto:recode-forum@iro.umontreal.ca, this list is
+opened to its members only.  Python specific discussions might go to
+mailto:python-list@python.org.
+
+The |package| program and library have been written by François Pinard, yet
+they reuse ideas from users, and other works in this area.  This is an evolving
+package, specifications might change in future releases.
+
+Installation
+------------
+
+Install through either ``python setup.py install`` or ``make install``
+at top-level of the unpacked distribution.  To check the installation,
+try ``recodec -lc`` in a shell, this should list all usable charsets,
+surfaces, and aliases. ``make check`` launches the validation suite.
+
+Around permission problems, you may install in your own home directory with
+``python setup.py install --home=$HOME``.  If you do, adjust some environment
+variables before usage, with commands like these::
+
+  export PATH=$HOME/bin:$PATH
+  export PYTHONPATH=$HOME/lib/python:$PYTHONPATH
+
+Documentation
+-------------
+
+This |package| manual has been derived from the |Recode| manual, a copy of
+which may be read at http://recode.progiciels-bpi.ca/manual/.
+
+The |Recode| manual documents the C API, which is not available in |package|.
+Some later version of this manual will document the Python API.  Until then,
+the following example should help.  The shell command::
+
+  recodec qnx..latin-1 < INPUT > OUTPUT
+
+could be rewritten into the following Python program::
+
+  import Recode
+  buffer = file('INPUT').read().encode('qnx..latin1', 'replace')
+  file('OUTPUT', 'w').write(buffer)
+
+or maybe a little more explicitly as::
+
+  from Recode import Recodec
+  input = file('INPUT')
+  output = file('OUTPUT', 'w')
+  codec = Recodec('qnx..latin-1')
+  buffer, length = codec.encode(input.read(), 'replace')
+  ouput.write(buffer)
+
+The 'replace' arguments may be omitted, this has the same effect as if
+the ``--strict`` (``-s``) option has been given on the :code:`recodec` call.
+
+Maintenance
+-----------
+
+Proper maintenance of |package|, beyond mere installation and usage,
+currently requires the GNU Make.  It is expected that later releases
+will also need Greg Ewing's Pyrex and a C development environment.
+
+Motivation
+----------
+
+|Recode|, formerly GNU :code:`recode`, is due for a major ovehaul.
+
+For one thing, I want to explore some new avenues.  It does not seem natural
+anymore, to me at least, using C code for exploring or prototyping new ideas
+requiring complex internal structures: encompassing changes are stretchy, work
+overhead is just too high.  My plan is now to maintain a Python prototype for
+|Recode|, together with a C rendering of that prototype where speed
+considerations apply.
+
+Another thing is that |Recode| should reuse more of the work of many
+competent people in the recoding area.  I was brought into the business of
+character set conversion issues by a random set of coincidences and needs, but
+have never been a character set specialist myself.  I rely on users to help me
+sketch what needs to be done.  There are other tools and other maintainers who
+address these matters more competently than me. |Recode| might well rely on
+their work and better concentrate on user functionalities and on an overall
+picture.
+
+Consequently, the release 3.6 for |Recode| may well be the last in the 3.x
+series.  Version 4.0 is planned as an undecided mix of Python, C and Pyrex.  On
+the development road, there might be many pretest releases before the new
+program recovers even the functionality of 3.6.  To avoid confusion, but also
+for allowing an easier co-existence of the official |Recode| with the one being
+rewritten, the new |Recode| is called |package|, for which versioning scheme
+starts back at 0.0.  When |package| will have become stable and usable enough
+to replace |Recode| 3.6, it will be renamed |Recode| 4.0.  That |Recode| might
+still install a :code:`recodec` program, if it ever offers a GUI.
+
+Overall plan
+------------
+
+|package| releases 0.X are pure Python relying on the Python library, and
+is going to recover most functionalities of |Recode|.  See ``recodec --help``
+for an exact list of missing options and features.
+
+Series 1.X will start when the list almost vanishes.  Release 1.X might
+support either :code:`libiconv` or GNU :code:`libc` recoding facilities as
+configurable, but separate C extensions.  |package| and |Recode| will have
+similar specifications; see `Planned differences`_ later down.
+
+The |package| 2.X series is meant to create a usable bridge between
+C and Python.  The |package| internal API will get exposed for C
+programming, as well as a compatibility layer offering the older |Recode|
+will be rewritten either in C or in Pyrex (which may run at C speed
+with proper care), using Pyrex itself to generate the interface between
+languages.  If Unicode is not supported by Pyrex at that time, I'll have to
+displace the equilibrium a bit more from Pyrex towards C.  The goals here are
+to recover part of the speed, spare disk accesses, and find a way to be
+economical on memory.
+
+The 3.X series is going to address and formalise some, but not all of the
+new aspects of structures and spaces within |package|.  These are likely to
+have begun to peek into the 2.X series.  Internally, the effort might go
+towards minimizing Python startup time: the rest of initialisation time has
+already been cut a lot in 0.X series.  I might explore providing for Pyrex
+generated code some kludges of a Python API interface so the Python interpreter
+would not be required at all at run-time, but today, I doubt this is doable in
+practice, or that the implied restrictions on Pyrex code would be bearable.  By
+the time, I may come to think that this is not worth the effort, anyway.
+
+Finally, the 4.X series will coincide with releasing |Recode| as a full
+merge of |package| within |Recode|.  |package| will likely disappear, and
+|package| 4.X might never exist as such.  We'll decide once there!
+
+Speed and memory
+----------------
+
+Historically, |Recode| has always been oriented towards some generality in
+specifications, combined with good execution speed.  Generality is granted
+through providing recoding steps either as tables or fuller algorithms
+expressed as C code.  Speed surely results from careful C coding of individual
+steps, and using Flex for more difficult recognition problems.  Speed also
+comes from the monolithic design of an executable holding all tables at once,
+relying on system paging instead of run-time opening of external data files.
+The automatic selection among step sequencing methods also play a role in the
+speed area.
+
+Rewriting a character shuffling engine in Python is going to have consequences
+on both speed and memory: Python is inherently much slower than C for such
+problems, program startup requires many disk accesses to load all required
+modules, and the size of the Python interpreter is not negligible.  On the
+other hand, |Recode| is not small as it stands.
+
+For prototyping various experiments, the slowdown is likely to be bearable,
+especially considering the development speedup that might result from using
+Python instead of C.  It is fairly tedious to make encompassing structural
+changes in the C version of |Recode|, while similar changes are going to be
+rather easy in Python.  I expect that the shorter development cycle will
+counter-weight some duplication in the maintenance of |Recode| both in Python
+and C afterwards.
+
+Planned differences
+-------------------
+
+Whenever the Python library offers a charset or a surface which |Recode| also
+has, the Python library codec is used.  In some cases, this introduces
+differences, those will have to be resolved one by one, either by accepting
+that the Python library does better, getting the Python team to improve some
+codecs, or overriding these from |package|.
+
+Other differences may occur, especially in the Asian charset area, from the
+fact :code:`libiconv`, GNU :code:`libc` recoding facilities, and various
+contributors to the Python codecs project, do not fully agree on how things
+should be done.  |package| is likely to offer configuration mechanisms to
+choose among various possibilities, but will not likely attempt to rule out who
+is right and who is wrong! :-)
+
+Issues about reversibility and canonicity, which were much present in |Recode|
+3.X, are fading out.  While some of these were moderately easy to
+implement, other cases stayed pending as fairly difficult to solve without a
+significant loss of efficiency.  I think these issues are better abandoned than
+forever kept as half-hearted and not wholly dependable.  Any user concerned
+about such things might try the reverse coding to find out if the original file
+is recoverable, some new option might automate a (costly) reversibility test.
+
+File :file:`NEWS` lists user visible changes, in a concise way.  File
+:file:`ChangeLog` gives a more comprehensive description for all changes.

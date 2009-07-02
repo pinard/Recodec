@@ -126,6 +126,7 @@ reversibility is still possible, but there might be difficult cases.
 
 ASCII without diacritics nor underline
 --------------------------------------
+
 .. :tindex flat, a charset
 
 This charset is available in |package| under the name :charset:`flat`.
