@@ -35,8 +35,8 @@ class Main:
         for module in modules:
             if hasattr(module, 'implied_surfaces'):
                 for alias, surface in module.implied_surfaces:
-                    self.implied[recode.clean_alias(alias)] = (
-                        recode.clean_alias(surface))
+                    self.implied[recode.cleaned_alias(alias)] = (
+                        recode.cleaned_alias(surface))
         # Register recode methods.
         self.methods = {}
         for module, module_name in zip(modules, arguments):
@@ -71,8 +71,8 @@ class Main:
             aliases = ()
         else:
             official = declare[0]
-            aliases = [recode.clean_alias(alias) for alias in declare[1:]]
-        coding = recode.clean_alias(official)
+            aliases = [recode.cleaned_alias(alias) for alias in declare[1:]]
+        coding = recode.cleaned_alias(official)
         # Use coding's cluster, create it if necessary.  The first element
         # of a cluster is always the official name, other elements are clean.
         if coding not in self.clusters:
@@ -84,7 +84,7 @@ class Main:
                 # Add this cluster to the pre-existing alias' cluster.
                 # Clean the first element of cluster into a mere alias.
                 existing = self.clusters[alias]
-                element = recode.clean_alias(cluster[0])
+                element = recode.cleaned_alias(cluster[0])
                 existing.append(element)
                 self.clusters[element] = existing
                 for element in cluster[1:]:
@@ -97,8 +97,8 @@ class Main:
                 self.clusters[alias] = cluster
 
     def handle_codec(self, module_name, codec_name, codec):
-        internal = self.clusters[recode.clean_alias(codec.internal_coding)][0]
-        external = self.clusters[recode.clean_alias(codec.external_coding)][0]
+        internal = self.clusters[recode.cleaned_alias(codec.internal_coding)][0]
+        external = self.clusters[recode.cleaned_alias(codec.external_coding)][0]
         for check, before, after, direction in (
             (codec.encode, internal, external, True),
             (codec.decode, external, internal, False)):

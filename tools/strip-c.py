@@ -10,9 +10,9 @@ class Main:
 	self.strip_index = {}
 	self.add_strip(u'\uFFFF' * recode.STRIP_SIZE)
 	strip_data = []
-	for charset, data, indices in listings.all_strip_data():
+	for charset, data, indices in common.all_strip_data():
 	    strip_data.append(
-		(recode.clean_alias(charset), charset,
+		(recode.cleaned_alias(charset), charset,
 		 [self.add_strip(data[index:index+recode.STRIP_SIZE])
 		  for index in indices]))
 	# Write the strip pool.

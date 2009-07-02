@@ -19,7 +19,7 @@
 
 import recode
 
-declares = [('IBM437', 'IBM-PC', 'dos', 'MSDOS', 'pc')]
+declares = [('IBM437', 'IBM-PC', 'dos', 'MSDOS', 'pc', 'QNX-4', 'q4')]
 
 implied_surfaces = [
     ('IBM-PC', 'CR-LF'),

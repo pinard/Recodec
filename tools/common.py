@@ -1,6 +1,24 @@
 # Handling basic input and output.
 
+from __future__ import generators
 import sys
+
+def all_strip_data():
+    # Save all data from known StripStep classes.
+    from Recode import recode
+    for (before, after), method in recode.registry.methods.iteritems():
+        if after == recode.UNICODE_STRING:
+            if isinstance(method, tuple):
+                if len(method) != 3:
+                    continue
+                module_name, codec_name, use_encode = method
+                module = getattr(__import__('Recode.' + module_name),
+                                 module_name)
+                step = getattr(module, codec_name)
+            else:
+                step = method.im_class
+            if issubclass(step, recode.StripStep):
+                yield before, step.data, step.indices
 
 class Input:
     def __init__(self, name):

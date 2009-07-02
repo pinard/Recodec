@@ -76,7 +76,7 @@ class Main:
     def save_alias(self, base, alias):
         if base not in self.aliases:
             self.aliases[base] = []
-        if recode.clean_alias(alias) != recode.clean_alias(base):
+        if recode.cleaned_alias(alias) != recode.cleaned_alias(base):
             self.aliases[base].append(alias)
 
     def write_aliases(self, write):

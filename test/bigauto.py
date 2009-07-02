@@ -51,8 +51,8 @@ class Main:
             afters = {}
             for before, after in recode.registry.methods:
                 if recode.TRIVIAL_SURFACE not in (before, after):
-                    befores[recode.clean_alias(before)] = before
-                    afters[recode.clean_alias(after)] = after
+                    befores[recode.cleaned_alias(before)] = before
+                    afters[recode.cleaned_alias(after)] = after
             befores = befores.items()
             befores.sort()
             afters = afters.items()

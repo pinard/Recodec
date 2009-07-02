@@ -37,6 +37,10 @@
     try `recodec -lc' in a shell, this should list all usable charsets,
     surfaces, and aliases.  `make check' launches the validation suite.
 
+    If you have permission problems at installation time, you might install
+    in your home directory with `python setup.py install --home=$HOME'.
+    But you have to `export PYTHONPATH=$HOME:$PYTHONPATH' before using it.
+
 . : Documentation.
 
     Recodec currently does not have a documentation on its own.  However,
@@ -112,13 +116,11 @@
 
     Recodec releases `0.X' are pure Python relying on the Python library,
     and is going to recover most functionalities of Free `recode'.
-    Still missing are options `-Scdghikpx', `--sequence' settings other
-    than `memory'; charsets `applemac', `ebcdic' and `mule'; `rfc1345'
-    and its options; and finally, message internationalisation.
+    See `recodec --help' for an exact list of missing options and features.
 
-    Series `1.X' will start when the above list almost vanishes.  Release
-    `1.X' might support either `libiconv' or GNU `libc' recoding facilities
-    as configurable, but separate C extensions.  Recodec and Free `recode'
+    Series `1.X' will start when the list almost vanishes.  Release `1.X'
+    might support either `libiconv' or GNU `libc' recoding facilities as
+    configurable, but separate C extensions.  Recodec and Free `recode'
     will have similar specifications; see `Planned differences' later down.
 
     The Recodec `2.X' series is meant to create a usable bridge between C and
@@ -206,5 +208,5 @@
     bare `--list' (`-l') should now be written `--list=codings' (`-lc').
     Codings `test7', `test8', `test15' and `test16', which were kludgey
     surfaces, are now kludgey charsets :-).  Option `--freeze-table'
-    (`-F') has never really been implemented and goes away: we use a
-    separate program for builduig `preset.py'.
+    (`-F') and `--find-subsets' (`-T') disappear, they were meant only
+    for maintenance and we now prefer to use separate programs for them.

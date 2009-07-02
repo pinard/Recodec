@@ -10,6 +10,7 @@ Usage: python suite.py [OPTION]... [TEST]...
 Options:
    -b  Also execute bigger, lengthy tests.
    -i  Produce tracebacks immediately.
+   -p  Profile the testing suite.
    -q  Do not display marching dots.
    -v  Display one full line per test.
 
@@ -19,64 +20,80 @@ documentation for details.  Otherwise, all tests are executed.
 
 import sys, unittest
 
-def main(*arguments):
-    import getopt
-    options, arguments = getopt.getopt(arguments, 'biqv')
-    bigger = False
-    # If IMMEDIATE is False, which is the default, tracebacks appear
-    # after all tests, and the exit status is non-zero if any test failed.
-    # Otherwise, tracebacks are interspersed within tests, and the exit
-    # status is zero.
-    immediate = False
-    # VERBOSITY may be 0 for silence, 1 for marching dots and 2 for
-    # full lines.
-    verbosity = 1
-    for option, value in options:
-        if option == '-b':
-            bigger = True
-	elif option == '-i':
-	    immediate = True
-	elif option == '-q':
-	    verbosity = 0
-	elif option == '-v':
-	    verbosity = 2
-    print_warning()
-    # Save remaining arguments for `unittest' to consider.
-    sys.argv[1:] = list(arguments)
-    suite = make_suite(bigger)
-    if immediate:
-	ImmediateTestRunner(verbosity=verbosity).run(suite)
-    else:
-	unittest.TextTestRunner(verbosity=verbosity).run(suite)
+class Main:
+    def __init__(self):
+        self.bigger = False
+        # If IMMEDIATE is False, which is the default, tracebacks appear
+        # after all tests, and the exit status is non-zero if any test failed.
+        # Otherwise, tracebacks are interspersed within tests, and the exit
+        # status is zero.
+        self.immediate = False
+        # VERBOSITY may be 0 for silence, 1 for marching dots and 2 for
+        # full lines.
+        self.verbosity = 1
+        # Profile is set when profiling is wanted.
+        self.profile = False
 
-def print_warning():
-    sys.stderr.write("""\
-WARNING: The `bigauto' test will be skipped, as it takes quite a long time to
-	 complete.  To launch it, type `python test/bigauto.py' in a shell.
+    def main(self, *arguments):
+        import getopt
+        options, arguments = getopt.getopt(arguments, 'bipqv')
+        for option, value in options:
+            if option == '-b':
+                self.bigger = True
+            elif option == '-i':
+                self.immediate = True
+            elif option == '-p':
+                self.profile = True
+            elif option == '-q':
+                self.verbosity = 0
+            elif option == '-v':
+                self.verbosity = 2
+        self.print_warning()
+        # Save remaining arguments for `unittest' to consider.
+        sys.argv[1:] = list(arguments)
+        self.prepare_suite()
+        if self.profile:
+            import profile, pstats
+            global run_suite
+            run_suite = self.run_suite
+            profile.run('run_suite()', 'profile-data')
+            stats = pstats.Stats('profile-data')
+            stats.strip_dirs().sort_stats('time', 'cumulative').print_stats(10)
+        else:
+            self.run_suite()
+
+    def run_suite(self):
+        if self.immediate:
+            ImmediateTestRunner(verbosity=self.verbosity).run(self.suite)
+        else:
+            unittest.TextTestRunner(verbosity=self.verbosity).run(self.suite)
+
+    def print_warning(self):
+        sys.stderr.write("""\
+WARNING: The `bigauto' test will be skipped, as it takes many minutes to
+         complete.  To launch it, type `python test/bigauto.py' in a shell.
 """)
 
-def make_suite(bigger=False):
-    # Decide the sequence of tests.  Tests in FIRST are run first.
-    # All remaining tests are then executed in lexicographical order.
-    first = []
-    # Test basic engine.
-    if bigger:
-        first += ['names', 'listings', 'methods']
-    else:
-        first += ['listings', 'methods']
-    # Test individual surfaces.
-    first += ['dumps', 'base64', 'quoted']
-    # FIXME: 'endline', 'permut' tests are lacking above.
-    # Run the mini-suite.
-    first += ['minisuite']
-    # FIXME: Some tests are going to be inhibited for now.
-    inhibit = ['testdump', 'utf7']
-    import glob
-    names = [name[2:-3] for name in glob.glob('t_*.py')
-	     if name[2:-3] not in first + inhibit]
-    names.sort()
-    return (unittest.defaultTestLoader.loadTestsFromNames(
-	['t_' + name for name in first + names]))
+    def prepare_suite(self):
+        # Decide the sequence of tests.  Tests in FIRST are run first.
+        # All remaining tests are then executed in lexicographical order.
+        # Test basic engine and individual surfaces, run the mini-suite.
+        first = ['names', 'listings', 'methods',
+                 'dumps', 'base64', 'quoted',
+                 # FIXME: 'endline', 'permut' tests are lacking.
+                 'minisuite']
+        # FIXME: Some tests are going to be inhibited for now.
+        inhibit = ['testdump', 'utf7']
+        if not self.bigger:
+            inhibit += ['names']
+        import glob
+        names = [name[2:-3] for name in glob.glob('t_*.py')
+                 if name[2:-3] not in first]
+        names.sort()
+        self.suite = (unittest.defaultTestLoader.loadTestsFromNames(
+            ['t_' + name for name in first + names if name not in inhibit]))
+
+main = Main().main
 
 class ImmediateTestRunner(unittest.TextTestRunner):
     # By Jeremy Hylton <jeremy@alum.mit.edu>, 2002-01-21.

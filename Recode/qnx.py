@@ -25,8 +25,8 @@ ESCAPE = chr(25)		# QNX escape for diacritics
 ENDLINE = chr(30)		# end-line code for QNX
 
 class IconQnx(recode.GenericStep):
-    internal_charset = 'IBM-PC'
-    external_charset = 'Icon-QNX'
+    internal_coding = 'IBM-PC'
+    external_coding = 'Icon-QNX'
     data = [
         ('\n', ENDLINE),
         (133, ESCAPE + 'Aa'),

@@ -12,6 +12,9 @@ class Tests(common.Test):
     def test_html(self):
         self.two_way('l1..html', "Fran&ccedil;ois et l'&icirc;le!")
 
+    def test_mac(self):
+        self.two_way('l1..mac/qp', "Fran=8Dois et l'=94le!")
+
     def test_tlin(self):
         self.two_way('l1..t-lin', "Franc\,ois et l'i^le!")
 

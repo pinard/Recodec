@@ -58,7 +58,6 @@ declares = [
     'cp874',
     'cp875',
     ('euc_jp', 'ajec', 'ujis'),
-    ('euc_kr', 'ksc5601'),
     ('hex_codec', 'hex'),
     'iso8859_10',
     'iso8859_13',
@@ -87,7 +86,6 @@ declares = [
     'rot_13',
     ('shift_jis', 'sjis'),
     ('tactis', 'tis260'),
-    'uhc',
     'unicode_escape',
     'unicode_internal',
     ('utf_16', 'u16'),
@@ -240,10 +238,6 @@ class Codec_cp875(recode.BuiltinStep):
     internal_coding = '<Ustring>'
     external_coding = 'cp875'
 
-class Codec_euc_kr(recode.BuiltinStep):
-    internal_coding = '<Ustring>'
-    external_coding = 'euc_kr'
-
 class Codec_hex_codec(recode.BuiltinStep):
     internal_coding = '<Data>'
     external_coding = 'hex_codec'
@@ -342,10 +336,6 @@ class Codec_rot_13(recode.BuiltinStep):
     internal_coding = '<Data>'
     external_coding = 'rot_13'
     always_strict = True
-
-class Codec_uhc(recode.BuiltinStep):
-    internal_coding = '<Ustring>'
-    external_coding = 'uhc'
 
 class Codec_unicode_escape(recode.BuiltinStep):
     internal_coding = '<Ustring>'

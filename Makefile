@@ -2,8 +2,6 @@
 # Copyright © 2002 Progiciels Bourbeau-Pinard inc.
 # François Pinard <pinard@iro.umontreal.ca>, 2002.
 
-DISTRIBUTION = Recodec-0.1
-
 ifdef MAKEFILE_COMMUN
  PROJET = recodec
  include $(MAKEFILE_COMMUN)
@@ -39,6 +37,9 @@ check: $(EXTRA_BUILT)
 	$(PYSETUP) build
 	cd test && PYTHONPATH=.. $(PYTHON) -S suite.py -bv
 
+profile:
+	cd test && PYTHONPATH=.. $(PYTHON) -S suite.py -bp
+
 clean::
 	find -name '*.pyc' | xargs rm -f
 #	rm -f $(EXTRA_BUILT)
@@ -46,6 +47,8 @@ clean::
 
 tags:
 	find -name '*.py' | egrep -v '^./build|~$$' | etags -
+
+DISTRIBUTION = $(shell $(PYTHON) Recode/version.py)
 
 publish: distcheck
 	python $(HOME)/webert-0.0/Webert/htmlpage.py README index.html

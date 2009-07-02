@@ -1,6 +1,10 @@
 Recodec NEWS - User visible changes.		-*- outline -*- (allout)
 Copyright © 2002 Free Software Foundation, Inc.
 
+* Version 0.2 - François Pinard, 2002-09.
+
+.. `--find-subsets' (`-T') option deleted, now a separate program.
+
 * Version 0.1 - François Pinard, 2002-09.
 
 .. `Unicode-Escape-X' charset, according to Java documentation.
