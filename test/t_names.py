@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from Recode import listings
 import common
 
@@ -256,8 +257,14 @@ XML-standalone h0 [h0]
 '''
         fragments = []
         listings.list_all_codings(fragments.append)
-        # FIXME: Should produce diff, here.
-        self.assertEqual(''.join(fragments), output)
+        import difflib, sys
+        delta = difflib.ndiff(''.join(fragments).splitlines(),
+                              output.splitlines())
+        delta = difflib.ndiff(output.splitlines(), output.splitlines())
+        lines = [line.rstrip() + '\n' for line in delta
+                 if not line.startswith('  ')]
+        sys.stdout.writelines(lines)
+        assert not lines
 
 if __name__ == '__main__':
     import unittest

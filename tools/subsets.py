@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 """\
 Report all charsets which are a subset of another, or are identical.
 Only strip-described charsets are handled.

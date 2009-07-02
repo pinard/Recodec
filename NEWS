@@ -1,20 +1,31 @@
 Recodec NEWS - User visible changes.		-*- outline -*- (allout)
-Copyright © 2002 Free Software Foundation, Inc.
+Copyright Â© 2002 Free Software Foundation, Inc.
 
-* Version 0.2 - François Pinard, 2002-09.
+* Version 0.3 - FranÃ§ois Pinard, 2002-10.
 
-.. `--find-subsets' (`-T') option deleted, now a separate program.
+* Older Recodec releases
+.. Version 0.2 - FranÃ§ois Pinard, 2002-09.
+.. Version 0.1 - FranÃ§ois Pinard, 2002-09.
+.. Version 0.0 - FranÃ§ois Pinard, 2002-09.
 
-* Version 0.1 - François Pinard, 2002-09.
+* Cumulative changes, respective to Free Recode 3.6.
 
-.. `Unicode-Escape-X' charset, according to Java documentation.
-.. `flat' and `Texinfo' are better connected to more charsets.
-.. `--find-subsets' (`-T') results are automatically sorted.
-.. `--list=codings' (`-lc') shows the handiest alias for each coding.
+.. General changes
+. : More charsets are reversible, precise inventory to follow later.
 
-* Version 0.0 - François Pinard, 2002-09.
+.. Option changes
+. : Bare `--list' (`-l') should now be written `--list=codings' (`-lc').
+. : `--silent' or `--quiet' (`-q') is accepted but ignored.
+. : `--source' (`-S') and `--headers' (`-h') now require a language.
+. : `--freeze-table' (`-F') disappears, now a separate maintenance program.
+. : `--find-subsets' (`-T') disappears, now a separate maintenance program.
 
-.. More charsets are reversible, precise inventory to follow later.
+.. Charsets and surfaces
+. : `Unicode-Escape-X' charset, according to Java documentation.
+. : `flat' and `Texinfo' are better connected.
+. : `q4' and `QNX-4' as new aliases for `IBM437'.
+. : `test7', `test8', `test15' and `test16' now charsets, not surfaces.
 
-* For prior history, see `NEWS' in Free `recode'.  Both `NEWS' file will
-  eventually get merged.
+.. Prior history
+   For prior history, see `NEWS' in Free `recode'.  Both `NEWS' file will
+   eventually get merged.

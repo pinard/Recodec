@@ -1,8 +1,9 @@
 # DO NOT MODIFY THIS FILE!  It was automatically generated.
+# -*- coding: UTF-8 -*-
 
 # Conversion between different charsets, surfaces and structures.
-# Copyright © 1993, 1997, 1999, 2002 Free Software Foundation, Inc.
-# Contributed by François Pinard <pinard@iro.umontreal.ca>, 1993.
+# Copyright Â© 1993, 1997, 1999, 2002 Free Software Foundation, Inc.
+# Contributed by FranÃ§ois Pinard <pinard@iro.umontreal.ca>, 1993.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License

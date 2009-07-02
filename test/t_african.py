@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import common
 
 class Tests_1(common.Test):

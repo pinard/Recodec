@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import common
 from Recode import listings
 

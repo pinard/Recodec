@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import common
 
 class Tests(common.Test):
@@ -24,6 +25,9 @@ class Tests(common.Test):
     def test_ue(self):
         self.two_way('l1..ue', "Fran\\u00E7ois et l'\\u00EEle!")
 
+    def test_ue2(self):
+        self.two_way('l1..ue, l1..ue', "Fran\\uu00E7ois et l'\\uu00EEle!")
+
     def test_dump(self):
         output = """\
 UCS2   Mne   Description
@@ -49,16 +53,16 @@ UCS2   Mne   Description
 """
         self.one_way('l1..dump/qp', output)
 
-    def two_way(self, request, output):
-        self.one_way(request, output)
-        self.assertEqual(self.decode(output), self.input)
-
     def one_way(self, request, output):
         self.request(request)
         if request.endswith('/qp'):
             self.assertQuotedEqual(self.encode(self.input), output)
         else:
             self.assertEqual(self.encode(self.input), output)
+
+    def two_way(self, request, output):
+        self.one_way(request, output)
+        self.assertEqual(self.decode(output), self.input)
 
 if __name__ == '__main__':
     import unittest

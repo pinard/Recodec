@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-# Copyright © 2002 Free Software Foundation, Inc.
-# Contributed by François Pinard <pinard@iro.umontreal.ca>, 2002.
+# -*- coding: UTF-8 -*-
+# Copyright Â© 2002 Free Software Foundation, Inc.
+# Contributed by FranÃ§ois Pinard <pinard@iro.umontreal.ca>, 2002.
 
 """\
 Conversion between different charsets, surfaces and structures.

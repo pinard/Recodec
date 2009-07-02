@@ -1,9 +1,13 @@
 #!/usr/bin/env python
-# Copyright © 2002 Free Software Foundation, Inc.
-# Contributed by François Pinard <pinard@iro.umontreal.ca>, 2002.
+# -*- coding: UTF-8 -*-
+# Copyright Â© 2002 Free Software Foundation, Inc.
+# Contributed by FranÃ§ois Pinard <pinard@iro.umontreal.ca>, 2002.
 
 """\
 Conversion between different charsets, surfaces and structures.
+
+Options:
+  -v   Be verbose about overrides.
 
 Pre-computation of recoding preset data.
 """
@@ -13,8 +17,15 @@ from Recode import recode
 import common
 
 class Main:
+    verbose = False
 
     def main(self, *arguments):
+        # Decode options.
+        import getopt
+        options, arguments = getopt.getopt(arguments, 'v')
+        for option, value in options:
+            if option == '-v':
+                self.verbose = True
         # Import all modules.
         modules = [getattr(__import__('Recode.' + module_name), module_name)
                    for module_name in arguments]
@@ -105,15 +116,17 @@ class Main:
             if check is not None:
                 if (before, after) in self.methods:
                     if module_name == 'builtin':
-                        sys.stderr.write(
-                            "Overriding `%s' by `%s' for `%s..%s'.\n"
-                            % (self.methods[before, after][0], module_name,
-                               before, after))
+                        if self.verbose:
+                            sys.stderr.write(
+                                "Overriding `%s' by `%s' for `%s..%s'.\n"
+                                % (self.methods[before, after][0], module_name,
+                                   before, after))
                     else:
-                        sys.stderr.write(
-                            "Overriding `%s' by `%s' for `%s..%s'.\n"
-                            % (module_name, self.methods[before, after][0],
-                               before, after))
+                        if self.verbose:
+                            sys.stderr.write(
+                                "Overriding `%s' by `%s' for `%s..%s'.\n"
+                                % (module_name, self.methods[before, after][0],
+                                   before, after))
                         continue
                 self.methods[before, after] = (
                     module_name, codec_name, direction)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-# Copyright © 1998, 1999, 2000, 2002 Progiciels Bourbeau-Pinard inc.
-# François Pinard <pinard@iro.umontreal.ca>, 1998.
+# -*- coding: UTF-8 -*-
+# Copyright Â© 1998, 1999, 2000, 2002 Progiciels Bourbeau-Pinard inc.
+# FranÃ§ois Pinard <pinard@iro.umontreal.ca>, 1998.
 
 """\
 Validation suite for the Free `recode' program and library.

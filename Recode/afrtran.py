@@ -1,6 +1,7 @@
 # Traitement de certaines tables africaines.
-# Copyright © 1999, 2000, 2002 Progiciels Bourbeau-Pinard inc.
-# François Pinard <pinard@iro.umontreal.ca>, 1997.  */
+# -*- coding: UTF-8 -*-
+# Copyright Â© 1999, 2000, 2002 Progiciels Bourbeau-Pinard inc.
+# FranÃ§ois Pinard <pinard@iro.umontreal.ca>, 1997.  */
 
 import recode
 

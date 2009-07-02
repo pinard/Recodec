@@ -1,7 +1,7 @@
-# -*- coding: latin-1 -*-
+# -*- coding: UTF-8 -*-
 # Traitement de certaines tables africaines.
-# Copyright © 1999, 2000, 2002 Progiciels Bourbeau-Pinard inc.
-# François Pinard <pinard@iro.umontreal.ca>, 1997.  */
+# Copyright Â© 1999, 2000, 2002 Progiciels Bourbeau-Pinard inc.
+# FranÃ§ois Pinard <pinard@iro.umontreal.ca>, 1997.  */
 
 import recode
 
@@ -118,7 +118,7 @@ class BPI_104(recode.GenericStep):
 
 # Mali:  Bambara, Bobo, Bozo, Dogon, Fulfulde, Fuuta-jalon, Minyanka, Soninke.
 # Niger: Fulfulde, Hausa.
-# Sénégal: Joola, Mande, Pulaar (fulfulde), Sereer, Sooninke, Wolof.
+# SÃ©nÃ©gal: Joola, Mande, Pulaar (fulfulde), Sereer, Sooninke, Wolof.
 
 class BPI_106(recode.GenericStep):
     internal_coding = 'BPI-106'
@@ -172,7 +172,7 @@ class BPI_106(recode.GenericStep):
         (255, u'\u0292'),
         ]
 
-# Ewondo, Lingála, Munukutuba (Kikongo), Sangö.
+# Ewondo, LingÃ¡la, Munukutuba (Kikongo), SangÃ¶.
 
 class BPI_108(recode.GenericStep):
     internal_coding = 'BPI-108'

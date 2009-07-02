@@ -1,6 +1,7 @@
 # Conversion of files between different charsets and surfaces.
-# Copyright © 1990, 93, 97, 98, 99, 00, 02 Free Software Foundation, Inc.
-# Contributed by François Pinard <pinard@iro.umontreal.ca>, 1988.
+# -*- coding: UTF-8 -*-
+# Copyright Â© 1990, 93, 97, 98, 99, 00, 02 Free Software Foundation, Inc.
+# Contributed by FranÃ§ois Pinard <pinard@iro.umontreal.ca>, 1988.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License

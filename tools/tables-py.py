@@ -1,7 +1,7 @@
 #!/usr/bin/python
-# -*- coding: latin-1 -*-
-# Copyright © 1993, 94, 97, 98, 99, 00, 02 Free Software Foundation, Inc.
-# FranÁois Pinard <pinard@iro.umontreal.ca>, 1993.
+# -*- coding: UTF-8 -*-
+# Copyright ¬© 1993, 94, 97, 98, 99, 00, 02 Free Software Foundation, Inc.
+# Fran√ßois Pinard <pinard@iro.umontreal.ca>, 1993.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -188,19 +188,19 @@ class Charnames(Options):
     def digest_french(self, input):
         self.preset_french()
         import string
-        folding = string.maketrans('ABCDEFGHIJKLMNOPQRSTUVWXYZ¿¬«»… Œœ—‘÷€',
-                                   'abcdefghijklmnopqrstuvwxyz‡‚ÁËÈÍÓÔÒÙˆ˚')
+        folding = string.maketrans('ABCDEFGHIJKLMNOPQRSTUVWXYZ√Ä√Ç√á√à√â√ä√é√è√ë√î√ñ√õ',
+                                   'abcdefghijklmnopqrstuvwxyz√†√¢√ß√®√©√™√Æ√Ø√±√¥√∂√ª')
         for line in input:
             if line.startswith('@@\t'):
                 continue
-            # Pour Èliminer la fin de ligne.
+            # Pour √©liminer la fin de ligne.
             line = line.rstrip()
             match = re.match('([0-9A-F]{4})\t([^(]+)( \\(.*\\))?( \\*)?$',
                              line)
             if match:
                 ucs = int(match.group(1), 16)
                 text = match.group(2).translate(folding)
-                if text in ('<commande>', '<rÈservÈ>', '<pas un caractËre>'):
+                if text in ('<commande>', '<r√©serv√©>', '<pas un caract√®re>'):
                     continue
                 self.declare(ucs, re.sub(r' +\*$', '', text, 1))
             else:
@@ -211,14 +211,14 @@ class Charnames(Options):
         ucs = 0x0000
         for text in (
             "nul (nul)",                                        # 0000
-            "dÈbut d'en-tÍte (soh)",                            # 0001
-            "dÈbut de texte (stx)",                             # 0002
+            "d√©but d'en-t√™te (soh)",                            # 0001
+            "d√©but de texte (stx)",                             # 0002
             "fin de texte (etx)",                               # 0003
             "fin de transmission (eot)",                        # 0004
             "demande (enq)",                                    # 0005
-            "accusÈ de rÈception positif (ack)",                # 0006
+            "accus√© de r√©ception positif (ack)",                # 0006
             "sonnerie (bel)",                                   # 0007
-            "espace arriËre (bs)",                              # 0008
+            "espace arri√®re (bs)",                              # 0008
             "tabulation horizontale (ht)",                      # 0009
             "interligne (lf)",                                  # 000A
             "tabulation verticale (vt)",                        # 000B
@@ -226,59 +226,59 @@ class Charnames(Options):
             "retour de chariot (cr)",                           # 000D
             "hors code (so)",                                   # 000E
             "en code (si)",                                     # 000F
-            "Èchappement transmission (dle)",                   # 0010
+            "√©chappement transmission (dle)",                   # 0010
             "commande d'appareil un (dc1)",                     # 0011
             "commande d'appareil deux (dc2)",                   # 0012
             "commande d'appareil trois (dc3)",                  # 0013
             "commande d'appareil quatre (dc4)",                 # 0014
-            "accusÈ de rÈception nÈgatif (nak)",                # 0015
+            "accus√© de r√©ception n√©gatif (nak)",                # 0015
             "synchronisation (syn)",                            # 0016
             "fin de transmission de bloc (etb)",                # 0017
             "annulation (can)",                                 # 0018
             "fin de support (em)",                              # 0019
-            "caractËre de substitution (sub)",                  # 001A
-            "Èchappement (esc)",                                # 001B
-            "sÈparateur de fichier (fs)",                       # 001C
-            "sÈparateur de groupe (gs)",                        # 001D
-            "sÈparateur d'article (rs)",                        # 001E
-            "sÈparateur de sous-article (us)",                  # 001F
+            "caract√®re de substitution (sub)",                  # 001A
+            "√©chappement (esc)",                                # 001B
+            "s√©parateur de fichier (fs)",                       # 001C
+            "s√©parateur de groupe (gs)",                        # 001D
+            "s√©parateur d'article (rs)",                        # 001E
+            "s√©parateur de sous-article (us)",                  # 001F
             ):
             self.declare(ucs, text)
             ucs += 1
         ucs = 0x007F
         for text in (
             "suppression (del)",                                # 007F
-            "caractËre de bourre (pad)",                        # 0080
-            "octet supÈrieur prÈdÈfini (hop)",                  # 0081
-            "arrÍt permis ici (bph)",                           # 0082
-            "aucun arrÍt ici (nbh)",                            # 0083
+            "caract√®re de bourre (pad)",                        # 0080
+            "octet sup√©rieur pr√©d√©fini (hop)",                  # 0081
+            "arr√™t permis ici (bph)",                           # 0082
+            "aucun arr√™t ici (nbh)",                            # 0083
             "index (ind)",                                      # 0084
-            "‡ la ligne (nel)",                                 # 0085
-            "dÈbut de zone sÈlectionnÈe (ssa)",                 # 0086
-            "fin de zone sÈlectionnÈe (esa)",                   # 0087
-            "arrÍt de tabulateur horizontal (hts)",             # 0088
+            "√† la ligne (nel)",                                 # 0085
+            "d√©but de zone s√©lectionn√©e (ssa)",                 # 0086
+            "fin de zone s√©lectionn√©e (esa)",                   # 0087
+            "arr√™t de tabulateur horizontal (hts)",             # 0088
             "tabulateur horizontal avec justification (htj)",   # 0089
-            "arrÍt de tabulateur vertical (vts)",               # 008A
+            "arr√™t de tabulateur vertical (vts)",               # 008A
             "interligne partiel vers <= bas (pld)",             # 008B
             "interligne partiel vers <= haut (plu)",            # 008C
-            "index inversÈ (ri)",                               # 008D
+            "index invers√© (ri)",                               # 008D
             "remplacement unique deux (ss2)",                   # 008E
             "remplacement unique trois (ss3)",                  # 008F
-            "chaÓne de commande d'appareil (dcs)",              # 0090
-            "usage privÈ un (pu1)",                             # 0091
-            "usage privÈ deux (pu2)",                           # 0092
+            "cha√Æne de commande d'appareil (dcs)",              # 0090
+            "usage priv√© un (pu1)",                             # 0091
+            "usage priv√© deux (pu2)",                           # 0092
             "mise en mode transmission (sts)",                  # 0093
-            "annulation du caractËre prÈcÈdent (cch)",          # 0094
+            "annulation du caract√®re pr√©c√©dent (cch)",          # 0094
             "message en attente (mw)",                          # 0095
-            "dÈbut de zone protÈgÈe (sga)",                     # 0096
-            "fin de zone protÈgÈe (ega)",                       # 0097
-            "dÈbut de chaÓne (sos)",                            # 0098
-            "introducteur de caractËre graphique unique (sgci)",# 0099
-            "introducteur de caractËre unique (sci)",           # 009A
-            "introducteur de sÈquence de commande (csi)",       # 009B
-            "fin de chaÓne (st)",                               # 009C
-            "commande de systËme d'exploitation (osc)",         # 009D
-            "message privÈ (pm)",                               # 009E
+            "d√©but de zone prot√©g√©e (sga)",                     # 0096
+            "fin de zone prot√©g√©e (ega)",                       # 0097
+            "d√©but de cha√Æne (sos)",                            # 0098
+            "introducteur de caract√®re graphique unique (sgci)",# 0099
+            "introducteur de caract√®re unique (sci)",           # 009A
+            "introducteur de s√©quence de commande (csi)",       # 009B
+            "fin de cha√Æne (st)",                               # 009C
+            "commande de syst√®me d'exploitation (osc)",         # 009D
+            "message priv√© (pm)",                               # 009E
             "commande de progiciel (apc)",                      # 009F
             ):
             self.declare(ucs, text)

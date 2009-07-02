@@ -1,7 +1,8 @@
 # Conversion of files between different charsets and surfaces.
-# Copyright © 1993, 1994, 1997, 2002 Free Software Foundation, Inc.
+# -*- coding: UTF-8 -*-
+# Copyright Â© 1993, 1994, 1997, 2002 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
-# Contributed by François Pinard <pinard@iro.umontreal.ca>, 1993.
+# Contributed by FranÃ§ois Pinard <pinard@iro.umontreal.ca>, 1993.
 #
 # The `recode' Library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public License

@@ -1,10 +1,10 @@
+# -*- coding: UTF-8 -*-
 from __future__ import generators
 
 import codecs
-from pprint import pprint as pp
 
 # How to interpret an empty alias.
-IMPLIED_ALIAS = 'Latin-1'
+IMPLIED_CODING = 'Latin-1'
 
 # Special coding name for Python internal Unicode strings.
 UNICODE_STRING = '<Ustring>'
@@ -40,15 +40,15 @@ def cleaned_alias(name):
 class Aliases:
     # Aliases is a dictionary-like object, for which any non-ambiguous
     # abbreviation of a key may be used to retrieve a value.  The key
-    # itself, not abbreviated, may always be use to retrieve a value even
-    # if that key happens to be the prefix of another one.  Once set, a
-    # key value may not changed.  If two different keys a common prefix,
-    # this prefix and abbreviations thereof are not ambiguous if both
-    # keys yield the same value.
+    # itself, not abbreviated, may always be used to retrieve a value even
+    # if that key happens to be the prefix of another one.  Once set,
+    # a key value may not changed.  If two different keys share a common
+    # prefix, this prefix and abbreviations thereof are not ambiguous if
+    # both keys yield the same value.
     def __init__(self):
         self.table = {}
         import string
-        self.clean_table = string.maketrans(
+        self.cleaning_table = string.maketrans(
             string.ascii_uppercase, string.ascii_lowercase)
 
     def __getitem__(self, key):
@@ -79,6 +79,10 @@ class Aliases:
             key = key[:-1]
             exact = False
 
+    def cleaned(self, name):
+        # Return an alias NAME, all cleaned.
+        return name.translate(self.cleaning_table, '/<>-_.:()@')
+
     def keys(self):
         return list(self.iterkeys())
 
@@ -102,10 +106,6 @@ class Aliases:
         for key, (exact, value) in self.table.iteritems():
             if exact:
                 yield key, value
-
-    def cleaned(self, name):
-        # Return an alias NAME, all cleaned.
-        return name.translate(self.clean_table, '/<>-_.:()@')
 
 # Return some descriptive text for a UNICODE point, or None.
 def unicode_description(unicode, modules=[]):
@@ -167,21 +167,6 @@ class Registry:
             # merely described by a collection of arcs.  We compute that
             # graph here once and for all.
             self.methods_keys = preset.methods.keys()
-
-# FIXME: The `resolve' routine is fairly slow, as shown by `recodec -lc'.
-# Maybe I could just invent a kind of GenericStep able to do the same?
-def resolve(given, word_list):
-    # Desambiguate GIVEN, knowing it is part of a WORD_LIST.  Unless it
-    # matches exactly, GIVEN should be the prefix of at most one word,
-    # which is then returned whole.  Otherwise, an exception is raised.
-    if given in word_list:
-        return given
-    candidates = [word for word in word_list if word.startswith(given)]
-    if len(candidates) == 1:
-        return candidates[0]
-    if len(candidates) > 1:
-        raise AmbiguousWordError, (given, candidates)
-    raise UnknownWordError, given
 
 # Base Step class, and Python built-in Codecs.
 
@@ -190,12 +175,12 @@ class Step(codecs.Codec):
     # some directionality between some internal or common representation
     # of a text and an external representation of the same.  With Python
     # provided codecs, the common internal representation is often Unicode,
-    # so the meaning of `encode' and `decode' is usually clear within a
-    # Codec instance.  In practice, we might not always use the same common
-    # representation, or switch the coding of a text between two internal
-    # representations, so `encode' and `decode' become rather meaningless.
-    # A Step oject is essentially a Codec object in which the attributes
-    # INTERNAL_CODING and EXTERNAL_CODING `encode' and `decode' really mean.
+    # so the meaning of `encode' and `decode' is usually clear within
+    # a Codec instance.  In practice, we might not always use the same
+    # common representation, or switch the coding of a text between two
+    # internal representations, so `encode' and `decode' become rather
+    # meaningless.  A Step oject is essentially a Codec object in which
+    # INTERNAL_CODING and EXTERNAL_CODING attributes have been specified.
     # We `encode' the internal coding into the external coding, and we
     # `decode' the external coding into the internal coding.
 
@@ -259,22 +244,23 @@ class GenericStep(Step):
     # putting into correspondence some internal writing, given first,
     # with an external writing, given second.  Encoding "goes" from left
     # to right, decoding "goes" from right to left.  A writing is either
-    # a string of one or more characters, an integer giving the ordinal
-    # of a single character, or a tuple of alternative writings, in which
+    # a string of one or more characters, an integer giving the code of
+    # a single character, or a tuple of alternative writings, in which
     # case the first is meant to be canonical: all alternative writings
     # are recognised, but only the canonical one is produced.
 
-    # Unicode strings may be used in rewriting rules either for the internal
-    # coding or the external coding, but this should be consistent with the
-    # the fact that either the internal or external coding is UNICODE_STRING.
+    # Unicode strings may be used in rewriting rules either for
+    # the internal coding or the external coding, but this should be
+    # consistent with the the fact that either the internal or external
+    # coding is UNICODE_STRING.
 
-    # Recoding sequentially proceeds from the beginning of input towards its
-    # end, there is no kind of attempt at global optimisation about which
-    # mix of rewritings to use when there are many possible interpretations.
-    # However, at a given point, the longest matching rewriting is always
-    # preferred.  Single characters with ordinal between 0 and 255 are
-    # also rewritten to themselves when there is no explicit rewriting
-    # rule for them.
+    # Recoding sequentially proceeds from the beginning of input towards
+    # its end, there is no kind of attempt at global optimisation
+    # about which mix of rewritings to use when there are many possible
+    # interpretations.  However, at a given point, the longest matching
+    # rewriting is always preferred.  Single characters with code between
+    # 0 and 255 are also rewritten to themselves when there is no explicit
+    # rewriting rule for them.
 
     def __init__(self):
         self.encoding_table = None
@@ -475,10 +461,10 @@ codecs.register(search_function)
 
 class Recodec(Step):
     # As many recoding requests may be unrelated to Unicode, and also
-    # because some codings are only connected to Unicode through more than
-    # one recoding step, a Recodec object is meant to represent zero, one or
-    # more recoding steps taken as a whole.  A Recodec may be sub-classed,
-    # but it usually does not need to.
+    # because some codings are only connected through a chain of more
+    # than one recoding step, a Recodec object is meant to represent
+    # zero, one or more recoding steps taken as a whole.  A Recodec may
+    # be sub-classed, of course, but it usually does not need to.
 
     def __init__(self, request, implied=True):
         # Handle implied surfaces only if IMPLIED is True.
@@ -525,23 +511,24 @@ def segments_from_request(request, implied):
             chains.append('')
         before = chains[0]
         for after in chains[1:]:
-            befores = before.split('/')
-            if len(befores) == 1:
-                coding, surface = registry.aliases[befores[0] or IMPLIED_ALIAS]
-                if implied and surface is not None:
+            befores = [text.strip() for text in before.split('/')]
+            if len(befores) == 1 and implied:
+                surface = registry.aliases[befores[0] or IMPLIED_CODING][1]
+                if surface is not None:
                     befores.append(surface)
-            afters = after.split('/')
-            if len(afters) == 1:
-                coding, surface = registry.aliases[afters[0] or IMPLIED_ALIAS]
-                if implied and surface is not None:
+            afters = [text.strip() for text in after.split('/')]
+            if len(afters) == 1 and implied:
+                surface = registry.aliases[afters[0] or IMPLIED_CODING][1]
+                if surface is not None:
                     afters.append(surface)
             befores.reverse()
             for surface in befores[:-1]:
                 if surface:
                     segments.append((registry.aliases[surface][0],
                                      TRIVIAL_SURFACE))
-            segments.append((registry.aliases[befores[-1] or IMPLIED_ALIAS][0],
-                             registry.aliases[afters[0] or IMPLIED_ALIAS][0]))
+            segments.append(
+                (registry.aliases[befores[-1] or IMPLIED_CODING][0],
+                 registry.aliases[afters[0] or IMPLIED_CODING][0]))
             for surface in afters[1:]:
                 if surface:
                     segments.append((TRIVIAL_SURFACE,

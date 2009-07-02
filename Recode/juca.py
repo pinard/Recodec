@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import recode
 
 declares = [('BPI-JUCA-Translit', 'tjuca')]
@@ -16,7 +17,6 @@ class JucaTranslit(recode.GenericStep):
         (u'A\u0327\u0301', "A,'"),
         (u'A\u0327\u030c', 'A,\\v'),
         (u'A\u0331', 'A\\m'),
-        (u"CH'", "CH' "),
         (u'CH\u02bc', "CH?'"),
         (u'D\u01b5', 'DZ\\x'),
         (u'D\u01b7', 'DZ]'),

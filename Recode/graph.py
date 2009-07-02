@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-# Copyright © 1999, 2000, 2001, 2002 Progiciels Bourbeau-Pinard inc.
-# François Pinard <pinard@iro.umontreal.ca>, 1999.
+# -*- coding: UTF-8 -*-
+# Copyright Â© 1999, 2000, 2001, 2002 Progiciels Bourbeau-Pinard inc.
+# FranÃ§ois Pinard <pinard@iro.umontreal.ca>, 1999.
 
 """\
 A graph is made from a set of vertices, and a set of oriented arcs.

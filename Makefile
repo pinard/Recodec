@@ -1,14 +1,16 @@
 # Conversion between charsets, surfaces and structures.
-# Copyright © 2002 Progiciels Bourbeau-Pinard inc.
-# François Pinard <pinard@iro.umontreal.ca>, 2002.
+# Copyright Â© 2002 Progiciels Bourbeau-Pinard inc.
+# FranÃ§ois Pinard <pinard@iro.umontreal.ca>, 2002.
 
-ifdef MAKEFILE_COMMUN
- PROJET = recodec
- include $(MAKEFILE_COMMUN)
-else
- PYTHON = python
- PYSETUP = $(PYTHON) setup.py
-endif
+#ifdef MAKEFILE_COMMUN
+# PROJET = recodec
+# include $(MAKEFILE_COMMUN)
+#else
+# PYTHON = python
+# PYSETUP = $(PYTHON) setup.py
+#endif
+PYTHON = python
+PYSETUP = $(PYTHON) setup.py
 
 RFC1345_TXT = data/rfc1345.txt
 ENCODINGS_DEF = data/encodings.def $(wildcard data/encodings_*.def)

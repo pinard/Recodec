@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-# Copyright © 2002 Free Software Foundation, Inc.
-# Contributed by François Pinard <pinard@iro.umontreal.ca>, 2002.
+# -*- coding: UTF-8 -*-
+# Copyright Â© 2002 Free Software Foundation, Inc.
+# Contributed by FranÃ§ois Pinard <pinard@iro.umontreal.ca>, 2002.
 
 # I postponed a bit the writing of the following `--help' block, not sure
 # about when and how I will add internationalisation.  But pondering this
@@ -14,17 +15,15 @@ Usage: recodec [OPTION]... [ [CHARSET] | REQUEST [FILE]... ]
 If a long option shows an argument as mandatory, then it is mandatory
 for the equivalent short option as well.
 
-WARNING: The `@' symbols, below, mark features which are not implemented
-yet.  They will progressively melt as `0.X' releases progress, until `1.0'.
-The `--sequence' setting is currently tied to `memory'.  Also missing
-are charsets `applemac' and `ebcdic' (the old ones), the `mule' cleaner,
-`rfc1345' and its options; and finally, message internationalisation.
-Asian support will be reintroduced only after `1.0' is released, however.
+WARNING: The below `@' symbols mark features still to be re-implemented.
+They will disappear as `0.X' releases go.  Also missing are charsets
+`applemac' and `ebcdic', the `mule' cleaner, `rfc1345' with its options,
+and message internationalisation.  Asian support is postponed until `1.0'.
 
 Listings:
-  -l, --list[=FORMAT]        list one or all known charsets and aliases
+  -l, --list=FORMAT          list one or all known charsets and aliases
 @ -k, --known=PAIRS          restrict charsets according to known PAIRS list
-@ -h, --header[=[LN/]NAME]   write table NAME on stdout using LN, then exit
+@ -h, --header=[LN/]NAME     write table NAME on stdout using LN, then exit
   -C, --copyright            display Copyright and copying conditions
       --help                 display this help and exit
       --version              output version information and exit
@@ -35,14 +34,14 @@ Operation modes:
   -f, --force             force recodings even when not reversible
   -t, --touch             touch the recoded files after replacement
 @ -i, --sequence=files    use intermediate files for sequencing passes
-@     --sequence=memory   use memory buffers for sequencing passes
+      --sequence=memory   use memory buffers for sequencing passes
 @ -p, --sequence=pipe     use pipe machinery for sequencing passes
-@ -p, --sequence=pipe     or, same as -i (on this system)
+                          or, same as -i (on some systems)
 
 Fine tuning:
   -s, --strict           use strict mappings, even loose characters
 @ -d, --diacritics       convert only diacritics or alike for HTML/LaTeX
-@ -S, --source[=LN]      limit recoding to strings and comments as for LN
+@ -S, --source=LN        limit recoding to strings and comments as for LN
 @ -c, --colons           use colons instead of double quotes for diaeresis
 @ -g, --graphics         approximate IBMPC rulers by ASCII graphics
 @ -x, --ignore=CHARSET   ignore CHARSET while choosing a recoding path
@@ -88,35 +87,29 @@ class Main:
             sys.exit(0)
         try:
             self.decode_program_options(arguments)
-            if self.listing is not None:
+            if self.listing is None:
+                self.recode_all_files()
+            else:
                 self.write_listing(sys.stdout.write)
-                sys.exit(0)
-            self.recode_all_files()
         except recode.NotImplementedError, message:
-            sys.stderr.write("Not implemented: %s.\n" % message)
-            sys.exit(1)
+            die("Not implemented: %s." % message)
         except recode.AmbiguousWordError, name:
-            sys.stderr.write("Word `%s' is ambiguous.\n" % name)
-            sys.exit(1)
+            die("Word `%s' is ambiguous." % name)
         except recode.UnknownWordError, name:
-            sys.stderr.write("Word `%s' is unknown.\n" % name)
-            sys.exit(1)
+            die("Word `%s' is unknown." % name)
         except recode.UnresolvedRecodecError, (before, after):
-            sys.stderr.write("Cannot recode from `%s' to `%s'.\n"
-                             % (before, after))
-            sys.exit(1)
+            die("Cannot recode from `%s' to `%s'." % (before, after))
         except recode.ComplexRecodecError, (before, after):
-            sys.stderr.write("Going from `%s' to `%s' is not simple enough.\n"
-                             % (before, after))
-            sys.exit(1)
+            die("Going from `%s' to `%s' is not simple enough."
+                % (before, after))
 
     def decode_program_options(self, arguments):
         import getopt
         options, self.arguments = getopt.getopt(
             arguments, 'CFS:cdfgh:ik:l:pqstvx:',
             ['colons', 'copyright', 'diacritics', 'force', 'freeze-tables',
-            'header', 'help', 'ignore', 'known', 'list', 'listing', 'quiet',
-            'sequence', 'source', 'silent', 'strict', 'touch', 'verbose',
+            'header=', 'help', 'ignore=', 'known=', 'listing=', 'quiet',
+            'sequence', 'source=', 'silent', 'strict', 'touch', 'verbose',
             'version'])
         for option, value in options:
             if option in ('-C', '--copyright'):
@@ -125,29 +118,31 @@ class Main:
             elif option in ('-F', '--freeze-tables'):
                 pass                    # FIXME!
             elif option in ('-S', '--source'):
-                self.source = recode.resolve(value.lower(),
-                                             ['c', 'perl', 'po'])
+                self.source = resolve(value.lower(), [
+                    'c', 'perl', 'po', 'python'])
             elif option in ('-c', '--colons'):
                 pass                    # FIXME!
             elif option in ('-d', '--diacritics'):
                 pass                    # FIXME!
             elif option in ('-f', '--force'):
-                assert self.errors is None, self.errors
+                if self.errors is not None:
+                    die("More than one of `--force' or `--strict'.")
                 self.errors = 'ignore'
             elif option in ('-g', '--graphics'):
                 pass                    # FIXME!
-            elif option in ('-h', '--headers'):
-                self.headers = recode.resolve(value.lower(), ['c', 'perl'])
+            elif option in ('-h', '--header'):
+                self.headers = resolve(value.lower(), [
+                    'c', 'perl', 'python'])
             elif option in ('-k', '--known'):
                 pass                    # FIXME!
-            elif option in ('-l', '--list', '--listing'):
-                self.listing = recode.resolve(
-                    value.lower(),
-                    ['codings', 'decimal', 'octal', 'hexadecimal', 'full'])
+            elif option in ('-l', '--listing'):
+                self.listing = resolve(value.lower(), [
+                    'codings', 'decimal', 'octal', 'hexadecimal', 'full'])
             elif option in ('-q', '--quiet', '--silent'):
                 pass
             elif option in ('-s', '--strict'):
-                assert self.errors is None, self.errors
+                if self.errors is not None:
+                    die("More than one of `--force' or `--strict'.")
                 self.errors = 'strict'
             elif option in ('-t', '--touch'):
                 self.touch = True
@@ -159,11 +154,11 @@ class Main:
                 self.write_help(sys.stdout.write)
                 sys.exit(0)
             elif option == '--version':
-                sys.write_version(sys.stdout.write)
+                self.write_version(sys.stdout.write)
                 sys.exit(0)
             elif option == '--sequence':
-                self.sequence = recode.resolve(
-                    value.lower(), ['memory', 'files', 'pipe'])
+                self.sequence = resolve(value.lower(), [
+                    'memory', 'files', 'pipe'])
         if self.errors is None:
             self.errors = 'replace'
 
@@ -194,10 +189,12 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
     def write_listing(self, write):
         import listings
         if self.listing == 'codings':
-            assert not self.arguments, self.arguments
+            if self.arguments:
+                die("`--listing=codings' should not be used with arguments.")
             listings.list_all_codings(write)
         else:
-            assert len(self.arguments) == 1, self.arguments
+            if len(self.arguments) != 1:
+                die("`--listing=FORMAT' should be followed with a charset.")
             charset = self.arguments[0]
             if self.listing == 'full':
                 listings.list_full_charset(charset, write)
@@ -209,7 +206,8 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                     write)
 
     def recode_all_files(self):
-        assert len(self.arguments) > 0
+        if not self.arguments:
+            die("The request argument, like BEFORE..AFTER, is missing.")
         request = self.arguments[0]
         arguments = self.arguments[1:]
         codec = recode.Recodec(request)
@@ -217,7 +215,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
             counter = 0
             for before, after in codec.encoding_arcs():
                 counter += 1
-                sys.stderr.write('  %d: %s..%s\n' % (counter, before, after))
+                warn('  %d: %s..%s' % (counter, before, after))
         if arguments:
             import os, tempfile
             counter = 0
@@ -250,6 +248,26 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 run = Main()
 main = run.main
+
+def resolve(given, word_list):
+    # Desambiguate GIVEN, knowing it is part of a WORD_LIST.  Unless it
+    # matches exactly, GIVEN should be the prefix of at most one word,
+    # which is then returned whole.  Otherwise, an exception is raised.
+    if given in word_list:
+        return given
+    candidates = [word for word in word_list if word.startswith(given)]
+    if len(candidates) == 0:
+        raise recode.UnknownWordError, given
+    if len(candidates) > 1:
+        raise recode.AmbiguousWordError, given
+    return candidates[0]
+
+def die(message):
+    warn('* ' + message)
+    sys.exit(1)
+
+def warn(message):
+    sys.stderr.write(message + '\n')
 
 if __name__ == '__main__':
     main(*sys.argv[1:])

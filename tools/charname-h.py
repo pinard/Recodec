@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 def main(*arguments):
     import getopt
     options, arguments = getopt.getopt(arguments, 'F')
