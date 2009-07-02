@@ -24,7 +24,7 @@ declares = ['TCVN', 'VIQR', 'VISCII', 'VNI', 'VPS']
 
 class Tcvn(recode.StripStep):
     external_coding = 'TCVN'
-    strip_pool = (
+    data = (
         u'\u0000\u00DA\u1EE4\u0003\u1EEA\u1EEC\u1EEE\u0007'  # 0
         u'\u0008\u0009\u000A\u000B\u000C\u000D\u000E\u000F'  # 8
         u'\u0010\u1EE8\u1EF0\u1EF2\u1EF6\u1EF8\u00DD\u1EF4'  # 16
@@ -58,11 +58,10 @@ class Tcvn(recode.StripStep):
         u'\u1ED6\u1EE7\u0169\u00FA\u1EE5\u1EEB\u1EED\u1EEF'  # 240
         u'\u1EE9\u1EF1\u1EF3\u1EF7\u1EF9\u00FD\u1EF5\u1ED0'  # 248
         )
-    data = range(0, 256, recode.STRIP_SIZE)
 
 class Viscii(recode.StripStep):
     external_coding = 'VISCII'
-    strip_pool = (
+    data = (
         u'\u0000\u0001\u1EB2\u0003\u0004\u1EB4\u1EAA\u0007'  # 0
         u'\u0008\u0009\u000A\u000B\u000C\u000D\u000E\u000F'  # 8
         u'\u0010\u0011\u0012\u0013\u1EF6\u0015\u0016\u0017'  # 16
@@ -96,11 +95,10 @@ class Viscii(recode.StripStep):
         u'\u0111\u1EF1\u00F2\u00F3\u00F4\u00F5\u1ECF\u1ECD'  # 240
         u'\u1EE5\u00F9\u00FA\u0169\u1EE7\u00FD\u1EE3\u1EEE'  # 248
         )
-    data = range(0, 256, recode.STRIP_SIZE)
 
 class Vps(recode.StripStep):
     external_coding = 'VPS'
-    strip_pool = (
+    data = (
         u'\u0000\u0001\u1EA0\u1EAC\u1EB6\u1EB8\u1EC6\u0007'  # 0
         u'\u0008\u0009\u000A\u000B\u000C\u000D\u000E\u000F'  # 8
         u'\u1ECA\u1ECC\u1ED8\u1EE2\u1EE4\u1EF0\u0016\u0017'  # 16
@@ -134,7 +132,6 @@ class Vps(recode.StripStep):
         u'\u1EB4\u0110\u00F2\u00F3\u00F4\u00F5\uFFFF\u01A0'  # 240
         u'\u1EE5\u00F9\u00FA\u1EE7\uFFFF\u1EF6\u1EBC\u1EF3'  # 248
         )
-    data = range(0, 256, recode.STRIP_SIZE)
 
 class Viqr(recode.GenericStep):
     internal_coding = 'VISCII'

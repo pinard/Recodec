@@ -10,16 +10,16 @@ Pre-computation of recoding preset data.
 
 import sys
 from Recode import recode
-
-BUILTIN_PY = 'builtin.py'
+import common
 
 class Main:
 
     def main(self, *arguments):
         assert not arguments, arguments
         self.study_python_modules()
-        write = file(BUILTIN_PY, 'w').write
-        write('import recode\n')
+        write = common.Output('builtin.py', 'Python').write
+        write('\n'
+              'import recode\n')
         self.write_aliases(write)
         self.write_methods(write)
 

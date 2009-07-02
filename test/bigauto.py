@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright © 1997, 1999, 2000 Progiciels Bourbeau-Pinard inc.
+# Copyright © 1997, 1999, 2000, 2002 Progiciels Bourbeau-Pinard inc.
 # François Pinard <pinard@iro.umontreal.ca>, 1997.
 
 """\
@@ -10,139 +10,69 @@ Usage: bigauto [RECODE_OPTION]... [CHARSET_OPTION]...
 This script makes a simple analysis for the connectivity of the various
 charsets and produce a report on standard output.  The reports include
 statistics about the number of steps before and after optimisation.
+(FIXME: Currently, there is no step sequence optimisation in Recodec.)
 
 The option `-hNAME' would affect the resulting output, because there are
 more merging rules when this option is in effect.  Other options affect
-the result: `-d', `-g' and, notably, `-s'.
+the result: `-d', `-g' and, notably, `-s'.  (FIXME: Options are ignored!)
 
-All non-option arguments are interpreted as charset names.  If any is given,
-the study is limited to those recodings having any of the given charsets
-both as a starting and ending points.  If there is no such non-option
-argument, all possible possible recodings are considered.
+All non-option arguments are interpreted as charset names.  If any is
+given, the study is limited to those recodings having any of the given
+charsets both as a starting and ending points.  If there is no such
+non-option argument, all possible recodings are considered.
 """
 
-import os, string, sys
+import os, sys
+from Recode import recode
 
-def main(*arguments):
-    recode_options = []
-    charset_options = []
-    for argument in arguments:
-        if arguments[0] == '-':
-            recode_options.append(argument)
-        else:
-            charset_options.append(argument)
-    work_name = '/tmp/bigauto-data'
-    if os.path.exists(work_name):
-        os.remove(work_name)
-    create_data(work_name, recode_options, charset_options)
-    report = Report()
-    report.digest_data(open(work_name).readline)
-    report.produce_report(sys.stdout.write)
-    os.remove(work_name)
+class Main:
 
-def create_data(name, recode_options, charset_options):
-    # Get the list of charsets.
-    if charset_options:
-        charsets = charset_options
-    else:
-        charsets = []
-        for line in os.popen('recode -l').readlines():
-            charset = string.split(line)[0]
-            if charset[0] in ':/':
-                continue
-            charsets.append(charset)
-    # Do the work, calling a subshell once per `before' value.
-    recode_call = 'recode </dev/null -v %s' % string.join(recode_options)
-    for before in charsets:
-        if before in ('count-characters', 'dump-with-names',
-                      'flat', 'Texinfo'):
-            continue
-        sys.stderr.write("Before charset: %s\n" % before)
-        write = os.popen('sh >>%s 2>&1' % name, 'w').write
-        write('export LANGUAGE; LANGUAGE=C\n'
-              'export LANG; LANG=C\n'
-              'export LC_ALL; LC_ALL=C\n')
-        for after in charsets:
-            if after != before:
-                write("%s '%s..%s'\n" % (recode_call, before, after))
+    def main(self, *arguments):
+        self.recode_options = []
+        self.charset_options = []
+        for argument in arguments:
+            if arguments[0] == '-':
+                self.recode_options.append(argument)
+            else:
+                self.charset_options.append(argument)
+        self.produce_counts()
+        self.produce_report(sys.stdout.write)
 
-class Report:
-
-    def __init__(self):
+    def produce_counts(self):
         self.recode_calls = 0
-        self.original_count = {}
-        self.original_example = {}
-        self.original_total = 0
-        self.shrunk_count = {}
-        self.shrunk_example = {}
-        self.shrunk_total = 0
-
-    def digest_data(self, readline):
-        lensep = len(os.linesep)
-        line = readline()
-        while line:
-            type, request = string.split(line[:-lensep], ':', 1)
-            if type == 'Request':
-                steps = self.get_steps(request)
-                self.count_original_request(steps, request)
-                line = readline()
-                if line:
-                    if len(string.split(line[:-lensep], ':', 1)) != 2:
-                        print '*', line,
-                    type, shrunk_to = string.split(line[:-lensep], ':', 1)
-                    if type == 'Shrunk to':
-                        steps = self.get_steps(shrunk_to)
-                        self.count_shrunk_request(steps, shrunk_to)
-                        line = readline()
-                    else:
-                        self.count_shrunk_request(steps, request)
-                else:
-                    self.count_shrunk_request(steps, request)
-            else:
-                sys.stderr.write('Unrecognized line: ' + line)
-                line = readline()
-
-    def get_steps(self, text):
-        if text == '*mere copy*':
-            return 0
-        if text[-1] == '/':
-            text = text[:-1]
-        text = string.replace(text, '/..', '..')
+        self.original = Stats()
+        self.shrunk = Stats()
+        # Get the list of charsets.
+        if self.charset_options:
+            befores = [(charset, charset) for charset in self.charset_options]
+            afters = befores
+        else:
+            befores = {}
+            afters = {}
+            for before, after in recode.registry.methods:
+                if recode.TRIVIAL_SURFACE not in (before, after):
+                    befores[recode.clean_alias(before)] = before
+                    afters[recode.clean_alias(after)] = after
+            befores = befores.items()
+            befores.sort()
+            afters = afters.items()
+            afters.sort()
+        # Recode in all combinations.
+        sys.stderr.write("Attempting %d (%d x %d) recodings.\n"
+                         % (len(befores)*len(afters),
+                            len(befores), len(afters)))
         count = 0
-        for fragment in string.split(text, '..'):
-            count = count + len(string.split(fragment, '/'))
-        return count - 1
-
-    def count_original_request(self, steps, text):
-        self.recode_calls = self.recode_calls + 1
-        if self.original_count.has_key(steps):
-            self.original_count[steps] = self.original_count[steps] + 1
-        else:
-            self.original_count[steps] = 1
-            self.original_example[steps] = string.strip(text)
-            if self.original_total == 0:
-                self.original_minimum = self.original_maximum = steps
-            else:
-                if steps < self.original_minimum:
-                    self.original_minimum = steps
-                if steps > self.original_maximum:
-                    self.original_maximum = steps
-        self.original_total = self.original_total + steps
-
-    def count_shrunk_request(self, steps, text):
-        if self.shrunk_count.has_key(steps):
-            self.shrunk_count[steps] = self.shrunk_count[steps] + 1
-        else:
-            self.shrunk_count[steps] = 1
-            self.shrunk_example[steps] = string.strip(text)
-            if self.shrunk_total == 0:
-                self.shrunk_minimum = self.shrunk_maximum = steps
-            else:
-                if steps < self.shrunk_minimum:
-                    self.shrunk_minimum = steps
-                if steps > self.shrunk_maximum:
-                    self.shrunk_maximum = steps
-        self.shrunk_total = self.shrunk_total + steps
+        for _, before in befores:
+            count += 1
+            sys.stderr.write("  %d/%d. %s..*\n"
+                             % (count, len(befores), before))
+            for _, after in afters:
+                if after != before:
+                    request = '%s..%s' % (before, after)
+                    arcs = recode.Recodec(request).encoding_arcs()
+                    self.recode_calls += 1
+                    self.original.count_request(arcs)
+                    self.shrunk.count_request(arcs)
 
     def produce_report(self, write):
         if self.recode_calls == 0:
@@ -154,24 +84,68 @@ class Report:
               "Minimum       |  %2d        %2d\n"
               "Maximum       |  %2d        %2d\n"
               "Average       |  %4.1f      %4.1f\n"
-              % (self.original_minimum, self.shrunk_minimum,
-                 self.original_maximum, self.shrunk_maximum,
-                 float(self.original_total) / float(self.recode_calls),
-                 float(self.shrunk_total) / float(self.recode_calls)))
-        write("\n"
-              "Histogram for original requests\n")
-        for steps in range(self.original_minimum, self.original_maximum+1):
-            if self.original_count.has_key(steps):
+              % (self.original.minimum, self.shrunk.minimum,
+                 self.original.maximum, self.shrunk.maximum,
+                 float(self.original.total) / float(self.recode_calls),
+                 float(self.shrunk.total) / float(self.recode_calls)))
+        self.original.write_histogram("Histogram for original requests", write)
+        self.shrunk.write_histogram("Histogram for shrunk requests", write)
+
+main = Main().main
+
+class Stats:
+    def __init__(self):
+        self.count = {}
+        self.example = {}
+        self.total = 0
+
+    def count_request(self, arcs):
+        steps = len(arcs)
+        if steps in self.count:
+            self.count[steps] += 1
+        else:
+            self.count[steps] = 1
+            self.example[steps] = arcs
+            if self.total == 0:
+                self.minimum = self.maximum = steps
+            else:
+                if steps < self.minimum:
+                    self.minimum = steps
+                if steps > self.maximum:
+                    self.maximum = steps
+        self.total += steps
+
+    def write_histogram(self, title, write):
+        write('\n%s\n' % title)
+        for steps in range(self.minimum, self.maximum+1):
+            if steps in self.count:
                 write("%5d steps, %5d times  %s\n"
-                      % (steps, self.original_count[steps],
-                         self.original_example[steps]))
-        write("\n"
-              "Histogram for shrunk requests\n")
-        for steps in range(self.shrunk_minimum, self.shrunk_maximum+1):
-            if self.shrunk_count.has_key(steps):
-                write("%5d steps, %5d times  %s\n"
-                      % (steps, self.shrunk_count[steps],
-                         self.shrunk_example[steps]))
+                      % (steps, self.count[steps],
+                         edit_arcs(self.example[steps])))
+
+def edit_arcs(arcs):
+    fragments = []
+    write = fragments.append
+    before_surface = ''
+    after_surface = ''
+    current_charset = None
+    for before, after in arcs:
+        if before == recode.TRIVIAL_SURFACE:
+            after_surface += '/' + after
+        elif after == recode.TRIVIAL_SURFACE:
+            before_surface = '/' + before + before_surface
+        elif before == current_charset:
+            write('..%s' % after)
+            current_charset = after
+        else:
+            if current_charset is not None:
+                write('%s,' % after_surface)
+                after_surface = ''
+            write('%s%s..%s' % (before, before_surface, after))
+            before_surface = ''
+            current_charset = after
+    write(after_surface)
+    return ''.join(fragments)
 
 if __name__ == '__main__':
-    apply(main, tuple(sys.argv[1:]))
+    main(*sys.argv[1:])

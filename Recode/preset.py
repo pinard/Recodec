@@ -1,3 +1,23 @@
+# DO NOT MODIFY THIS FILE!  It was automatically generated.
+
+# Conversion between different charsets, surfaces and structures.
+# Copyright © 1993, 1997, 1999, 2002 Free Software Foundation, Inc.
+# Contributed by François Pinard <pinard@iro.umontreal.ca>, 1993.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with the `recode' Library; see the file `COPYING.LIB'.
+# If not, write to the Free Software Foundation, Inc., 59 Temple Place -
+# Suite 330, Boston, MA 02111-1307, USA.
 
 aliases = {
     '037': ('IBM037', 'crlf'),
@@ -109,6 +129,7 @@ aliases = {
     'cn': ('GB_1988-80', None),
     'co': ('combined-UCS-2', None),
     'combineducs2': ('combined-UCS-2', None),
+    'cork': ('CORK', None),
     'countcharacters': ('count-characters', None),
     'cp037': ('IBM037', 'crlf'),
     'cp038': ('IBM038', 'crlf'),
@@ -266,6 +287,7 @@ aliases = {
     'euckr': ('euc_kr', None),
     'ewondo': ('BPI-102', None),
     'fi': ('SEN_850200_B', None),
+    'flat': ('flat', None),
     'fr': ('NF_Z_62-010', None),
     'friss': ('EBCDIC-IS-FRISS', None),
     'fssutf': ('UTF-8', None),
@@ -503,6 +525,7 @@ aliases = {
     'isoir96': ('JIS_C6229-1984-kana', None),
     'isoir98': ('ISO_2033-1983', None),
     'it': ('IT', None),
+    'java': ('Unicode-Escape-X', None),
     'jis7': ('jis_7', None),
     'jisc62201969': ('JIS_C6220-1969-jp', None),
     'jisc62201969jp': ('JIS_C6220-1969-jp', None),
@@ -524,9 +547,12 @@ aliases = {
     'jusib1002': ('JUS_I.B1.002', None),
     'jusib1003mac': ('JUS_I.B1.003-mac', None),
     'jusib1003serb': ('JUS_I.B1.003-serb', None),
+    'kamenicky': ('KEYBCS2', None),
     'katakana': ('JIS_C6220-1969-jp', None),
+    'keybcs2': ('KEYBCS2', None),
     'koi7': ('KOI-7', None),
     'koi8': ('KOI-8', None),
+    'koi8cs2': ('KOI-8_CS2', None),
     'koi8l2': ('CSN_369103', None),
     'koi8r': ('KOI8-R', None),
     'koi8ru': ('KOI8-RU', None),
@@ -640,6 +666,7 @@ aliases = {
     'ss636127': ('SEN_850200_B', None),
     'stsev35888': ('GOST_19768-87', None),
     'swabytes': ('21-Permutation', None),
+    't1': ('CORK', None),
     't617bit': ('T.61-7bit', None),
     'tactis': ('tactis', None),
     'tbambara': ('BPI-103', None),
@@ -684,6 +711,7 @@ aliases = {
     'ucs': ('ISO-10646-UCS-4', None),
     'ucs2': ('ISO-10646-UCS-2', None),
     'ucs4': ('ISO-10646-UCS-4', None),
+    'ue': ('Unicode-Escape-X', None),
     'uhc': ('uhc', None),
     'ujis': ('euc_jp', None),
     'uk': ('BS_4730', None),
@@ -691,6 +719,7 @@ aliases = {
     'unicode11utf7': ('UNICODE-1-1-UTF-7', None),
     'unicodebigunmarked': ('utf_16_be', None),
     'unicodeescape': ('unicode_escape', None),
+    'unicodeescapex': ('Unicode-Escape-X', None),
     'unicodeinternal': ('ISO-10646-UCS-2', None),
     'unicodelittleunmarked': ('utf_16_le', None),
     'us': ('ANSI_X3.4-1968', None),
@@ -773,6 +802,7 @@ methods = {
     ('<Ustring>', 'BPI-JUCA-Translit'): ('juca', 'JucaTranslit', 1),
     ('<Ustring>', 'BS_4730'): ('strip', 'StripCodec_3', 1),
     ('<Ustring>', 'BS_viewdata'): ('strip', 'StripCodec_22', 1),
+    ('<Ustring>', 'CORK'): ('varia', 'Cork', 0),
     ('<Ustring>', 'CP1250'): ('builtin', 'Codec_cp1250', 1),
     ('<Ustring>', 'CP1251'): ('builtin', 'Codec_cp1251', 1),
     ('<Ustring>', 'CP1252'): ('builtin', 'Codec_cp1252', 1),
@@ -898,8 +928,10 @@ methods = {
     ('<Ustring>', 'JUS_I.B1.002'): ('strip', 'StripCodec_57', 1),
     ('<Ustring>', 'JUS_I.B1.003-mac'): ('strip', 'StripCodec_61', 1),
     ('<Ustring>', 'JUS_I.B1.003-serb'): ('strip', 'StripCodec_60', 1),
+    ('<Ustring>', 'KEYBCS2'): ('varia', 'Kamenicky', 0),
     ('<Ustring>', 'KOI-7'): ('strip', 'StripCodec_151', 1),
     ('<Ustring>', 'KOI-8'): ('strip', 'StripCodec_152', 1),
+    ('<Ustring>', 'KOI-8_CS2'): ('varia', 'Koi8cs2', 0),
     ('<Ustring>', 'KOI8-R'): ('builtin', 'Codec_koi8_r', 1),
     ('<Ustring>', 'KOI8-RU'): ('strip', 'StripCodec_154', 1),
     ('<Ustring>', 'KOI8-U'): ('strip', 'StripCodec_155', 1),
@@ -922,9 +954,11 @@ methods = {
     ('<Ustring>', 'SEN_850200_C'): ('strip', 'StripCodec_10', 1),
     ('<Ustring>', 'T.61-7bit'): ('strip', 'StripCodec_46', 1),
     ('<Ustring>', 'TCVN'): ('vietnam', 'Tcvn', 1),
+    ('<Ustring>', 'Texinfo'): ('texinfo', 'Texinfo', 1),
     ('<Ustring>', 'UNICODE-1-1-UTF-7'): ('builtin', 'Codec_utf_7', 1),
     ('<Ustring>', 'UTF-16'): ('builtin', 'Codec_utf_16', 1),
     ('<Ustring>', 'UTF-8'): ('builtin', 'Codec_utf_8', 1),
+    ('<Ustring>', 'Unicode-Escape-X'): ('java', 'Java', 1),
     ('<Ustring>', 'VISCII'): ('vietnam', 'Viscii', 1),
     ('<Ustring>', 'VPS'): ('vietnam', 'Vps', 1),
     ('<Ustring>', 'XML-standalone'): ('html', 'Xmlstandalone', 1),
@@ -941,6 +975,7 @@ methods = {
     ('<Ustring>', 'cp874'): ('builtin', 'Codec_cp874', 1),
     ('<Ustring>', 'dump-with-names'): ('testdump', 'DumpWithNames', 1),
     ('<Ustring>', 'euc_kr'): ('builtin', 'Codec_euc_kr', 1),
+    ('<Ustring>', 'flat'): ('flat', 'Flat', 1),
     ('<Ustring>', 'greek-ccitt'): ('strip', 'StripCodec_63', 1),
     ('<Ustring>', 'greek7'): ('strip', 'StripCodec_35', 1),
     ('<Ustring>', 'greek7-old'): ('strip', 'StripCodec_16', 1),
@@ -991,6 +1026,7 @@ methods = {
     ('Bang-Bang', 'ISO-8859-1'): ('bangbang', 'Bangbang', 0),
     ('Base64', '<Data>'): ('builtin', 'Codec_base64_codec', 0),
     ('CDC-NOS', 'ASCII-BS'): ('cdcnos', 'Cdcnos', 0),
+    ('CORK', '<Ustring>'): ('varia', 'Cork', 1),
     ('CP1250', '<Ustring>'): ('builtin', 'Codec_cp1250', 0),
     ('CP1251', '<Ustring>'): ('builtin', 'Codec_cp1251', 0),
     ('CP1252', '<Ustring>'): ('builtin', 'Codec_cp1252', 0),
@@ -1098,7 +1134,6 @@ methods = {
     ('ISO-8859-1', 'BPI-101'): ('afrtran', 'BPI_101', 1),
     ('ISO-8859-1', 'Bang-Bang'): ('bangbang', 'Bangbang', 1),
     ('ISO-8859-1', 'LaTeX'): ('latex', 'Latex', 1),
-    ('ISO-8859-1', 'Texinfo'): ('texinfo', 'Texinfo', 1),
     ('ISO-8859-1', 'Texte'): ('texte', 'Texte', 1),
     ('ISO-8859-10', '<Ustring>'): ('builtin', 'Codec_iso8859_10', 0),
     ('ISO-8859-13', '<Ustring>'): ('builtin', 'Codec_iso8859_13', 0),
@@ -1132,8 +1167,10 @@ methods = {
     ('JUS_I.B1.002', '<Ustring>'): ('strip', 'StripCodec_57', 0),
     ('JUS_I.B1.003-mac', '<Ustring>'): ('strip', 'StripCodec_61', 0),
     ('JUS_I.B1.003-serb', '<Ustring>'): ('strip', 'StripCodec_60', 0),
+    ('KEYBCS2', '<Ustring>'): ('varia', 'Kamenicky', 1),
     ('KOI-7', '<Ustring>'): ('strip', 'StripCodec_151', 0),
     ('KOI-8', '<Ustring>'): ('strip', 'StripCodec_152', 0),
+    ('KOI-8_CS2', '<Ustring>'): ('varia', 'Koi8cs2', 1),
     ('KOI8-R', '<Ustring>'): ('builtin', 'Codec_koi8_r', 0),
     ('KOI8-RU', '<Ustring>'): ('strip', 'StripCodec_154', 0),
     ('KOI8-U', '<Ustring>'): ('strip', 'StripCodec_155', 0),
@@ -1162,11 +1199,12 @@ methods = {
     ('SEN_850200_C', '<Ustring>'): ('strip', 'StripCodec_10', 0),
     ('T.61-7bit', '<Ustring>'): ('strip', 'StripCodec_46', 0),
     ('TCVN', '<Ustring>'): ('vietnam', 'Tcvn', 0),
-    ('Texinfo', 'ISO-8859-1'): ('texinfo', 'Texinfo', 0),
+    ('Texinfo', '<Ustring>'): ('texinfo', 'Texinfo', 0),
     ('Texte', 'ISO-8859-1'): ('texte', 'Texte', 0),
     ('UNICODE-1-1-UTF-7', '<Ustring>'): ('builtin', 'Codec_utf_7', 0),
     ('UTF-16', '<Ustring>'): ('builtin', 'Codec_utf_16', 0),
     ('UTF-8', '<Ustring>'): ('builtin', 'Codec_utf_8', 0),
+    ('Unicode-Escape-X', '<Ustring>'): ('java', 'Java', 0),
     ('VIQR', 'VISCII'): ('vietnam', 'Viqr', 0),
     ('VISCII', '<Ustring>'): ('vietnam', 'Viscii', 0),
     ('VISCII', 'VIQR'): ('vietnam', 'Viqr', 1),

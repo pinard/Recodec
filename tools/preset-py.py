@@ -10,8 +10,7 @@ Pre-computation of recoding preset data.
 
 import sys
 from Recode import recode
-
-PRESET_PY = 'preset.py'
+import common
 
 class Main:
 
@@ -40,18 +39,14 @@ class Main:
                         recode.clean_alias(surface))
         # Register recode methods.
         self.methods = {}
-        from types import ClassType
         for module, module_name in zip(modules, arguments):
-            for codec_name in dir(module):
-                codec = getattr(module, codec_name)
-                if not (type(codec) is ClassType
-                        and issubclass(codec, recode.Step)
-                        and hasattr(codec, 'internal_coding')
-                        and hasattr(codec, 'external_coding')):
-                    continue
-                self.handle_codec(module_name, codec_name, codec)
+            for name in dir(module):
+                codec = getattr(module, name)
+                if (hasattr(codec, 'internal_coding')
+                    and hasattr(codec, 'external_coding')):
+                    self.handle_codec(module_name, name, codec)
         # Write out the Python source.
-        write = file(PRESET_PY, 'w').write
+        write = common.Output('preset.py', 'Python').write
         write('\n'
               'aliases = {\n')
         items = self.clusters.items()
@@ -68,28 +63,6 @@ class Main:
             write('    (%r, %r): (%r, %r, %r),\n' %
                   (before, after, module_name, codec_name, use_encode))
         write('    }\n')
-
-    def handle_codec(self, module_name, codec_name, codec):
-        internal = self.clusters[recode.clean_alias(codec.internal_coding)][0]
-        external = self.clusters[recode.clean_alias(codec.external_coding)][0]
-        for check, before, after, direction in (
-            (codec.encode, internal, external, True),
-            (codec.decode, external, internal, False)):
-            if check is not None:
-                if (before, after) in self.methods:
-                    if module_name == 'builtin':
-                        sys.stderr.write(
-                            "Overriding `%s' by `%s' for `%s..%s'.\n"
-                            % (self.methods[before, after][0], module_name,
-                               before, after))
-                    else:
-                        sys.stderr.write(
-                            "Overriding `%s' by `%s' for `%s..%s'.\n"
-                            % (module_name, self.methods[before, after][0],
-                               before, after))
-                        continue
-                self.methods[before, after] = (
-                    module_name, codec_name, direction)
 
     def handle_declare(self, declare):
         # Split out the official coding name and its aliases.
@@ -122,6 +95,28 @@ class Main:
                 # Add alias to the current cluster.
                 cluster.append(alias)
                 self.clusters[alias] = cluster
+
+    def handle_codec(self, module_name, codec_name, codec):
+        internal = self.clusters[recode.clean_alias(codec.internal_coding)][0]
+        external = self.clusters[recode.clean_alias(codec.external_coding)][0]
+        for check, before, after, direction in (
+            (codec.encode, internal, external, True),
+            (codec.decode, external, internal, False)):
+            if check is not None:
+                if (before, after) in self.methods:
+                    if module_name == 'builtin':
+                        sys.stderr.write(
+                            "Overriding `%s' by `%s' for `%s..%s'.\n"
+                            % (self.methods[before, after][0], module_name,
+                               before, after))
+                    else:
+                        sys.stderr.write(
+                            "Overriding `%s' by `%s' for `%s..%s'.\n"
+                            % (module_name, self.methods[before, after][0],
+                               before, after))
+                        continue
+                self.methods[before, after] = (
+                    module_name, codec_name, direction)
 
 if __name__ == '__main__':
     Main().main(*sys.argv[1:])

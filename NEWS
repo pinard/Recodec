@@ -1,0 +1,16 @@
+Recodec NEWS - User visible changes.		-*- outline -*- (allout)
+Copyright © 2002 Free Software Foundation, Inc.
+
+* Version 0.1 - François Pinard, 2002-09.
+
+.. `Unicode-Escape-X' charset, according to Java documentation.
+.. `flat' and `Texinfo' are better connected to more charsets.
+.. `--find-subsets' (`-T') results are automatically sorted.
+.. `--list=codings' (`-lc') shows the handiest alias for each coding.
+
+* Version 0.0 - François Pinard, 2002-09.
+
+.. More charsets are reversible, precise inventory to follow later.
+
+* For prior history, see `NEWS' in Free `recode'.  Both `NEWS' file will
+  eventually get merged.

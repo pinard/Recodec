@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='Recodec',
-      version='0.0',
+      version='0.1',
       description="Conversion between charsets, surfaces and structures.",
       author='François Pinard',
       author_email='pinard@iro.umontreal.ca',

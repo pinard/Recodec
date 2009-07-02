@@ -69,7 +69,7 @@ class Main:
                 self.source = recode.resolve(value.lower(),
                                              ['c', 'perl', 'po'])
             elif option in ('-T', '--find-subsets'):
-                pass                    # FIXME!
+                self.listing = 'subsets'
             elif option in ('-c', '--colons'):
                 pass                    # FIXME!
             elif option in ('-d', '--diacritics'):
@@ -138,6 +138,9 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
         if self.listing == 'codings':
             assert not self.arguments, self.arguments
             listings.list_all_codings(write)
+        elif self.listing == 'subsets':
+            assert not self.arguments, self.arguments
+            listings.list_all_subsets(write)
         else:
             assert len(self.arguments) == 1, self.arguments
             charset = self.arguments[0]
@@ -156,9 +159,10 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
         arguments = self.arguments[1:]
         codec = recode.Recodec(request)
         if self.verbose:
-            codec.encode('')
-            for arc in codec.encode_sequence:
-                sys.stderr.write('... %s..%s\n' % arc)
+            counter = 0
+            for before, after in codec.encoding_arcs():
+                counter += 1
+                sys.stderr.write('  %d: %s..%s\n' % (counter, before, after))
         if arguments:
             import tempfile
             for name in arguments:

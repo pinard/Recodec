@@ -22,24 +22,22 @@
 
 Usage: python tables.py [OPTION]... DATA-FILE...
 
-  -F  produce French versions for -n, -s or -t
-  -P  produce Python sources instead of C sources (.py instead of .c or .h)
+  -F  French versions for -n, -s or -t
+  -l  Python source file for libiconv charsets (libiconv.py).
+  -m  Python inclusion file for short RFC 1345 mnemonics (rfc1345.py).
+  -n  Python inclusion file for character names (charname.py).
+  -p  Python source files for strip data (strip.py).
+  -s  Texinfo inclusion file for libiconv (libiconv.texi).
+  -t  Texinfo inclusion file for RFC 1345 (rfc1345.texi).
 
-  -e  produce C source file for explode data (explode.c)
-  -l  produce C source file for libiconv charsets (libiconv.h)
-  -m  produce C inclusion file for short RFC 1345 mnemonics (rfc1345.h)
-  -n  produce C inclusion file for character names (charname.h)
-  -p  produce C source files for strip data (strip-pool.c and strip-data.c)
-  -s  produce Texinfo inclusion file for libiconv (libiconv.texi)
-  -t  produce Texinfo inclusion file for RFC 1345 (rfc1345.texi)
-
-Options `-F' and `-P' should appear first.  When `-F' and `-n' are used,
-process Alain's tables.  DATA-FILEs may be rfc1345.txt, mnemonic[.,]ds,
-Unicode maps, or .def files from Keld's chset* packages.  The digesting
-order for DATA-FILES is usually important.
+Option `-F' should appear first.  When `-F' and `-n' are used, process
+Alain's tables.  DATA-FILEs may be rfc1345.txt, mnemonic[.,]ds, Unicode
+maps, or .def files from Keld's chset* packages.  The digesting order
+for DATA-FILES is usually important.
 """
 
 import re, sys
+import common
 
 ### Copied from `recode.py'.
 #
@@ -56,22 +54,14 @@ NOT_A_CHARACTER = u'\uFFFF'
 class Main:
     def __init__(self):
         self.french_mode = False
-        self.python_mode = False
 
     def main(self, *arguments):
         import getopt
-        charnames = explodes = libiconv = mnemonics = rfc1345 = strips = None
-        self.explodes = None            # Strips.charset_done() needs it
-        options, arguments = getopt.getopt(arguments, 'FPelmnpst')
+        charnames = libiconv = mnemonics = rfc1345 = strips = None
+        options, arguments = getopt.getopt(arguments, 'Flmnpst')
         for option, value in options:
             if option == '-F':
                 self.french_mode = True
-            elif option == '-P':
-                self.python_mode = True
-            elif option == '-e':
-                if not explodes:
-                    explodes = self.explodes = Explodes()
-                explodes.do_sources = True
             elif option == '-l':
                 if not libiconv:
                     libiconv = Libiconv()
@@ -102,7 +92,7 @@ class Main:
 
         # Read all data tables.
         for name in arguments:
-            input = Input(name)
+            input = common.Input(name)
             for line in input:
                 if line[0] == '\n':
                     continue
@@ -136,7 +126,7 @@ class Main:
                             if not mnemonics:
                                 mnemonics = Mnemonics()
                             mnemonics.digest_rfc1345(input, charnames)
-                    if explodes or strips:
+                    if strips:
                         while line != '5.  CHARSET TABLES\n':
                             line = input.next()
                         if not strips:
@@ -169,11 +159,12 @@ class Main:
                     mnemonics.digest_iso10646_def(input)
                     break
                 input.die("Data file with unknown contents")
-        for instance in explodes, strips, charnames, libiconv, mnemonics:
+        for instance in strips, charnames, libiconv, mnemonics:
             if instance:
                 instance.complete()
 
-main = Main()
+run = Main()
+main = run.main
 
 class Options:
     def __init__(self):
@@ -183,8 +174,7 @@ class Options:
 # Charnames.
 
 class Charnames(Options):
-    C_SOURCES = 'charname.h'
-    PY_SOURCES = 'charname.py'
+    SOURCES = 'charname.py'
 
     # Name of character, given its numerical value.
     charname_map = {}
@@ -308,16 +298,10 @@ class Charnames(Options):
     def complete(self):
         if not self.do_sources:
             return
-        if main.french_mode:
-            if main.python_mode:
-                write = Output('fr_%s' % self.PY_SOURCES).write
-            else:
-                write = Output('fr-%s' % self.C_SOURCES).write
+        if run.french_mode:
+            write = common.Output('fr_%s' % self.SOURCES, 'Python').write
         else:
-            if main.python_mode:
-                write = Output(self.PY_SOURCES).write
-            else:
-                write = Output(self.C_SOURCES).write
+            write = common.Output(self.SOURCES, 'Python').write
         # Establish a mild compression scheme.  Words word[0:singles]
         # will be represented by a single byte running from 1 to
         # singles.  All remaining words will be represented by two
@@ -336,77 +320,38 @@ class Charnames(Options):
         unicode_table = self.charname_map.keys()
         unicode_table.sort()
         sys.stderr.write(' %d of them\n' % len(unicode_table))
-        if main.python_mode:
-            write('\n'
-                  'number_of_singles = %d\n'
-                  'max_charname_length = %d\n'
-                  'number_of_charnames = %d\n'
-                  % (singles, self.max_length, len(unicode_table)))
-        else:
-            write('\n'
-                  '#define NUMBER_OF_SINGLES %d\n'
-                  '#define MAX_CHARNAME_LENGTH %d\n'
-                  '#define NUMBER_OF_CHARNAMES %d\n'
-                  % (singles, self.max_length, len(unicode_table)))
+        write('\n'
+              'number_of_singles = %d\n'
+              'max_charname_length = %d\n'
+              'number_of_charnames = %d\n'
+              % (singles, self.max_length, len(unicode_table)))
         # Establish a mild compression scheme (one or two bytes per word).
         sys.stderr.write("  writing words\n")
-        if main.python_mode:
-            write('\n'
-                  'word = [\n')
-        else:
-            write('\n'
-                  'static const char *const word[%d] =\n'
-                  '  {\n'
-                  % count)
+        write('\n'
+              'word = [\n')
         char1 = 1
         char2 = 1
         for counter in range(singles):
             word = words[counter]
-            if main.python_mode:
-                write('    %-28s# \\%0.3o\n' % ('%r,' % word, char1))
-            else:
-                write('    %-28s/* \\%0.3o */\n'
-                      % ('"%s",' % word.replace('"', r'\"'), char1))
+            write('    %-28s# \\%0.3o\n' % ('%r,' % word, char1))
             self.code_map[words[counter]] = char1
             char1 += 1
         for counter in range(singles, count):
             word = words[counter]
-            if main.python_mode:
-                write('    %-28s# \\%0.3o\\%0.3o\n'
-                      % ('%r,' % word, char1, char2))
-            else:
-                write('    %-28s/* \\%0.3o\\%0.3o */\n'
-                      % ('"%s",' % word.replace('"', r'\"', 1), char1, char2))
+            write('    %-28s# \\%0.3o\\%0.3o\n'
+                  % ('%r,' % word, char1, char2))
             self.code_map[words[counter]] = 256 * char1 + char2
             if char2 == 255:
                 char1 += 1
                 char2 = 1
             else:
                 char2 += 1
-        if main.python_mode:
-            write('    ]\n')
-        else:
-            write('  };\n')
+        write('    ]\n')
         sys.stderr.write("  writing names\n")
-        if main.python_mode:
-            write('\n'
-                  'charname = {\n')
-        else:
-            write('\n'
-                  'struct charname\n'
-                  '  {\n'
-                  '    recode_ucs2 code;\n'
-                  '    const char *crypted;\n'
-                  '  };\n'
-                  '\n'
-                  'static const struct charname charname[NUMBER_OF_CHARNAMES]'
-                  ' =\n'
-                  '  {\n')
+        write('\n'
+              'charname = {\n')
         for unicode in unicode_table:
-            if main.python_mode:
-                write('    0x%04X: "' % unicode)
-            else:
-                write('    {0x%04X, "' % unicode)
+            write('    0x%04X: "' % unicode)
             for word in self.charname_map[unicode].split():
                 if word in self.code_map:
                     code = self.code_map[word]
@@ -416,74 +361,13 @@ class Charnames(Options):
                         write('\\%0.3o\\%0.3o' % divmod(code, 256))
                 else:
                     sys.stderr.write('??? %s\n' % word)
-            if main.python_mode:
-                write('",\n')
-            else:
-                write('"},\n')
-        if main.python_mode:
-            write('    }\n')
-        else:
-            write('  };\n')
-
-# Explodes.
-
-class Explodes(Options):
-    C_SOURCES = 'explode.c'
-    PY_SOURCES = 'explode.py'
-
-    def __init__(self):
-        Options.__init__(self)
-        # Table fragments will be produced while reading data tables.
-        if main.python_mode:
-            write = self.write = Output(self.PY_SOURCES).write
-        else:
-            write = self.write = Output(self.C_SOURCES).write
-            write('\n'
-                  '#include "common.h"\n')
-
-    def complete(self):
-        if not self.do_sources:
-            return
-        # Print the collectable initialization function.
-        if main.python_mode:
-            sys.stderr.write("Completing %s\n" % self.PY_SOURCES)
-        else:
-            sys.stderr.write("Completing %s\n" % self.C_SOURCES)
-        write = self.write
-        if main.python_mode:
-            pass
-        else:
-            write('\n'
-                  'bool\n'
-                  'module_explodes (struct recode_outer *outer)\n'
-                  '{\n')
-            count = 0
-            while self.declare_charset:
-                write('  if (!declare_explode_data (outer, &data_%d, "%s"))\n'
-                      '    return false;\n'
-                      % (count, self.declare_charset[0]))
-                del self.declare_charset[0]
-                count += 1
-            write('\n')
-            while declare_alias:
-                write('  if (!declare_alias (outer, "%s", "%s"))\n'
-                      '    return false;\n'
-                      % declare_alias[0])
-                del declare_alias[0]
-            write('\n'
-                  '  return true;\n'
-                  '}\n'
-                  '\n'
-                  'void\n'
-                  'delmodule_explodes (struct recode_outer *outer)\n'
-                  '{\n'
-                  '}\n')
+            write('",\n')
+        write('    }\n')
 
 # Libiconv.
 
 class Libiconv(Options):
-    C_SOURCES = 'libiconv.h'
-    PY_SOURCES = 'libiconv.py'
+    SOURCES = 'libiconv.py'
     TEXINFO = 'libiconv.texi'
 
     data = []
@@ -537,65 +421,35 @@ class Libiconv(Options):
     def complete_sources(self):
         if not self.do_sources:
             return
-        if main.python_mode:
-            write = Output(self.PY_SOURCES).write
-        else:
-            write = Output(self.C_SOURCES).write
+        write = common.Output(self.SOURCES, 'Python').write
         count = 1
         for comment, charset, aliases in self.data:
             count += 2 + len(aliases)
-        if main.python_mode:
-            write('\n'
-                  "# This is derived from Bruno Haible's `libiconv' package.\n"
-                  'iconv_name_list = [\n')
-        else:
-            write('\n'
-                  "/* This is derived from Bruno Haible's `libiconv'"
-                  " package.  */\n"
-                  'static const char *iconv_name_list[%d] =\n'
-                  '  {\n'
-                  % count)
+        write('\n'
+              "# This is derived from Bruno Haible's `libiconv' package.\n"
+              'iconv_name_list = [\n')
         for comment, charset, aliases in self.data:
             if comment:
-                if main.python_mode:
-                    write('\n'
-                          '    # %s.\n'
-                          '\n'
-                          % comment)
-                else:
-                    write('\n'
-                          '    /* %s.  */\n'
-                          '\n'
-                          % comment)
+                write('\n'
+                      '    # %s.\n'
+                      '\n'
+                      % comment)
             if aliases:
-                if main.python_mode:
-                    write('    (%r' % charset)
-                    for alias in aliases:
-                        write(',\n        %r' % alias)
-                    write('),\n')
-                else:
-                    write('    "%s",\n' % charset)
-                    for alias in aliases[:-1]:
-                        write('\t"%s",\n' % alias)
-                    write('\t"%s", NULL,\n' % aliases[-1])
+                write('    (%r' % charset)
+                for alias in aliases:
+                    write(',\n        %r' % alias)
+                write('),\n')
             else:
-                if main.python_mode:
-                    write('    (%r,),\n' % charset)
-                else:
-                    write('    "%s", NULL,\n' % charset)
-        if main.python_mode:
-            write('    ]\n')
-        else:
-            write('    NULL\n'
-                  '  };\n')
+                write('    (%r,),\n' % charset)
+        write('    ]\n')
 
     def complete_texinfo(self):
         if not self.do_texinfo:
             return
-        if main.french_mode:
-            write = Output('fr-%s' % self.TEXINFO, noheader=True).write
+        if run.french_mode:
+            write = common.Output('fr-%s' % self.TEXINFO).write
         else:
-            write = Output(self.TEXINFO, noheader=True).write
+            write = common.Output(self.TEXINFO).write
         write('\n'
               '@itemize @bullet\n')
         block = None
@@ -633,8 +487,7 @@ class Libiconv(Options):
 # Mnemonics.
 
 class Mnemonics(Options):
-    C_SOURCES = 'rfc1345.h'
-    PY_SOURCES = 'rfc1345.py'
+    SOURCES = 'rfc1345.py'
 
     # Ignore any mnemonic whose length is greater than MAX_MNEMONIC_LENGTH.
     MAX_MNEMONIC_LENGTH = 3
@@ -772,78 +625,31 @@ class Mnemonics(Options):
 
     # Write an UCS-2 to RFC 1345 mnemonic table.
     def complete_sources(self):
-        if main.python_mode:
-            write = Output(self.PY_SOURCES).write
-            write('\n'
-                  'max_mnemonic_length = %d\n'
-                  % self.MAX_MNEMONIC_LENGTH)
-            write('\n'
-                  'table = {\n')
-            pairs = self.mnemonic_map.items()
-            pairs.sort()
-            for unicode, mnemonic in pairs:
-                write('    0x%04X: %r,\n' % (unicode, mnemonic))
-            write('    }\n')
+        write = common.Output(self.SOURCES, 'Python').write
+        write('\n'
+              'max_mnemonic_length = %d\n'
+              % self.MAX_MNEMONIC_LENGTH)
+        write('\n'
+              'table = {\n')
+        pairs = self.mnemonic_map.items()
+        pairs.sort()
+        for unicode, mnemonic in pairs:
+            write('    0x%04X: %r,\n' % (unicode, mnemonic))
+        write('    }\n')
 
-            write('\n'
-                  'inverse = {\n')
-            pairs = [(mnemonic, unicode)
-                     for unicode, mnemonic in self.mnemonic_map.items()]
-            pairs.sort()
-            for mnemonic, unicode in pairs:
-                write('    %r: 0x%04X,\n' % (mnemonic, unicode))
-            write('    }\n')
-        else:
-            inverse_map = {}
-            write = Output(self.C_SOURCES).write
-            write('\n'
-                  '#define TABLE_LENGTH %d\n'
-                  '#define MAX_MNEMONIC_LENGTH %d\n'
-                  % (self.table_length, self.MAX_MNEMONIC_LENGTH))
-            write('\n'
-                  'struct entry\n'
-                  '  {\n'
-                  '    recode_ucs2 code;\n'
-                  '    const char *rfc1345;\n'
-                  '  };\n'
-                  '\n'
-                  'static const struct entry table[TABLE_LENGTH] =\n'
-                  '  {\n')
-            count = 0
-            indices = self.mnemonic_map.keys()
-            indices.sort()
-            for unicode in indices:
-                text = self.mnemonic_map[unicode]
-                inverse_map[text] = count
-                write('    /* %4d */ {0x%04X, "%s"},\n'
-                      % (count, unicode, re.sub(r'([\"])', r'\\\1', text)))
-                count += 1
-            write('  };\n')
-
-            write('\n'
-                  'static const unsigned short inverse[TABLE_LENGTH] =\n'
-                  '  {')
-            count = 0
-            keys = inverse_map.keys()
-            keys.sort()
-            for text in keys:
-                if count % 10 == 0:
-                    if count != 0:
-                        write(',')
-                    write('\n    /* %4d */ ' % count)
-                else:
-                    write(', ')
-                write('%4d' % inverse_map[text])
-                count += 1
-            write('\n'
-                  '  };\n')
-
+        write('\n'
+              'inverse = {\n')
+        pairs = [(mnemonic, unicode)
+                 for unicode, mnemonic in self.mnemonic_map.items()]
+        pairs.sort()
+        for mnemonic, unicode in pairs:
+            write('    %r: 0x%04X,\n' % (mnemonic, unicode))
+        write('    }\n')
 
 # Global table of strips.
 
 class Strips(Options):
-    C_STRIP = 'strip.c'
-    PY_STRIP = 'strip.py'
+    STRIP = 'strip.py'
     TEXINFO = 'rfc1345.texi'
 
     # Change STRIP_SIZE in `src/recode.h' if you change the value here.
@@ -1102,16 +908,11 @@ class Strips(Options):
     def init_write(self):
         if self.do_sources and not self.write:
             # Table fragments will be produced while reading data tables.
-            if main.python_mode:
-                write = self.write = Output(self.PY_STRIP).write
-                write('\n'
-                      'import recode\n'
-                      '\n'
-                      'declares = [\n')
-            else:
-                write = self.write = Output(self.C_STRIP).write
-                write('\n'
-                      '#include \"common.h\"\n')
+            write = self.write = common.Output(self.STRIP, 'Python').write
+            write('\n'
+                  'import recode\n'
+                  '\n'
+                  'declares = [\n')
 
     # Print all accumulated information for the charset.  If the
     # charset should be discarded, adjust tables.
@@ -1129,45 +930,14 @@ class Strips(Options):
             aliases.sort()
             self.aliases_map[charset] = aliases
             self.remark_map[charset] = remark
-        if main.explodes:
-            write = main.explodes.write
-            # Make introductory comments.
-            if main.python_mode:
-                write('\n# %s\n' % '\n# '.join(self.comments))
-            else:
-                write('\n/* %s */\n' % '\n   '.join(self.comments))
-            # Make the table for this charset.  (FIXME: Python!)
-            if main.python_mode:
-                write('\n'
-                      'data_%d = {\n'
-                      % self.charset_ordinal)
-                for code in range(256):
-                    if code != self.table[code]:
-                        write('    %3d: (0x%.4X,),\n'
-                              % (code, self.table[code]))
-                write('    }\n')
-            else:
-                write('\n'
-                      'static const unsigned short data_%d[] =\n'
-                      '  {\n'
-                      % self.charset_ordinal)
-                for code in range(256):
-                    if code != self.table[code]:
-                        write('    %3d, 0x%.4X, DONE,\n'
-                              % (code, self.table[code]))
-                write('    DONE\n'
-                      '  };\n')
-            # Register the table.
-            self.declare_charset.append(charset)
         if self.do_sources:
             write = self.write
             # Make introductory comments.
-            if main.python_mode:
-                if len(self.comments) == 1:
-                    write('    %r,\n' % self.comments[0])
-                else:
-                    write('    (%s),\n' % ', '.join(
-                        [repr(comment) for comment in self.comments]))
+            if len(self.comments) == 1:
+                write('    %r,\n' % self.comments[0])
+            else:
+                write('    (%s),\n' % ', '.join(
+                    [repr(comment) for comment in self.comments]))
             # Make the table for this charset.
             self.strip_codecs.append((
                 self.charset_ordinal,
@@ -1196,156 +966,71 @@ class Strips(Options):
             self.complete_texinfo()
 
     def complete_sources(self):
-        if main.python_mode:
-            sys.stderr.write("Completing %s\n" % self.PY_STRIP)
-        else:
-            sys.stderr.write("Completing %s\n" % self.C_STRIP)
+        sys.stderr.write("Completing %s\n" % self.STRIP)
         write = self.write
         # Write out the UCS2 character pool.
         sys.stderr.write('  (table memory = %d bytes: pool %d, refs %d)\n'
                          % (self.pool_size * 2 + self.pool_refs * 2,
                             self.pool_size * 2,
                             self.pool_refs * 2))
-        if main.python_mode:
-            write('    ]\n'
-                  '\n'
-                  'unicode_data_pool = (\n'
-                  '    u\'')
-        else:
-            write('\n'
-                  'const recode_ucs2 ucs2_data_pool[%d] =\n'
-                  '  {'
-                  % self.pool_size)
+        write('    ]\n'
+              '\n'
+              'unicode_data_pool = (\n'
+              '    u\'')
         count = 0
         for strip in self.strips:
             for pos in range(0, self.STRIP_SIZE * 4, 4):
-                if main.python_mode:
-                    if count % 10 == 0:
-                        if count != 0:
-                            write('\'  # %d\n'
-                                  '    u\''
-                                  % (count-10))
-                    write('\\u' + strip[pos:pos+4])
-                else:
-                    if count % 8 == 0:
-                        if count != 0:
-                            write(',')
-                        write('\n    /* %4d */ ' % count)
-                    else:
-                        write(', ')
-                    write('0x' + strip[pos:pos+4])
-                count += 1
-        if main.python_mode:
-            if count > 0:
                 if count % 10 == 0:
-                    fill = ''
-                else:
-                    fill = '      ' * (10 - count % 10)
-            write('\'%s  # %d\n'
-                  '    )\n'
-                  % (fill, count // 10 * 10))
-        else:
-            write('\n'
-                  '  };\n')
+                    if count != 0:
+                        write('\'  # %d\n'
+                              '    u\''
+                              % (count-10))
+                write('\\u' + strip[pos:pos+4])
+                count += 1
+        if count > 0:
+            if count % 10 == 0:
+                fill = ''
+            else:
+                fill = '      ' * (10 - count % 10)
+        write('\'%s  # %d\n'
+              '    )\n'
+              % (fill, count // 10 * 10))
         # Write charset description data.
         for ordinal, charset, indices in self.strip_codecs:
-            if main.python_mode:
-                write('\n'
-                      'class StripCodec_%d(recode.StripStep):\n'
-                      '    external_coding = %r\n'
-                      '    strip_pool = unicode_data_pool\n'
-                      % (ordinal, charset))
-            else:
-                write('\n'
-                      '/* %s */\n'
-                      '\n'
-                      'static struct strip_data data_%d =\n'
-                      '  {\n'
-                      '    ucs2_data_pool,\n'
-                      '    {\n'
-                      % (charset, ordinal))
+            write('\n'
+                  'class StripCodec_%d(recode.StripStep):\n'
+                  '    external_coding = %r\n'
+                  '    data = unicode_data_pool\n'
+                  % (ordinal, charset))
             count = 0
             for indice in indices:
-                if main.python_mode:
-                    if count % 11 == 0:
-                        if count == 0:
-                            write('    data = (')
-                        else:
-                            write(',\n'
-                                  '            ')
+                if count % 11 == 0:
+                    if count == 0:
+                        write('    indices = (')
                     else:
-                        write(', ')
-                    write('%d' % indice)
+                        write(',\n'
+                              '            ')
                 else:
-                    if count % 12 == 0:
-                        if count != 0:
-                            write(',\n')
-                        write('      ')
-                    else:
-                        write(', ')
-                    write('%4d' % indice)
+                    write(', ')
+                write('%d' % indice)
                 count += 1
-            if main.python_mode:
-                write(')\n')
-            else:
-                write('\n'
-                      '    }\n'
-                      '  };\n')
-        # Print the collectable initialization function.
-        if main.python_mode:
-            del self.declare_charset[:]
-            write('\n'
-                  'implied_surfaces = [\n')
-            for alias, charset in self.declare_alias:
-                surface = self.implied_surface.get(alias)
-                if surface is not None:
-                    write('    (%r, %r),\n' % (alias, surface))
-            write('    ]\n')
-            del self.declare_alias[:]
-        else:
-            write('\n'
-                  'bool\n'
-                  'module_strips (struct recode_outer *outer)\n'
-                  '{\n'
-                  '  RECODE_ALIAS alias;\n'
-                  '\n')
-            count = 0
-            for charset in self.declare_charset:
-                write('  if (!declare_strip_data (outer, &data_%d, "%s"))\n'
-                      '    return false;\n'
-                      % (count, charset))
-                count += 1
-            write('\n')
-            del self.declare_charset[:]
-            for alias, charset in  self.declare_alias:
-                if alias in self.implied_surface:
-                    write('  if (alias = declare_alias (outer, "%s", "%s"),'
-                          ' !alias)\n'
-                          '    return false;\n'
-                          % (alias, charset))
-                    write('  if (!declare_implied_surface (outer, alias,'
-                          ' outer->%s_surface))\n'
-                          '    return false;\n'
-                          % self.implied_surface[alias])
-                else:
-                    write('  if (!declare_alias (outer, "%s", "%s"))\n'
-                          '    return false;\n'
-                          % (alias, charset))
-            write('\n'
-                  '  return true;\n'
-                  '}\n'
-                  '\n'
-                  'void\n'
-                  'delmodule_strips (struct recode_outer *outer)\n'
-                  '{\n'
-                  '}\n')
-            del self.declare_alias[:]
+            write(')\n')
+        # Print implied surface data.
+        del self.declare_charset[:]
+        write('\n'
+              'implied_surfaces = [\n')
+        for alias, charset in self.declare_alias:
+            surface = self.implied_surface.get(alias)
+            if surface is not None:
+                write('    (%r, %r),\n' % (alias, surface))
+        write('    ]\n')
+        del self.declare_alias[:]
 
     def complete_texinfo(self):
-        if main.french_mode:
-            write = Output('fr-%s' % self.TEXINFO, noheader=True).write
+        if run.french_mode:
+            write = common.Output('fr-%s' % self.TEXINFO).write
         else:
-            write = Output(self.TEXINFO, noheader=True).write
+            write = common.Output(self.TEXINFO).write
         charsets = self.remark_map.keys()
         charsets.sort()
         for charset in charsets:
@@ -1375,93 +1060,6 @@ class Strips(Options):
                 if line[-1] != '.':
                     write('.')
                 write('\n')
-
-# Handling basic input and output.
-
-class Input:
-    def __init__(self, name):
-        self.name = name
-        self.input = file(name)
-        self.line_count = 0
-        sys.stderr.write("Reading %s\n" % name)
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        line = self.input.readline()
-        if line:
-            self.line_count += 1
-            return line
-        raise StopIteration
-
-    def readline(self):
-        line = self.input.readline()
-        if line:
-            self.line_count += 1
-        return line
-
-    def warn(self, format, *args):
-        sys.stderr.write('%s:%s: %s\n'
-                         % (self.name, self.line_count, format % args))
-
-    def die(self, format, *args):
-        sys.stderr.write('%s:%s: %s\n'
-                         % (self.name, self.line_count, format % args))
-        raise 'Fatal'
-
-class Output:
-    def __init__(self, name, noheader=False):
-        self.name = name
-        self.write = file(name, 'w').write
-        sys.stderr.write("Writing %s\n" % name)
-        if not noheader:
-            if main.python_mode:
-                self.write("""\
-# DO NOT MODIFY THIS FILE!  It was generated by `recode/doc/tables.py'.
-
-# Conversion between different charsets, surfaces and structures.
-# Copyright © 1993, 1997, 1999, 2002 Free Software Foundation, Inc.
-# Contributed by François Pinard <pinard@iro.umontreal.ca>, 1993.
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public License
-# as published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be
-# useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with the `recode' Library; see the file `COPYING.LIB'.
-# If not, write to the Free Software Foundation, Inc., 59 Temple Place -
-# Suite 330, Boston, MA 02111-1307, USA.
-""")
-            else:
-                self.write("""\
-/* DO NOT MODIFY THIS FILE!  It was generated by `recode/doc/tables.py'.  */
-
-/* Conversion between different charsets, surfaces and structures.
-   Copyright © 1993, 1997, 1999, 2002 Free Software Foundation, Inc.
-   Contributed by François Pinard <pinard@iro.umontreal.ca>, 1993.
-
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2 of the
-   License, or (at your option) any later version.
-
-   This library is distributed in the hope that it will be
-   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the `recode' Library; see the file `COPYING.LIB'.
-   If not, write to the Free Software Foundation, Inc., 59 Temple Place -
-   Suite 330, Boston, MA 02111-1307, USA.  */
-""")
 
 if __name__ == '__main__':
-    main.main(*sys.argv[1:])
+    main(*sys.argv[1:])

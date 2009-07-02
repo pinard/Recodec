@@ -86,32 +86,38 @@ class Registry:
             self.aliases = preset.aliases
             # METHODS relates a (BEFORE, AFTER) pair to a recoding METHOD.
             # BEFORE and AFTER are canonical coding names.  METHOD might
-            # cache the callable method at run-time.  Until then, it
-            # is either a 2-tuple or a 3-tuple.  The first element is
+            # merely cache the callable method at run-time.  Until then,
+            # it is either a 2-tuple or a 3-tuple.  The first element is
             # always a string naming a module to import.  For a 2-tuple,
             # the second element is a string naming a recoding function
             # within that module.  For a 3-tuple, the second element is
             # a string naming a Step sub-class in the module; the third
-            # element is True if BEFORE gets recoded into AFTER by any
-            # Step instance ENCODE method, or False if by its DECODE method.
+            # element is True if BEFORE gets recoded into AFTER by any Step
+            # instance ENCODE method, or False if by its DECODE method.
             self.methods = preset.methods
+            # Finding recoding sequences requires a graph of possibilities,
+            # merely described by a collection of arcs.  We compute that
+            # graph here once and for all.
+            self.methods_keys = preset.methods.keys()
 
     def unalias(self, name):
         if not name:
             name = IMPLIED_ALIAS
         return self.aliases[resolve(clean_alias(name), self.aliases)]
 
+# FIXME: The `resolve' routine is fairly slow, as shown by `recodec -lc'.
+# Maybe I could just invent a kind of GenericStep able to do the same?
 def resolve(given, word_list):
     # Desambiguate GIVEN, knowing it is part of a WORD_LIST.  Unless it
     # matches exactly, GIVEN should be the prefix of at most one word,
-    # which is returned.  Otherwise, an exception is raised.
+    # which is then returned whole.  Otherwise, an exception is raised.
     if given in word_list:
         return given
-    found = [word for word in word_list if word.startswith(given)]
-    if len(found) == 1:
-        return found[0]
-    if len(found) > 1:
-        raise AmbiguousWordError, (given, found)
+    candidates = [word for word in word_list if word.startswith(given)]
+    if len(candidates) == 1:
+        return candidates[0]
+    if len(candidates) > 1:
+        raise AmbiguousWordError, (given, candidates)
     raise UnknownWordError, given
 
 # Base Step class, and Python built-in Codecs.
@@ -330,6 +336,10 @@ class StripStep(Step):
 
     internal_coding = UNICODE_STRING
 
+    # The default value for INDICES is meant for when DATA is a sequence
+    # of 256 Unicode characters in natural order.
+    indices = range(0, 256, STRIP_SIZE)
+
     # The following tables are defaulted as base class attributes, and are
     # later overridden, as needed, by derived class attributes instead of
     # instance attributes, so they get built at most once per derived class.
@@ -340,11 +350,11 @@ class StripStep(Step):
         table = self.encoding_table
         if table is None:
             table = {}
-            strip_pool = self.strip_pool
             data = self.data
+            indices = self.indices
             for counter in range(256):
                 index, offset = divmod(counter, STRIP_SIZE)
-                value = strip_pool[data[index] + offset]
+                value = strip_pool[indices[index] + offset]
                 if value != NOT_A_CHARACTER:
                     table[value] = chr(counter)
             self.__class__.encoding_table = table
@@ -363,11 +373,11 @@ class StripStep(Step):
         table = self.decoding_table
         if table is None:
             table = []
-            strip_pool = self.strip_pool
             data = self.data
+            indices = self.indices
             for counter in range(256):
                 index, offset = divmod(counter, STRIP_SIZE)
-                value = strip_pool[data[index] + offset]
+                value = strip_pool[indices[index] + offset]
                 if value == NOT_A_CHARACTER:
                     table.append(None)
                 else:
@@ -410,40 +420,41 @@ class Recodec(Step):
     def __init__(self, request, implied=True):
         # Handle implied surfaces only if IMPLIED is True.
         self.segments = segments_from_request(request, implied)
-        self.encode_sequence = None
-        self.decode_sequence = None
-        # For most requests, the internal and external codings just cannot
-        # represent all of what the combined recoding does, and consequently,
-        # are not meaningful.
-        #self.internal_coding = segments[0][0]
-        #self.external_coding = segments[-1][-1]
+        self.encode_methods = None
+        self.decode_methods = None
+        # For most requests, self.internal_coding and self.external_coding
+        # just cannot represent all of what the combined recoding does, and
+        # consequently, not being meaningful, they do not get initialised.
 
     def encode(self, text, errors='strict'):
-        if self.encode_sequence is None:
-            self.encode_sequence = sequence_from_segments(
-                self.segments, registry.methods.keys())
-            import_sequence(self.encode_sequence)
+        if self.encode_methods is None:
+            self.encode_methods = methods_from_sequence(self.encoding_arcs())
         length = len(text)
-        for arc in self.encode_sequence:
-            text, _ = registry.methods[arc](text, errors)
+        for method in self.encode_methods:
+            text, _ = method(text, errors)
         return text, length
 
     def decode(self, text, errors='strict'):
-        if self.decode_sequence is None:
-            segments = [(after, before) for before, after in self.segments]
-            segments.reverse()
-            self.decode_sequence = sequence_from_segments(
-                segments, registry.methods.keys())
-            import_sequence(self.decode_sequence)
+        if self.decode_methods is None:
+            self.decode_methods = methods_from_sequence(self.decoding_arcs())
         length = len(text)
-        for arc in self.decode_sequence:
-            text, _ = registry.methods[arc](text, errors)
+        for method in self.decode_methods:
+            text, _ = method(text, errors)
         return text, length
+
+    def encoding_arcs(self):
+        return sequence_from_segments(self.segments, registry.methods_keys)
+
+    def decoding_arcs(self):
+        segments = [(after, before) for before, after in self.segments]
+        segments.reverse()
+        return sequence_from_segments(segments, registry.methods_keys)
 
 def segments_from_request(request, implied):
     # Return list of segments for representing REQUEST.  Each segment
-    # is a (BEFORE, AFTER) pair, where BEFORE and AFTER are canonical
-    # coding names.  Handle implied surfaces if IMPLIED is True.
+    # is a (BEFORE, AFTER) pair, where BEFORE and AFTER are each either
+    # canonical coding name, or a sequence of such in fallback order.
+    # Handle implied surfaces if IMPLIED is True.
     segments = []
     for segment in request.split(','):
         chains = segment.split('..')
@@ -476,8 +487,9 @@ def segments_from_request(request, implied):
     return segments
 
 def sequence_from_segments(segments, arcs):
-    # Return sequence of arcs for representing all request SEGMENTS.
+    # Return a tree of arcs for representing all request SEGMENTS.
     # ARCS describe the graph of all possible elementary recodings.
+    # The tree is a sequence of either @@@
     import graph
     sequence = []
     for before, after in segments:
@@ -487,8 +499,10 @@ def sequence_from_segments(segments, arcs):
         sequence += subsequence
     return sequence
 
-def import_sequence(sequence):
-    # Import modules for SEQUENCE, discover needed methods and cache them.
+def methods_from_sequence(sequence):
+    # Return a list of methods from a SEQUENCE of arcs.
+    # While doing so, import modules and cache methods.
+    methods = []
     for arc in sequence:
         method = registry.methods[arc]
         if isinstance(method, tuple):
@@ -507,3 +521,5 @@ def import_sequence(sequence):
                 else:
                     method = codec.decode
             registry.methods[arc] = method
+        methods.append(method)
+    return methods

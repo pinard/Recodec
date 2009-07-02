@@ -1,3 +1,5 @@
+from __future__ import generators
+
 import sys
 import recode
 
@@ -61,11 +63,11 @@ def list_full_charset(charset, write=sys.stdout.write):
 def unicode_mapping(charset):
     codec = recode.Recodec(
         '%s..%s' % (charset, recode.UNICODE_STRING), implied=False)
-    codec.encode('')
-    if len(codec.encode_sequence) == 0:
+    codec.encode('')                    # force full initialisation
+    if len(codec.encode_methods) == 0:
         return map(unichr, range(256))
-    if len(codec.encode_sequence) == 1:
-        method = recode.registry.methods[codec.encode_sequence[0]]
+    if len(codec.encode_methods) == 1:
+        method = codec.encode_methods[0]
         mapping = method.im_self.unicode_mapping(method)
         if mapping is not None:
             return mapping
@@ -95,102 +97,89 @@ def list_all_codings(write=sys.stdout.write):
                 codings[after] = []
     # Tie various aliases with their official name.
     for alias, (coding, surface) in recode.registry.aliases.iteritems():
-        if coding in codings and alias != recode.clean_alias(coding):
+        if coding in codings:
             codings[coding].append((alias, surface))
     # Produce the synthetic report.
     items = [(recode.clean_alias(coding), coding, aliases)
              for (coding, aliases) in codings.iteritems()]
     items.sort()
     for key, coding, aliases in items:
+        # Write the coding official name and surface.
         if spaces[coding] == 'surface':
             write('/')
         write(coding)
-        surface = recode.registry.aliases[recode.clean_alias(coding)][1]
+        handy_alias = recode.clean_alias(coding)
+        surface = recode.registry.aliases[handy_alias][1]
         if surface is not None:
             write('/' + recode.registry.unalias(surface)[0])
+        # Write all available aliases.
         aliases.sort()
         for alias, surface in aliases:
-            write(' ')
-            write(alias)
-            if surface is not None:
-                write('/' + recode.registry.unalias(surface)[0])
-        write('\n')
+            if alias != recode.clean_alias(coding):
+                write(' ')
+                write(alias)
+                if surface is not None:
+                    write('/' + recode.registry.unalias(surface)[0])
+            while alias:
+                if len(alias) < len(handy_alias):
+                    handy_alias = alias
+                elif len(alias) == len(handy_alias) and alias < coding:
+                    handy_alias = alias
+                alias = alias[:-1]
+                try:
+                    check, _ = recode.registry.unalias(alias)
+                except recode.AmbiguousWordError:
+                    break
+                if check != coding:
+                    break
+        # Write the shortest acceptable writing of an alias.
+        write(' [%s]\n' % handy_alias)
 
-# This is a diagnostic tool.  Report all charsets which are a subset of
-# another, or are identical.  Return true only if there are no such subsets.
-def find_and_report_subsets():
-    pass
-#   bool success = true;
-#   RECODE_SYMBOL charset1;
-#
-#   for (charset1 = outer->symbol_list;
-#        charset1;
-#        charset1 = charset1->next)
-#     {
-#       const struct strip_data *table1 = charset1->data;
-#       RECODE_SYMBOL charset2;
-#
-#       if (charset1->ignore || charset1->data_type != RECODE_STRIP_DATA)
-#	continue;
-#
-#       for (charset2 = outer->symbol_list;
-#	   charset2;
-#	   charset2 = charset2->next)
-#	{
-#	  const struct strip_data *table2 = charset2->data;
-#
-#	  if (charset2->ignore || charset2->data_type != RECODE_STRIP_DATA
-#	      || charset2 == charset1)
-#	    continue;
-#
-#	  {
-#	    bool subset = true;
-#	    unsigned distance = 0;
-#	    unsigned counter;
-#	    unsigned slider;
-#
-#	    for (counter = 0; counter < 256/STRIP_SIZE; counter++)
-#	      {
-#		const recode_ucs2 *pool1 = table1->pool;
-#		const recode_ucs2 *pool2 = table2->pool;
-#		const short offset1 = table1->offset[counter];
-#		const short offset2 = table2->offset[counter];
-#
-#		if (pool1 != pool2 || offset1 != offset2)
-#		  for (slider = 0; slider < STRIP_SIZE; slider++)
-#		    {
-#		      recode_ucs2 value1 = pool1[offset1 + slider];
-#		      recode_ucs2 value2 = pool2[offset2 + slider];
-#
-#		      if (value1 != value2)
-#			{
-#			  if (value1 == MASK (16))
-#			    distance++;
-#			  else
-#			    {
-#			      subset = false;
-#			      break;
-#			    }
-#			}
-#		    }
-#		if (!subset)
-#		  break;
-#	      }
-#
-#	    if (subset)
-#	      {
-#		if (distance == 0)
-#		  printf ("[  0] %s == %s\n",
-#			  charset1->name, charset2->name);
-#		else
-#		  printf ("[%3d] %s < %s\n", distance,
-#			  charset1->name, charset2->name);
-#
-#		success = false;
-#	      }
-#	  }
-#	}
-#     }
+def list_all_subsets(write=sys.stdout.write):
+    # This is a diagnostic tool.  Report all charsets which are a subset of
+    # another, or are identical.
+    strip_data = list(all_strip_data())
+    # FIXME: Do not retain ignorable charsets above.
+    results = []
+    for charset1, data1, indices1 in strip_data:
+        for charset2, data2, indices2 in strip_data:
+            if charset1 == charset2:
+                continue
+            distance = 0
+            subset = True
+            for index1, index2 in zip(indices1, indices2):
+                if data1 != data2 or index1 != index2:
+                    for character1, character2 in zip(
+                        data1[index1:index1+recode.STRIP_SIZE],
+                        data2[index2:index2+recode.STRIP_SIZE]
+                        ):
+                        if character1 != character2:
+                            if character1 == recode.NOT_A_CHARACTER:
+                                distance += 1
+                            else:
+                                subset = False
+                                break
+                    if not subset:
+                        break
+            else:
+                results.append((distance, charset1, charset2))
+    results.sort()
+    for distance, charset1, charset2 in results:
+        if distance == 0:
+            write('[  0] %s == %s\n' % (charset1, charset2))
+        else:
+            write('[%3d] %s < %s\n' % (distance, charset1, charset2))
+
+def all_strip_data():
+    # Save all data from known StripStep classes.
+    for (before, after), method in recode.registry.methods.iteritems():
+        if after == recode.UNICODE_STRING and len(method) == 3:
+            module_name, codec_name, use_encode = method
+            module = getattr(__import__('Recode.' + module_name),
+                             module_name)
+            step = getattr(module, codec_name)
+            if issubclass(step, recode.StripStep):
+                yield before, step.data, step.indices
 
 # /* Charset contents.  */
 #
