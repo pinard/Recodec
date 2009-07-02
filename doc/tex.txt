@@ -1,0 +1,42 @@
+TeX related charsets
+====================
+
+LaTeX macro calls
+-----------------
+
+.. :tindex LaTeX, a charset
+.. :tindex ltex
+.. :cindex LaTeX files
+.. :cindex TeX files
+
+This charset is available in |package| under the name :charset:`LaTeX`
+and has :charset:`ltex` as an alias.  It is used for ASCII files coded to
+be read by LaTeX or, in certain cases, by TeX.
+
+Whenever you recode from another charset to :charset:`LaTeX`, beware that all
+occurrences of backslashes :kbd:`\` are translated into the string
+``\backslash{}``.  However, in practice, people often use backslashes in the
+other charset for introducing TeX commands, compromising it: it is not pure
+TeX, nor it is pure other charset.  This translation of backslashes into
+``\backslash{}`` can be rather inconvenient, it may be inhibited through the
+command option ``-d`` (see `Using mixed charset input`_).
+
+GNU project documentation files
+-------------------------------
+
+.. :tindex Texinfo, a charset
+.. :tindex texi
+.. :tindex ti
+.. :cindex Texinfo files
+
+This charset is available in |package| under the name
+:charset:`Texinfo` and has :charset:`texi` and :charset:`ti` for aliases.  It is
+used by the GNU project for its documentation.  Texinfo files may be
+converted into Info files by the :code:`makeinfo` program and into nice
+printed manuals by the TeX system.
+
+Even if |package| may transform other charsets to Texinfo, it may
+not read Texinfo files yet.  In these times, usages are also changing
+between versions of Texinfo, and |package| only partially succeeds
+in correctly following these changes.  So, for now, Texinfo support in
+|package| should be considered as work still in progress (!).

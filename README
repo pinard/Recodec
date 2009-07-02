@@ -1,225 +1,29 @@
-==================
-README for Recodec
-==================
+====================
+README for |package|
+====================
 
-.. contents::
+.. include:: /home/pinard/codes/recodec/doc/common.txt
+.. |Recode| replace:: Free :code:`recode`
 
-The Recodec project
-===================
+Here is |package| |version|, a clone of |Recode| meant for prototyping,
+experimenting, and preparing what |Recode| version 4.X will
+be.  You may find a manual for |package|, including installation
+instructions, migration plans, and many other things as well, at
+http://recodec.progiciels-bpi.ca/showfile.html?name=web/recodec.html .
 
-Presentation
-------------
+I'm currently concentrating on TeX-related matters: that is, exploring
+what are the differences between TeX, old LaTeX and LaTeX2e, and maybe
+Bibtex, and increasing the ability to process more characters outside
+Latin-1.  Despite implemented as charsets, TeX-related encodings are
+neither real charsets nor surfaces deep down, but some kind of fallback
+to be used in conjunction with other charsets.  Fallbacks need much
+conceptual straightening and implementation research within |package|:
+there is a lot of food for thought in this particular area.
 
-Here is version 0.2 of the Recodec program and library.  Recodec
-is a Python (2.2.1 or better) clone of Free ``recode``.  Both
-convert strings or files between various character sets and usages,
-transliterating between more than 240 different character sets.  When
-exact transliteration are not possible, they get rid of offending
-characters or fall back on approximations.
+This series of snapshots link the TeX (or LaTeX) charset to Unicode
+instead of Latin-1.  Note that the ``t_names`` test still fails, this
+failure does not need to be reported.  See the :file:`ChangeLog` in the
+distribution for further details.
 
-Recodec and Free ``recode`` have fairly compatible command calls.
-However, they use fairly different APIs internally, as Recodec extends
-the concept of Python codecs, and is designed to nicely mix with them.
 
-This file is repeated as http://recodec.progiciels-bpi.ca
-and http://recodec.progiciels-bpi.ca/archives/Recodec-0.2.tar.gz holds
-the latest snapshot or release.  This is still alpha quality and should
-not be used without caution in a production environment.
 
-Pretesters are welcome.  Please gently report problems, suggestions or
-other comments to mailto:pinard@iro.umontreal.ca. ``recode``-related
-discussions might be held on mailto:recode-forum@iro.umontreal.ca,
-this list is opened to its members only.  Python specific discussions
-might go to mailto:python-list@python.org.
-
-The Recodec program and library have been written by François Pinard,
-yet they reuse ideas from users, and other works in this area.  This is
-an evolving package, specifications might change in future releases.
-
-Installation
-------------
-
-Install through either ``python setup.py install`` or ``make install``
-at top-level of the unpacked distribution.  To check the installation,
-try ``recodec -lc`` in a shell, this should list all usable charsets,
-surfaces, and aliases. ``make check`` launches the validation suite.
-
-Around permission problems, you may install in your own home directory
-with ``python setup.py install --home=$HOME``.  If you do, adjust some
-environment variables before usage, with commands like these::
-
-  export PATH=$HOME/bin:$PATH
-  export PYTHONPATH=$HOME/lib/python:$PYTHONPATH
-
-Documentation
--------------
-
-Recodec currently does not have a documentation on its own.  However,
-the Free ``recode`` manual should roughly apply for Recodec, replacing
-``recode`` by ``recodec`` in the examples.  The Free ``recode`` manual
-may be read at http://recode.progiciels-bpi.ca/manual/.
-
-The manual documents the C API, which is not available in Recodec.  Some
-later version of the manual will document the Python API.  Until then,
-the following example should help.  The shell command::
-
-  recodec qnx..latin-1 < INPUT > OUTPUT
-
-could be rewritten into the following Python program::
-
-  import Recode
-  buffer = file('INPUT').read().encode('qnx..latin1', 'replace')
-  file('OUTPUT', 'w').write(buffer)
-
-or maybe a little more explicitly as::
-
-  from Recode import Recodec
-  input = file('INPUT')
-  output = file('OUTPUT', 'w')
-  codec = Recodec('qnx..latin-1')
-  buffer, length = codec.encode(input.read(), 'replace')
-  ouput.write(buffer)
-
-The 'replace' arguments may be omitted, this has the same effect as if
-the ``--strict`` (``-s``) option has been given on the ``recodec`` call.
-
-Maintenance
------------
-
-Proper maintenance of Recodec, beyond mere installation and usage,
-currently requires GNU Make.  It is expected that later releases will
-also need Greg Ewing's Pyrex and a C development environment.
-
-Recodec and Free ``recode``
-===========================
-
-Purpose
--------
-
-Free ``recode``, formerly GNU ``recode``, is due for a major ovehaul.
-
-For one thing, I want to explore some new avenues.  It does not
-seem natural anymore, to me at least, using C code for exploring
-or prototyping new ideas requiring complex internal structures:
-encompassing changes are stretchy, work overhead is just too high.  My
-plan is now to maintain a Python prototype for ``recode``, together with
-a C rendering of that prototype where speed considerations apply.
-
-Another thing is that ``recode`` should reuse more of the work of many
-competent people in the recoding area.  I was brought into the business
-of character set conversion issues by a random set of coincidences and
-needs, but have never been a character set specialist myself.  I rely on
-users to help me sketch what needs to be done.  There are other tools
-and other maintainers who address these matters more competently than
-me. ``recode`` might well rely on their work and better concentrate on
-user functionalities and on an overall picture.
-
-Consequently, the release 3.6 for Free ``recode`` may well be the
-last in the 3.x series.  Version 4.0 is planned as an undecided
-mix of Python, C and Pyrex.  On the development road, there might
-be many pretest releases before the new program recovers even the
-functionality of 3.6.  To avoid confusion, but also for allowing an
-easier co-existence of the official ``recode`` with the one being
-rewritten, the new ``recode`` is called Recodec, for which versioning
-scheme starts back at 0.0.  When Recodec will have become stable and
-usable enough to replace Free ``recode`` 3.6, it will be renamed Free
-``recode`` 4.0.  That Free ``recode`` might still install a ``recodec``
-program, if it offers a GUI.
-
-Overall plan
-------------
-
-Recodec releases ``0.X`` are pure Python relying on the Python library,
-and is going to recover most functionalities of Free ``recode``.  See
-``recodec --help`` for an exact list of missing options and features.
-
-Series ``1.X`` will start when the list almost vanishes.  Release
-``1.X`` might support either ``libiconv`` or GNU ``libc`` recoding
-facilities as configurable, but separate C extensions.  Recodec and Free
-``recode`` will have similar specifications; see `Planned differences`_
-later down.
-
-The Recodec ``2.X`` series is meant to create a usable bridge between
-C and Python.  The Recodec internal API will get exposed for C
-programming, as well as a compatibility layer offering the older Free
-``recode`` library API.  Guided by profiling, some parts of Recodec
-will be rewritten either in C or in Pyrex (which may run at C speed
-with proper care), using Pyrex itself to generate the interface between
-languages.  If Unicode is not supported by Pyrex at that time, I'll have
-to displace the equilibrium a bit more from Pyrex towards C.  The goals
-here are to recover part of the speed, spare disk accesses, and find a
-way to be economical on memory.
-
-The ``3.X`` series is going to address and formalise some, but not all
-of the new aspects of structures and spaces within Recodec.  These are
-likely to have begun to peek into the ``2.X`` series.  Internally, the
-effort might go towards minimizing Python startup time: the rest of
-initialisation time has already been cut a lot in ``0.X`` series.  I
-might explore providing for Pyrex generated code some kludges of a
-Python API interface so the Python interpreter would not be required at
-all at run-time, but today, I doubt this is doable in practice, or that
-the implied restrictions on Pyrex code would be bearable.  By the time,
-I may come to think that this is not worth the effort, anyway.
-
-Finally, the ``4.X`` series will coincide with releasing Free ``recode``
-as a full merge of Recodec within Free ``recode``.  Recodec will likely
-disappear, and Recodec ``4.X`` might never exist as such.  We'll decide
-once there!
-
-Speed and memory
-----------------
-
-Historically, Free ``recode`` has always been oriented towards some
-generality in specifications, combined with good execution speed.
-Generality is granted through providing recoding steps either as tables
-or fuller algorithms expressed as C code.  Speed surely results from
-careful C coding of individual steps, and using Flex for more difficult
-recognition problems.  Speed also comes from the monolithic design of an
-executable holding all tables at once, relying on system paging instead
-of run-time opening of external data files.  The automatic selection
-among step sequencing methods also play a role in the speed area.
-
-Rewriting a character shuffling engine in Python is going to have
-consequences on both speed and memory: Python is inherently much slower
-than C for such problems, program startup requires many disk accesses
-to load all required modules, and the size of the Python interpreter is
-not negligible.  On the other hand, Free ``recode`` is not small as it
-stands.
-
-For prototyping various experiments, the slowdown is likely to be
-bearable, especially considering the development speedup that might
-result from using Python instead of C.  It is fairly tedious to make
-encompassing structural changes in the C version of Free ``recode``,
-while similar changes are going to be rather easy in Python.  I expect
-that the shorter development cycle will counter-weight some duplication
-in the maintenance of Free ``recode`` both in Python and C afterwards.
-
-Planned differences
--------------------
-
-Whenever the Python library offers a charset or a surface which Free
-``recode`` also has, the Python library codec is used.  In some cases,
-this introduces differences, those will have to be resolved one by one,
-either by accepting that the Python library does better, getting the
-Python team to improve some codecs, or overriding these from Recodec.
-
-Other differences may occur, especially in the Asian charset area,
-from the fact ``libiconv``, GNU ``libc`` recoding facilities, and
-various contributors to the Python codecs project, do not fully agree
-on how things should be done.  Recodec is likely to offer configuration
-mechanisms to choose among various possibilities, but will not likely
-attempt to rule out who is right and who is wrong! :-)
-
-Issues about reversibility and canonicity, which were much present in
-Free ``recode`` ``3.X``, are fading out.  While some of these were
-moderately easy to implement, other cases stayed pending as fairly
-difficult to solve without a significant loss of efficiency.  I think
-these issues are better abandoned than forever kept as half-hearted and
-not wholly dependable.  Any user concerned about such things might try
-the reverse coding to find out if the original file is recoverable, some
-new option might automate a (costly) reversibility test.
-
-File ``NEWS`` lists user visible changes, in a concise way.  File
-``ChangeLog`` gives a more comprehensive description for all changes.
-
-.. sectnum::

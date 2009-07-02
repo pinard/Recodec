@@ -1,0 +1,95 @@
+Other micro-computer charsets
+=============================
+
+.. :cindex NeXT charsets
+
+The :charset:`NeXT` charset, which used to be especially provided in
+releases of |package| before 3.5, has been integrated since as one
+RFC 1345 table.
+
+Apple's Macintosh code
+----------------------
+
+.. :tindex Apple-Mac
+.. :cindex Macintosh charset
+
+This charset is available in |package| under the name :charset:`Apple-Mac`.
+The shortest way of specifying it in |package| is :charset:`ap`.
+
+The charset is aimed towards a Macintosh micro-computer from Apple.
+This is an eight bit code.  The file is the data fork only.  This
+charset is fairly old in |package|, its tables were produced a long
+while ago by mere inspection of a printed chart of the Macintosh codes
+and glyph.
+
+.. :cindex CR surface, in Macintosh charsets
+
+It has :charset:`CR` as its implied surface.  This means that, if
+the original end of lines have to be preserved while going out of
+:charset:`Apple-Mac`, they should currently be added back through the usage
+of a surface on the other charset, or better, just never removed.  Here
+are examples for both cases:
+
+.. parsed-literal::
+
+  recodec ap..l2/cr < :var:`input` > :var:`output`
+  recodec ap/..l2 < :var:`input` > :var:`output`
+
+RFC 1345 brings into |package| 2 other Macintosh charsets.  You
+can discover them by using :code:`grep` over the output of ``recode
+-l``::
+
+  recodec -l | grep -i mac
+
+.. :tindex macintosh, a charset, and its aliases
+.. :tindex macintosh_ce, and its aliases
+.. :tindex mac
+.. :tindex macce
+
+Charsets :charset:`macintosh` and :charset:`macintosh_ce`, as well
+as their aliases :charset:`mac` and :charset:`macce` also have
+:charset:`CR` as their implied surface.
+
+There are a few discrepancies between the :charset:`Apple-Mac` charset and
+the very similar RFC 1345 charset :charset:`macintosh`, which have not
+been analysed yet, so the charsets are being kept separate for now.
+This might change in the future, and the :charset:`Apple-Mac` charset might
+disappear.  Wizards would be interested in comparing the output of these
+two commands::
+
+  recodec -vh Apple-Mac..Latin-1
+  recodec -vh macintosh..Latin-1
+
+The first command use the charset prior to RFC 1345 introduction.  Both
+methods give different recodings.  These differences are annoying, the
+fuzziness will have to be explained and settle down one day.
+
+.. :cindex |package|, a Macintosh port
+
+As a side note, some people ask if there is a Macintosh port of the
+|package| program.  I'm not aware of any.  I presume that if the
+tool fills a need for Macintosh users, someone will port it one of these
+days?
+
+Atari ST code
+-------------
+
+.. :tindex AtariST
+
+This charset is available in |package| under the name
+:charset:`AtariST`.
+
+This is the character set used on the Atari ST/TT/Falcon.  This is
+similar to :charset:`IBM-PC`, but differs in some details: it includes some
+more accented characters, the graphic characters are mostly replaced by
+Hebrew characters, and there is a true German :kbd:`sharp s` different
+from Greek :kbd:`beta`.
+
+About the end-of-line conversions: the canonical end-of-line on the
+Atari is ``\r\n``, but unlike :charset:`IBM-PC`, the OS makes no difference
+between text and binary input/output; it is up to the application how
+to interpret the data.  In fact, most of the libraries that come with
+compilers can grok both ``\r\n`` and ``\n`` as end of lines.  Many of
+the users who also have access to Unix systems prefer ``\n`` to ease
+porting Unix utilities.  So, for easing reversibility, |package|
+tries to let ``\r`` undisturbed through recodings.

@@ -260,9 +260,8 @@ XML-standalone h0 [h0]
         import difflib, sys
         delta = difflib.ndiff(''.join(fragments).splitlines(),
                               output.splitlines())
-        delta = difflib.ndiff(output.splitlines(), output.splitlines())
-        lines = [line.rstrip() + '\n' for line in delta
-                 if not line.startswith('  ')]
+        lines = [line.rstrip() + '\n'
+                 for line in delta if not line.startswith('  ')]
         sys.stdout.writelines(lines)
         assert not lines
 

@@ -1,0 +1,382 @@
+The universal charset
+=====================
+
+.. :cindex ISO 10646
+
+Standard ISO 10646 defines a universal character set, intended to encompass
+in the long run all languages written on this planet.  It is based on
+wide characters, and offer possibilities for two billion characters
+(``2^31``).
+
+.. :tindex UCS
+
+This charset was to become available in |package| under the name
+:charset:`UCS`, with many external surfaces for it.  But in the current
+version, only surfaces of :charset:`UCS` are offered, each presented as a
+genuine charset rather than a surface.  Such surfaces are only meaningful
+for the :charset:`UCS` charset, so it is not that useful to draw a line
+between the surfaces and the only charset to which they may apply.
+
+.. :tindex UTF-1
+
+:charset:`UCS` stands for Universal Character Set. :charset:`UCS-2` and
+:charset:`UCS-4` are fixed length encodings, using two or four bytes
+per character respectively. :charset:`UTF` stands for :charset:`UCS`
+Transformation Format, and are variable length encodings dedicated
+to :charset:`UCS`. :charset:`UTF-1` was based on ISO 2022, it did
+not succeed [#]_. :charset:`UTF-2` replaced it, it has been called
+:charset:`UTF-FSS` (File System Safe) in Unicode or Plan9 context,
+but is better known today as :charset:`UTF-8`.  To complete the
+picture, there is :charset:`UTF-16` based on 16 bits bytes, and
+:charset:`UTF-7` which is meant for transmissions limited to 7-bit
+bytes.  Most often, one might see :charset:`UTF-8` used for external
+storage, and :charset:`UCS-2` used for internal storage.
+
+.. :FIXME: the manual never explains what the U+NNNN notation means!
+
+When |package| is producing any representation of :charset:`UCS`,
+it uses the replacement character :code:`U+FFFD` for any *valid*
+character which is not representable in the goal charset [#]_.  For
+shorter charsets, the ``--strict`` (``-s``) option decides what happens:
+either the character is dropped, or a reversible mapping is produced
+on the fly.}.  This happens, for example, when :charset:`UCS-2` is not
+capable to echo a wide :charset:`UCS-4` character, or for a similar
+reason, an :charset:`UTF-8` sequence using more than three bytes.  The
+replacement character is meant to represent an existing character.  So,
+it is never produced to represent an invalid sequence or ill-formed
+character in the input text.  In such cases, |package| just gets
+rid of the noise, while taking note of the error in its usual ways.
+
+Even if :charset:`UTF-8` is an encoding, really, it is the encoding
+of a single character set, and nothing else.  It is useful to
+distinguish between an encoding (a *surface* within |package|)
+and a charset, but only when the surface may be applied to several
+charsets.  Specifying a charset is a bit simpler than specifying a
+surface in a |package| request.  There would not be a practical
+advantage at imposing a more complex syntax to |package| users,
+when it is simple to assimilate :charset:`UTF-8` to a charset.
+Similar considerations apply for :charset:`UCS-2`, :charset:`UCS-4`,
+:charset:`UTF-16` and :charset:`UTF-7`.  These are all considered to be
+charsets.
+
+.. [#] It is not probable that |package| will ever support
+   :charset:`UTF-1`.
+
+.. [#] This is when the goal charset allows for 16-bits.
+
+Universal Character Set, 2 bytes
+--------------------------------
+
+.. :tindex UCS-2
+.. :cindex Unicode
+
+One surface of :charset:`UCS` is usable for the subset defined by its
+first sixty thousand characters (in fact, ``31 * 2^11`` codes), and uses
+exactly two bytes per character.  It is a mere dump of the internal
+memory representation which is *natural* for this subset and as such,
+conveys with it endianness problems.
+
+.. :cindex byte order mark
+
+A non-empty :charset:`UCS-2` file normally begins with a so called
+:dfn:`byte order mark`, having value :code:`0xFEFF`.  The value
+:code:`0xFFFE` is not an :charset:`UCS` character, so if this value is
+seen at the beginning of a file, |package| reacts by swapping all
+pairs of bytes.  The library also properly reacts to other occurrences
+of :code:`0xFEFF` or :code:`0xFFFE` elsewhere than at the beginning,
+because concatenation of :charset:`UCS-2` files should stay a simple
+matter, but it might trigger a diagnostic about non canonical input.
+
+By default, when producing an :charset:`UCS-2` file, |package| always outputs
+the high order byte before the low order byte.  But this could be easily
+overridden through the :charset:`21-Permutation` surface (see `Permuting
+groups of bytes`_).  For example, the command:
+
+.. parsed-literal::
+
+  recodec u8..u2/21 < :var:`input` > :var:`output`
+
+asks for an :charset:`UTF-8` to :charset:`UCS-2` conversion, with swapped byte
+output.
+
+.. :tindex ISO-10646-UCS-2, and aliases
+.. :tindex BMP
+.. :tindex rune
+.. :tindex u2
+
+Use :charset:`UCS-2` as a genuine charset.  This charset is available in
+|package| under the name :charset:`ISO-10646-UCS-2`.  Accepted aliases
+are :charset:`UCS-2`, :charset:`BMP`, :charset:`rune` and :charset:`u2`.
+
+.. :tindex combined-UCS-2
+.. :cindex combining characters
+
+The |package| library is able to combine :charset:`UCS-2` some
+sequences of codes into single code characters, to represent a few
+diacriticized characters, ligatures or diphtongs which have been
+included to ease mapping with other existing charsets.  It is also
+able to explode such single code characters into the corresponding
+sequence of codes.  The request syntax for triggering such operations is
+rudimentary and temporary.  The :charset:`combined-UCS-2` pseudo character
+set is a special form of :charset:`UCS-2` in which known combinings
+have been replaced by the simpler code.  Using :charset:`combined-UCS-2`
+instead of :charset:`UCS-2` in an *after* position of a request forces
+a combining step, while using :charset:`combined-UCS-2` instead of
+:charset:`UCS-2` in a *before* position of a request forces an exploding
+step.  For the time being, one has to resort to advanced request syntax
+to achieve other effects.  For example:
+
+.. parsed-literal::
+
+  recodec u8..co,u2..u8 < :var:`input` > :var:`output`
+
+copies an :charset:`UTF-8` :var:`input` over :var:`output`, still to be
+in :charset:`UTF-8`, yet merging combining characters into single codes
+whenever possible.
+
+Universal Character Set, 4 bytes
+--------------------------------
+
+.. :tindex UCS-4
+
+Another surface of :charset:`UCS` uses exactly four bytes per character,
+and is a mere dump of the internal memory representation which is
+*natural* for the whole charset and as such, conveys with it endianness
+problems.
+
+.. :tindex ISO-10646-UCS-4, and aliases
+.. :tindex ISO_10646
+.. :tindex 10646
+.. :tindex u4
+
+Use it as a genuine charset.  This charset is available in |package|
+under the name :charset:`ISO-10646-UCS-4`.  Accepted aliases are :charset:`UCS`,
+:charset:`UCS-4`, :charset:`ISO_10646`, :charset:`10646` and :charset:`u4`.
+
+Universal Transformation Format, 7 bits
+---------------------------------------
+
+.. :tindex UTF-7
+
+:charset:`UTF-7` comes from IETF rather than ISO, and is described by
+RFC 2152, in the MIME series.  The :charset:`UTF-7` encoding is meant
+to fit :charset:`UCS-2` over channels limited to seven bits per byte.
+It proceeds from a mix between the spirit of :charset:`Quoted-Printable`
+and methods of :charset:`Base64`, adapted to Unicode contexts.
+
+.. :tindex UNICODE-1-1-UTF-7, and aliases
+.. :tindex TF-7
+.. :tindex u7
+
+This charset is available in |package| under the name
+:charset:`UNICODE-1-1-UTF-7`.  Accepted aliases are :charset:`UTF-7`,
+:charset:`TF-7` and :charset:`u7`.
+
+Universal Transformation Format, 8 bits
+---------------------------------------
+
+.. :tindex UTF-8
+
+Even if :charset:`UTF-8` does not originally come from IETF, there
+is now RFC 2279 to describe it.  In letters sent on 1995-01-21 and
+1995-04-20, Markus Kuhn writes:
+
+  :charset:`UTF-8` is an :charset:`ASCII` compatible multi-byte encoding
+  of the ISO 10646 universal character set (:charset:`UCS`).
+  :charset:`UCS` is a 31-bit superset of all other character set
+  standards.  The first 256 characters of :charset:`UCS` are identical
+  to those of ISO 8859-1 (:charset:`Latin-1`).  The :charset:`UCS-2`
+  encoding of UCS is a sequence of bigendian 16-bit words, the
+  :charset:`UCS-4` encoding is a sequence of bigendian 32-bit words.
+  The :charset:`UCS-2` subset of ISO 10646 is also known as *Unicode*.
+  As both :charset:`UCS-2` and :charset:`UCS-4` require heavy
+  modifications to traditional :charset:`ASCII` oriented system designs
+  (e.g. Unix), the :charset:`UTF-8` encoding has been designed for these
+  applications.
+
+  In :charset:`UTF-8`, only :charset:`ASCII` characters are encoded
+  using bytes below 128.  All other non-ASCII characters are encoded
+  as multi-byte sequences consisting only of bytes in the range
+  128-253.  This avoids critical bytes like :kbd:`NUL` and :kbd:`/`
+  in :charset:`UTF-8` strings, which makes the :charset:`UTF-8`
+  encoding suitable for being handled by the standard C string library
+  and being used in Unix file names.  Other properties include the
+  preserved lexical sorting order and that :charset:`UTF-8` allows easy
+  self-synchronisation of software receiving :charset:`UTF-8` strings.
+
+:charset:`UTF-8` is the most common external surface of :charset:`UCS`,
+each character uses from one to six bytes, and is able to encode all
+``2^31`` characters of the :charset:`UCS`.  It is implemented as a
+charset, with the following properties:
+
+  + Strict 7-bit :charset:`ASCII` is completely invariant under
+    :charset:`UTF-8`, and those are the only one-byte characters.
+    :charset:`UCS` values and :charset:`ASCII` values coincide.  No
+    multi-byte characters ever contain bytes less than 128. :code:`NUL`
+    *is* :code:`NUL`.  A multi-byte character always starts with a byte of
+    192 or more, and is always followed by a number of bytes between 128
+    to 191.  That means that you may read at random on disk or memory, and
+    easily discover the start of the current, next or previous character.
+    You can count, skip or extract characters with this only knowledge.
+
+  + If you read the first byte of a multi-byte character in binary,
+    it contains many ``1`` bits in successions starting with the most
+    significant one (from the left), at least two.  The length of this
+    ``1`` sequence equals the byte size of the character.  All succeeding
+    bytes start by ``10``.  This is a lot of redundancy, making it fairly
+    easy to guess that a file is valid :charset:`UTF-8`, or to safely
+    state that it is not.
+
+  + In a multi-byte character, if you remove all leading ``1`` bits of
+    the first byte of a multi-byte character, and the initial ``10`` bits
+    of all remaining bytes (so keeping 6 bits per byte for those), the
+    remaining bits concatenated are the UCS value.
+
+These properties also have a few nice consequences:
+
+  + Conversion to/from values is algorithmically simple, and reasonably
+    speedy.
+
+  + A sequence of :var:`N` bytes can hold characters needing up to 2 +
+    5:var:`N` bits in their :charset:`UCS` representation.  Here, :var:`N`
+    is a number between 1 and 6.  So, :charset:`UTF-8` is most economical
+    when mapping ASCII (1 byte), followed by :charset:`UCS-2` (1 to 3
+    bytes) and :charset:`UCS-4` (1 to 6 bytes).
+
+  + The lexicographic sorting order of :charset:`UCS` strings is preserved.
+
+  + Bytes with value 254 or 255 never appear, and because of that, these
+    are sometimes used when escape mechanisms are needed.
+
+In some case, when little processing is done on a lot of strings,
+one may choose for efficiency reasons to handle :charset:`UTF-8`
+strings directly even if variable length, as it is easy to get start of
+characters.  Character insertion or replacement might require moving
+the remainder of the string in either direction.  In most cases, it is
+faster and easier to convert from :charset:`UTF-8` to :charset:`UCS-2`
+or :charset:`UCS-4` prior to processing.
+
+.. :tindex UTF-8, aliases
+.. :tindex UTF-FSS
+.. :tindex FSS_UTF
+.. :tindex TF-8
+.. :tindex u8
+
+This charset is available in |package| under the name :charset:`UTF-8`.
+Accepted aliases are :charset:`UTF-2`, :charset:`UTF-FSS`, :charset:`FSS_UTF`,
+:charset:`TF-8` and :charset:`u8`.
+
+Universal Transformation Format, 16 bits
+----------------------------------------
+
+.. :tindex UTF-16, and aliases
+
+Another external surface of :charset:`UCS` is also variable length, each
+character using either two or four bytes.  It is usable for the subset
+defined by the first million characters (``17 * 2^16``) of :charset:`UCS`.
+
+Martin J. Dürst writes (to ``comp.std.internat``, on 1995-03-28):
+
+  :charset:`UTF-16` is another method that reserves two times 1024
+  codepoints in Unicode and uses them to index around one million
+  additional characters. :charset:`UTF-16` is a little bit like former
+  multibyte codes, but quite not so, as both the first and the second
+  16-bit code clearly show what they are.  The idea is that one million
+  codepoints should be enough for all the rare Chinese ideograms and
+  historical scripts that do not fit into the Base Multilingual Plane of
+  ISO 10646 (with just about 63,000 positions available, now that 2,000
+  are gone).
+
+.. :tindex Unicode, an alias for UTF-16
+.. :tindex TF-16
+.. :tindex u6
+
+This charset is available in |package| under the name :charset:`UTF-16`.
+Accepted aliases are :charset:`Unicode`, :charset:`TF-16` and :charset:`u6`.
+
+Frequency count of characters
+-----------------------------
+
+.. :tindex count-characters
+.. :cindex counting characters
+
+A device may be used to obtain a list of characters in a file, and
+how many times each character appears.  Each count is followed by the
+:charset:`UCS-2` value of the character and, when known, the RFC 1345
+mnemonic for that character.
+
+This charset is available in |package| under the name
+:charset:`count-characters`.
+
+This :charset:`count` feature has been implemented as a charset.  This may
+change in some later version, as it would sometimes be convenient to
+count original bytes, instead of their :charset:`UCS-2` equivalent.
+
+Fully interpreted UCS dump
+--------------------------
+
+.. :tindex dump-with-names
+.. :cindex dumping characters, with description
+.. :cindex character streams, description
+.. :cindex description of individual characters
+
+Another device may be used to get fully interpreted dumps of an
+:charset:`UCS-2` stream of characters, with one :charset:`UCS-2`
+character displayed on a full output line.  Each line receives the
+RFC 1345 mnemonic for the character if it exists, the :charset:`UCS-2`
+value of the character, and a descriptive comment for that character.
+As each input character produces its own output line, beware that the
+output file from this conversion may be much, much bigger than the input
+file.
+
+This charset is available in |package| under the name
+:charset:`dump-with-names`.
+
+This :charset:`dump-with-names` feature has been implemented as a charset
+rather than a surface.  This is surely debatable.  The current
+implementation allows for dumping charsets other than :charset:`UCS-2`.
+For example, the command ``recodec l2..full <`` :var:`input` implies
+a necessary conversion from :charset:`Latin-2` to :charset:`UCS-2`, as
+:charset:`dump-with-names` is only connected out from :charset:`UCS-2`.  In
+such cases, |package| does not display the original :charset:`Latin-2`
+codes in the dump, only the corresponding :charset:`UCS-2` values.  To
+give a simpler example, the command::
+
+  echo 'Hello, world!' | recodec us..dump
+
+produces the following output::
+
+  UCS2   Mne   Description
+
+  0048   H     latin capital letter h
+  0065   e     latin small letter e
+  006C   l     latin small letter l
+  006C   l     latin small letter l
+  006F   o     latin small letter o
+  002C   ,     comma
+  0020   SP    space
+  0077   w     latin small letter w
+  006F   o     latin small letter o
+  0072   r     latin small letter r
+  006C   l     latin small letter l
+  0064   d     latin small letter d
+  0021   !     exclamation mark
+  000A   LF    line feed (lf)
+
+The descriptive comment is given in English and :charset:`ASCII`, yet if
+the English description is not available but a French one is, then the
+French description is given instead, using :charset:`Latin-1`.  However, if
+the :code:`LANGUAGE` or :code:`LANG` environment variable begins with
+the letters ``fr``, then listing preference goes to French when both
+descriptions are available.
+
+Here is another example.  To get the long description of the code 237 in
+Latin-5 table, one may use the following command::
+
+  echo -n 237 | recodec l5/d..dump
+
+If your :code:`echo` does not grok ``-n``, use ``echo 237\c`` instead.
+Here is how to see what Unicode :code:`U+03C6` means, while getting rid
+of the title lines::
+
+  echo -n 0x03C6 | recodec u2/x2..dump | tail +3

@@ -1,0 +1,374 @@
+All about surfaces
+==================
+.. :cindex surface, what it is
+
+.. :cindex trivial surface
+
+The :dfn:`trivial surface` consists of using a fixed number of bits
+(often eight) for each character, the bits together hold the integer
+value of the index for the character in its charset table.  There are
+many kinds of surfaces, beyond the trivial one, all having the purpose
+of increasing selected qualities for the storage or transmission.  For
+example, surfaces might increase the resistance to channel limits
+(:charset:`Base64`), the transmission speed (:charset:`gzip`), the information
+privacy (:charset:`DES`), the conformance to operating system conventions
+(:charset:`CR-LF`), the blocking into records (:charset:`VB`), and surely
+other things as well [#]_. Many surfaces may be applied to a stream
+of characters from a charset, the order of application of surfaces is
+important, and surfaces should be removed in the reverse order of their
+application.
+
+Even if surfaces may generally be applied to various charsets, some
+surfaces were specifically designed for a particular charset, and would
+not make much sense if applied to other charsets.  In such cases, these
+conceptual surfaces have been implemented as |package| charsets,
+instead of as surfaces.  This choice yields to cleaner syntax and usage.
+See `The universal charset`_.
+
+.. :cindex surfaces, implementation in |package|
+.. :tindex data, a special charset
+.. :tindex tree, a special charset
+
+Surfaces are implemented within |package| as special charsets which
+may only transform to or from the :charset:`data` or :charset:`tree` special
+charsets.  Clever users may use this knowledge for writing surface names
+in requests exactly as if they were pure charsets, when the only need is
+to change surfaces without any kind of recoding between real charsets.
+In such contexts, either :charset:`data` or :charset:`tree` may also be used
+as if it were some kind of generic, anonymous charset: the request
+``data..``\ :var:`surface` merely adds the given :var:`surface`, while
+the request :var:`surface`\ ``..data`` removes it.
+
+.. :cindex structural surfaces
+.. :cindex surfaces, structural
+.. :cindex surfaces, trees
+
+The |package| library distinguishes between mere data surfaces, and
+structural surfaces, also called tree surfaces for short.  Structural
+surfaces might allow, in the long run, transformations between a few
+specialised representations of structural information like MIME parts,
+Perl or Python initialisers, LISP S-expressions, XML, Emacs outlines,
+etc.
+
+We are still experimenting with surfaces in |package|.  The
+concept opens the doors to many avenues; it is not clear yet which ones
+are worth pursuing, and which should be abandoned.  In particular,
+implementation of structural surfaces is barely starting, there is not
+even a commitment that tree surfaces will stay in |package|, if
+they do prove to be more cumbersome than useful.  This chapter presents
+all surfaces currently available.
+
+.. [#] These are mere examples to explain the concept, |package|
+   only has :charset:`Base64` and :charset:`CR-LF`, actually.
+
+Permuting groups of bytes
+-------------------------
+.. :cindex permutations of groups of bytes
+
+.. :cindex byte order swapping
+.. :cindex endiannes, changing
+
+A permutation is a surface transformation which reorders groups of
+eight-bit bytes.  A *21* permutation exchanges pairs of successive
+bytes.  If the text contains an odd number of bytes, the last byte is
+merely copied.  An *4321* permutation inverts the order of quadruples
+of bytes.  If the text does not contains a multiple of four bytes, the
+remaining bytes are nevertheless permuted as *321* if there are three
+bytes, *21* if there are two bytes, or merely copied otherwise.
+
+  + :charset:`21`
+    .. :tindex 21-Permutation
+    .. :tindex swabytes
+
+    This surface is available in |package| under the name
+    :charset:`21-Permutation` and has :charset:`swabytes` for an alias.
+
+  + :charset:`4321`
+    .. :tindex 4321-Permutation
+
+    This surface is available in |package| under the name
+    :charset:`4321-Permutation`.
+
+Representation for end of lines
+-------------------------------
+.. :cindex end of line format
+
+The same charset might slightly differ, from one system to another, for
+the single fact that end of lines are not represented identically on all
+systems.  The representation for an end of line within |package| is
+the :charset:`ASCII` or :charset:`UCS` code with value 10, or :kbd:`LF`.
+Other conventions for representing end of lines are available through
+surfaces.
+
+  + :charset:`CR`
+    .. :tindex CR, a surface
+
+    This convention is popular on Apple's Macintosh machines.  When this
+    surface is applied, each line is terminated by :kbd:`CR`, which
+    has :charset:`ASCII` value 13.  Unless the library is operating in
+    strict mode, adding or removing the surface will in fact *exchange*
+    :kbd:`CR` and :kbd:`LF`, for better reversibility.  However, in
+    strict mode, the exchange does not happen, any :kbd:`CR` will be
+    copied verbatim while applying the surface, and any :kbd:`LF` will
+    be copied verbatim while removing it.
+
+    This surface is available in |package| under the name
+    :charset:`CR`, it does not have any aliases.  This is the implied
+    surface for the Apple Macintosh related charsets.
+
+  + :charset:`CR-LF`
+    .. :tindex CR-LF, a surface
+
+    This convention is popular on Microsoft systems running on IBM
+    PCs and compatible.  When this surface is applied, each line is
+    terminated by a sequence of two characters: one :kbd:`CR` followed
+    by one :kbd:`LF`, in that order.
+
+    .. :cindex Ctrl-Z, discarding
+
+    For compatibility with oldish MS-DOS systems, removing a
+    :charset:`CR-LF` surface will discard the first encountered :kbd:`C-z`,
+    which has :charset:`ASCII` value 26, and everything following it in the
+    text.  Adding this surface will not, however, append a :kbd:`C-z` to
+    the result.
+
+    .. :tindex cl
+
+    This surface is available in |package| under the name
+    :charset:`CR-LF` and has :charset:`cl` for an alias.  This is the implied
+    surface for the IBM or Microsoft related charsets or code pages.
+
+Some other charsets might have their own representation for an end of
+line, which is different from :kbd:`LF`.  For example, this is the
+case of various :charset:`EBCDIC` charsets, or :charset:`Icon-QNX`.  The
+recoding of end of lines is intimately tied into such charsets, it is
+not available separately as surfaces.
+
+MIME contents encodings
+-----------------------
+.. :cindex MIME encodings
+
+.. :cindex RFC 2045
+
+RFC 2045 defines two 7-bit surfaces, meant to prepare 8-bit messages
+for transmission.  Base64 is especially usable for binary entities,
+while Quoted-Printable is especially usable for text entities, in those
+case the lower 128 characters of the underlying charset coincide with
+ASCII.
+
+  + :charset:`Base64`
+    .. :tindex Base64
+    .. :tindex b64
+    .. :tindex 64
+
+    This surface is available in |package| under the name
+    :charset:`Base64`, with :charset:`b64` and :charset:`64` as acceptable
+    aliases.
+
+  + :charset:`Quoted-Printable`
+    .. :tindex Quoted-Printable
+    .. :tindex quote-printable
+    .. :tindex QP
+
+    This surface is available in |package| under the name
+    :charset:`Quoted-Printable`, with :charset:`quote-printable` and
+    :charset:`QP` as acceptable aliases.
+
+Note that :charset:`UTF-7`, which may be also considered as a MIME surface, is
+provided as a genuine charset instead, as it necessary relates to
+:charset:`UCS-2` and nothing else.  See `Universal Transformation Format, 7
+bits`_.
+
+A little historical note, also showing the three levels of acceptance
+of Internet standards.  MIME changed from a *Proposed Standard*
+(RFC 1341--1344, 1992) to a *Draft Standard* (RFC 1521--1523) in 1993,
+and was *recycled* as a *Draft Standard* in 1996-11.  It is not yet a
+*Full Standard*.
+
+Interpreted character dumps
+---------------------------
+
+.. :cindex dumping characters
+
+Dumps are surfaces meant to express, in ways which are a bit more
+readable, the bit patterns used to represent characters.  They allow
+the inspection or debugging of character streams, but also, they may
+assist a bit the production of C source code which, once compiled, would
+hold in memory a copy of the original coding.  However, |package|
+does not attempt, in any way, to produce complete C source files in
+dumps.  User hand editing or :file:`Makefile` trickery is still needed
+for adding missing lines.  Dumps may be given in decimal, hexadecimal
+and octal, and be based over chunks of either one, two or four eight-bit
+bytes.  Formatting has been chosen to respect the C language syntax for
+number constants, with commas and newlines inserted appropriately.
+
+However, when dumping two or four byte chunks, the last chunk may be
+incomplete.  This is observable through the usage of narrower expression
+for that last chunk only.  Such a shorter chunk would not be compiled
+properly within a C initialiser, as all members of an array share a
+single type, and so, have identical sizes.
+
+  + :charset:`Octal-1`
+    .. :tindex Octal-1
+    .. :tindex o1
+
+    This surface corresponds to an octal expression of each input byte.
+
+    It is available in |package| under the name :charset:`Octal-1`,
+    with :charset:`o1` and :charset:`o` as acceptable aliases.
+
+  + :charset:`Octal-2`
+    .. :tindex Octal-2
+    .. :tindex o2
+
+    This surface corresponds to an octal expression of each pair of
+    input bytes, except for the last pair, which may be short.
+
+    It is available in |package| under the name :charset:`Octal-2`
+    and has :charset:`o2` for an alias.
+
+  + :charset:`Octal-4`
+    .. :tindex Octal-4
+    .. :tindex o4
+
+    This surface corresponds to an octal expression of each quadruple of
+    input bytes, except for the last quadruple, which may be short.
+
+    It is available in |package| under the name :charset:`Octal-4`
+    and has :charset:`o4` for an alias.
+
+  + :charset:`Decimal-1`
+    .. :tindex Decimal-1
+    .. :tindex d1
+
+    This surface corresponds to an decimal expression of each input byte.
+
+    It is available in |package| under the name :charset:`Decimal-1`,
+    with :charset:`d1` and :charset:`d` as acceptable aliases.
+
+  + :charset:`Decimal-2`
+    .. :tindex Decimal-2
+    .. :tindex d2
+
+    This surface corresponds to an decimal expression of each pair of
+    input bytes, except for the last pair, which may be short.
+
+    It is available in |package| under the name :charset:`Decimal-2`
+    and has :charset:`d2` for an alias.
+
+  + :charset:`Decimal-4`
+    .. :tindex Decimal-4
+    .. :tindex d4
+
+    This surface corresponds to an decimal expression of each quadruple of
+    input bytes, except for the last quadruple, which may be short.
+
+    It is available in |package| under the name :charset:`Decimal-4`
+    and has :charset:`d4` for an alias.
+
+  + :charset:`Hexadecimal-1`
+    .. :tindex Hexadecimal-1
+    .. :tindex x1
+
+    This surface corresponds to an hexadecimal expression of each input byte.
+
+    It is available in |package| under the name :charset:`Hexadecimal-1`,
+    with :charset:`x1` and :charset:`x` as acceptable aliases.
+
+  + :charset:`Hexadecimal-2`
+    .. :tindex Hexadecimal-2
+    .. :tindex x2
+
+    This surface corresponds to an hexadecimal expression of each pair of
+    input bytes, except for the last pair, which may be short.
+
+    It is available in |package| under the name :charset:`Hexadecimal-2`,
+    with :charset:`x2` for an alias.
+
+  + :charset:`Hexadecimal-4`
+    .. :tindex Hexadecimal-4
+    .. :tindex x4
+
+    This surface corresponds to an hexadecimal expression of each quadruple of
+    input bytes, except for the last quadruple, which may be short.
+
+    It is available in |package| under the name :charset:`Hexadecimal-4`,
+    with :charset:`x4` for an alias.
+
+When removing a dump surface, that is, when reading a dump results
+back into a sequence of bytes, the narrower expression for a short
+last chunk is recognised, so dumping is a fully reversible operation.
+However, in case you want to produce dumps by other means than through
+|package|, beware that for decimal dumps, the library has to rely
+on the number of spaces to establish the original byte size of the
+chunk.
+
+Although the library might report reversibility errors, removing a
+dump surface is a rather forgiving process: one may mix bases, group a
+variable number of data per source line, or use shorter chunks in places
+other than at the far end.  Also, source lines not beginning with a
+number are skipped.  So, |package| should often be able to read
+a whole C header file, wrapping the results of a previous dump, and
+regenerate the original byte string.
+
+Artificial data for testing
+---------------------------
+
+A few pseudo-surfaces exist to generate debugging data out of thin
+air.  These surfaces are only meant for the expert |package| user,
+and are only useful in a few contexts, like for generating binary
+permutations from the recoding or acting on them.
+
+.. :cindex debugging surfaces
+
+Debugging surfaces, *when removed*, insert their generated data at the
+beginning of the output stream, and copy all the input stream after
+the generated data, unchanged.  This strange removal constraint comes
+from the fact that debugging surfaces are usually specified in the
+*before* position instead of the *after* position within a request.
+With debugging surfaces, one often recodes file :file:`/dev/null`
+in filter mode.  Specifying many debugging surfaces at once has an
+accumulation effect on the output, and since surfaces are removed from
+right to left, each generating its data at the beginning of previous
+output, the net effect is an *impression* that debugging surfaces are
+generated from left to right, each appending to the result of the
+previous.  In any case, any real input data gets appended after what was
+generated.
+
+  + :charset:`test7`
+    .. :tindex test7
+
+    When removed, this surface produces 128 single bytes, the first
+    having value 0, the second having value 1, and so forth until all
+    128 values have been generated.
+
+  + :charset:`test8`
+    .. :tindex test8
+
+    When removed, this surface produces 256 single bytes, the first
+    having value 0, the second having value 1, and so forth until all
+    256 values have been generated.
+
+  + :charset:`test15`
+    .. :tindex test15
+
+    When removed, this surface produces 64509 double bytes, the first
+    having value 0, the second having value 1, and so forth until all
+    values have been generated, but excluding risky :charset:`UCS-2`
+    values, like all codes from the surrogate :charset:`UCS-2` area (for
+    :charset:`UTF-16`), the byte order mark, and values known as invalid
+    :charset:`UCS-2`.
+
+  + :charset:`test16`
+    .. :tindex test16
+
+    When removed, this surface produces 65536 double bytes, the first
+    having value 0, the second having value 1, and so forth until all
+    65536 values have been generated.
+
+As an example, the command ``recodec l5/test8..dump < /dev/null`` is
+a convoluted way to produce an output similar to ``recodec -lf l5``.
+It says to generate all possible 256 bytes and interpret them as
+:charset:`ISO-8859-9` codes, while converting them to :charset:`UCS-2`.
+Resulting :charset:`UCS-2` characters are dumped one per line,
+accompanied with their explicative name.

@@ -1,0 +1,488 @@
+Various other charsets
+======================
+
+Even if these charsets were originally added to |package| for
+handling texts written in French, they find other uses.  We did use
+them a lot for writing French diacriticised texts in the past, so
+|package| knows how to handle these particularly well for French
+texts.
+
+World Wide Web representations
+------------------------------
+
+.. :cindex HTML
+.. :cindex SGML
+.. :cindex XML
+.. :cindex Web
+.. :cindex World Wide Web
+.. :cindex WWW
+.. :cindex markup language
+.. :cindex entities
+.. :cindex character entities
+.. :cindex character entity references
+.. :cindex numeric character references
+
+Character entities have been introduced by SGML and made widely popular
+through HTML, the markup language in use for the World Wide Web, or Web
+or WWW for short.  For representing *unusual* characters, HTML texts
+use special sequences, beginning with an ampersand :kbd:`&` and ending
+with a semicolon :kbd:`;`.  The sequence may itself start with a number
+sigh :kbd:`#` and be followed by digits, so forming a :dfn:`numeric
+character reference`, or else be an alphabetic identifier, so forming a
+:dfn:`character entity reference`.
+
+The HTML standards have been revised into different HTML levels
+over time, and the list of allowable character entities differ in
+them.  The later XML, meant to simplify many things, has an option
+(``standalone=yes``) which much restricts that list.  The |package|
+library is able to convert character references between their mnemonic
+form and their numeric form, depending on aimed HTML standard level.  It
+also can, of course, convert between HTML and various other charsets.
+
+Here is a list of those HTML variants which |package| supports.
+Some notes have been provided by François Yergeau <yergeau@alis.com>.
+
+  :charset:`XML-standalone`
+    .. :tindex h0
+    .. :tindex XML-standalone
+
+    This charset is available in |package| under the name
+    :charset:`XML-standalone`, with :charset:`h0` as an acceptable alias.  It
+    is documented in section 4.1 of http://www.w3.org/TR/REC-xml . It
+    only knows ``&amp;``, ``&gt;``, ``&lt;``, ``&quot;`` and ``&apos;``.
+
+  :charset:`HTML_1.1`
+    .. :tindex HTML_1.1
+    .. :tindex h1
+
+    This charset is available in |package| under the name
+    :charset:`HTML_1.1`, with :charset:`h1` as an acceptable alias.  HTML 1.0
+    was never really documented.
+
+  :charset:`HTML_2.0`
+    .. :tindex HTML_2.0
+    .. :tindex RFC1866
+    .. :tindex 1866
+    .. :tindex h2
+
+    This charset is available in |package| under the name
+    :charset:`HTML_2.0`, and has :charset:`RFC1866`, :charset:`1866` and
+    :charset:`h2` for aliases.  HTML 2.0 entities are listed in RFC 1866.
+    Basically, there is an entity for each *alphabetical* character in
+    the right part of ISO 8859-1.  In addition, there are four entities
+    for syntax-significant ASCII characters: ``&amp;``, ``&gt;``,
+    ``&lt;`` and ``&quot;``.
+
+  :charset:`HTML-i18n`
+    .. :tindex HTML-i18n
+    .. :tindex RFC2070
+    .. :tindex 2070
+
+    This charset is available in |package| under the name
+    :charset:`HTML-i18n`, and has :charset:`RFC2070` and :charset:`2070` for
+    aliases.  RFC 2070 added entities to cover the whole right
+    part of ISO 8859-1.  The list is conveniently accessible at
+    http://www.alis.com:8085/ietf/html/html-latin1.sgml . In addition,
+    four i18n-related entities were added: ``&zwnj;`` (``&#8204;``),
+    ``&zwj;`` (``&#8205;``), ``&lrm;`` (``&#8206``) and ``&rlm;``
+    (``&#8207;``).
+
+  :charset:`HTML_3.2`
+    .. :tindex HTML_3.2
+    .. :tindex h3
+
+    This charset is available in |package| under the name
+    :charset:`HTML_3.2`, with :charset:`h3` as an acceptable alias.
+    http://www.w3.org/TR/REC-html32.html, HTML 3.2 took up the full
+    :charset:`Latin-1` list but not the i18n-related entities from
+    RFC 2070.
+
+  :charset:`HTML_4.0`
+    .. :tindex h4
+    .. :tindex h
+
+    This charset is available in |package| under the name
+    :charset:`HTML_4.0`, and has :charset:`h4` and :charset:`h` for aliases.
+    Beware that the particular alias :charset:`h` is not *tied* to HTML
+    4.0, but to the highest HTML level supported by |package|;
+    so it might later represent HTML level 5 if this is ever created.
+    http://www.w3.org/TR/REC-html40/, HTML 4.0 has the whole
+    :charset:`Latin-1` list, a set of entities for symbols, mathematical
+    symbols, and Greek letters, and another set for markup-significant
+    and internationalization characters comprising the 4 ASCII
+    entities, the 4 i18n-related from RFC 2070 plus some more.  See
+    http://www.w3.org/TR/REC-html40/sgml/entities.html .
+
+Printable characters from :charset:`Latin-1` may be used directly in an
+HTML text.  However, partly because people have deficient keyboards,
+partly because people want to transmit HTML texts over non 8-bit clean
+channels while not using MIME, it is common (yet debatable) to use
+character entity references even for :charset:`Latin-1` characters, when
+they fall outside ASCII (that is, when they have the 8th bit set).
+
+When you recode from another charset to :charset:`HTML`, beware that all
+occurrences of double quotes, ampersands, and left or right angle
+brackets are translated into special sequences.  However, in practice,
+people often use ampersands and angle brackets in the other charset for
+introducing HTML commands, compromising it: it is not pure HTML, not
+it is pure other charset.  These particular translations can be rather
+inconvenient, they may be specifically inhibited through the command
+option ``-d`` (see `Using mixed charset input`_).
+
+Codes not having a mnemonic entity are output by |package| using
+the ``&#``\ :var:`nnn`\ ``;`` notation, where :var:`nnn` is a decimal
+representation of the UCS code value.  When there is an entity name for
+a character, it is always preferred over a numeric character reference.
+ASCII printable characters are always generated directly.  So is the
+newline.  While reading HTML, |package| supports numeric character
+reference as alternate writings, even when written as hexadecimal
+numbers, as in ``&#xfffd``.  This is documented in::
+
+  http://www.w3.org/TR/REC-html40/intro/sgmltut.html#h-3.2.3
+
+When |package| translates to HTML, the translation occurs according
+to the HTML level as selected by the goal charset.  When translating
+*from* HTML, |package| not only accepts the character entity
+references known at that level, but also those of all other levels, as
+well as a few alternative special sequences, to be forgiving to files
+using other HTML standards.
+
+.. :cindex normilise an HTML file
+.. :cindex HTML normalization
+
+The |package| program can be used to *normalise* an HTML file
+using oldish conventions.  For example, it accepts ``&AE;``, as this
+once was a valid writing, somewhere.  However, it should always produce
+``&AElig;`` instead of ``&AE;``.  Yet, this is not completely true.  If
+one does:
+
+.. parsed-literal::
+
+  recodec h3..h3 < :var:`input`
+
+the operation will be optimised into a mere copy, and you can get
+``&AE;`` this way, if you had some in your input file.  But if you
+explicitly defeat the optimisation, like this maybe:
+
+.. parsed-literal::
+
+  recodec h3..u2,u2..h3 < :var:`input`
+
+then ``&AE;`` should be normalised into ``&AElig;`` by the operation.
+
+Vietnamese charsets
+-------------------
+
+.. :cindex Vietnamese charsets
+
+We are currently experimenting the implementation, in |package|, of
+a few character sets and transliterated forms to handle the Vietnamese
+language.  They are quite briefly summarised, here.
+
+  :charset:`TCVN`
+    .. :tindex TCVN, for Vienamese
+    .. :tindex VN1, maybe not available
+    .. :tindex VN2, maybe not available
+    .. :tindex VN3, maybe not available
+
+    The TCVN charset has an incomplete name.  It might be one of
+    the three charset :charset:`VN1`, :charset:`VN2` or :charset:`VN3`.  Yes
+    :charset:`VN2` might be a second version of :charset:`VISCII`.  To be
+    clarified.
+
+  :charset:`VISCII`
+    .. :tindex VISCII
+
+    This is an 8-bit character set which seems to be rather popular for
+    writing Vietnamese.
+
+  :charset:`VPS`
+    .. :tindex VPS
+
+    This is an 8-bit character set for Vietnamese.  No much reference.
+
+  :charset:`VIQR`
+    .. :tindex VIQR
+
+    The VIQR convention is a 7-bit, :charset:`ASCII` transliteration for
+    Vietnamese.
+
+  :charset:`VNI`
+    .. :tindex VNI
+
+    The VNI convention is a 8-bit, :charset:`Latin-1` transliteration for
+    Vietnamese.
+
+.. :tindex 1129, not available
+.. :tindex CP1129, not available
+.. :tindex 1258, not available
+.. :tindex CP1258, not available
+
+Still lacking for Vietnamese in |package|, are the charsets
+:charset:`CP1129` and :charset:`CP1258`.
+
+African charsets
+----------------
+
+.. :cindex African charsets
+
+Some African character sets are available for a few languages, when
+these are heavily used in countries where French is also currently
+spoken.
+
+.. :tindex AFRFUL-102-BPI_OCIL, and aliases
+.. :tindex bambara
+.. :tindex bra
+.. :tindex ewondo
+.. :tindex fulfude
+.. :tindex AFRFUL-103-BPI_OCIL, and aliases
+.. :tindex t-bambara
+.. :tindex t-bra
+.. :tindex t-ewondo
+.. :tindex t-fulfude
+
+One African charset is usable for Bambara, Ewondo and Fulfude, as well
+as for French.  This charset is available in |package| under the
+name :charset:`AFRFUL-102-BPI_OCIL`.  Accepted aliases are :charset:`bambara`,
+:charset:`bra`, :charset:`ewondo` and :charset:`fulfude`.  Transliterated forms
+of the same are available under the name :charset:`AFRFUL-103-BPI_OCIL`.
+Accepted aliases are :charset:`t-bambara`, :charset:`t-bra`, :charset:`t-ewondo`
+and :charset:`t-fulfude`.
+
+.. :tindex AFRLIN-104-BPI_OCIL
+.. :tindex lingala
+.. :tindex lin
+.. :tindex sango
+.. :tindex wolof
+.. :tindex AFRLIN-105-BPI_OCIL
+.. :tindex t-lingala
+.. :tindex t-lin
+.. :tindex t-sango
+.. :tindex t-wolof
+
+Another African charset is usable for Lingala, Sango and Wolof, as well
+as for French.  This charset is available in |package| under the
+name :charset:`AFRLIN-104-BPI_OCIL`.  Accepted aliases are :charset:`lingala`,
+:charset:`lin`, :charset:`sango` and :charset:`wolof`.  Transliterated forms
+of the same are available under the name :charset:`AFRLIN-105-BPI_OCIL`.
+Accepted aliases are :charset:`t-lingala`, :charset:`t-lin`, :charset:`t-sango`
+and :charset:`t-wolof`.
+
+.. :tindex AFRL1-101-BPI_OCIL
+.. :tindex t-francais
+.. :tindex t-fra
+
+To ease exchange with :charset:`ISO-8859-1`, there is a charset conveying
+transliterated forms for :charset:`Latin-1` in a way which is compatible
+with the other African charsets in this series.  This charset is
+available in |package| under the name :charset:`AFRL1-101-BPI_OCIL`.
+Accepted aliases are :charset:`t-fra` and :charset:`t-francais`.
+
+Cyrillic and other charsets
+---------------------------
+
+.. :cindex Cyrillic charsets
+
+The following Cyrillic charsets are already available in |package|
+through RFC 1345 tables: :charset:`CP1251` with aliases :charset:`1251`,
+:charset:`ms-cyrl` and :charset:`windows-1251`; :charset:`CSN_369103` with
+aliases :charset:`ISO-IR-139` and :charset:`KOI8_L2`; :charset:`ECMA-cyrillic`
+with aliases :charset:`ECMA-113`, :charset:`ECMA-113:1986` and
+:charset:`iso-ir-111`, :charset:`IBM880` with aliases :charset:`880`,
+:charset:`CP880` and :charset:`EBCDIC-Cyrillic`; :charset:`INIS-cyrillic`
+with alias :charset:`iso-ir-51`; :charset:`ISO-8859-5` with aliases
+:charset:`cyrillic`, :charset:` ISO-8859-5:1988` and :charset:`iso-ir-144`;
+:charset:`KOI-7`; :charset:`KOI-8` with alias :charset:`GOST_19768-74`;
+:charset:`KOI8-R`; :charset:`KOI8-RU` and finally :charset:`KOI8-U`.
+
+There seems to remain some confusion in Roman charsets for Cyrillic
+languages, and because a few users requested it repeatedly,
+|package| now offers special services in that area.  Consider
+these charsets as experimental and debatable, as the extraneous tables
+describing them are still a bit fuzzy or non-standard.  Hopefully, in
+the long run, these charsets will be covered in Keld Simonsen's works to
+the satisfaction of everybody, and this section will merely disappear.
+
+  :charset:`KEYBCS2`
+    .. :tindex KEYBCS2
+    .. :tindex Kamenicky
+
+    This charset is available under the name :charset:`KEYBCS2`, with
+    :charset:`Kamenicky` as an accepted alias.
+
+  :charset:`CORK`
+    .. :tindex CORK
+    .. :tindex T1
+
+    This charset is available under the name :charset:`CORK`, with :charset:`T1`
+    as an accepted alias.
+
+  :charset:`KOI-8_CS2`
+    .. :tindex KOI-8_CS2
+
+    This charset is available under the name :charset:`KOI-8_CS2`.
+
+Easy French conventions
+-----------------------
+
+.. :tindex Texte
+.. :tindex txte
+
+This charset is available in |package| under the name :charset:`Texte`
+and has :charset:`txte` for an alias.  It is a seven bits code, identical
+to :charset:`ASCII-BS`, save for French diacritics which are noted using a
+slightly different convention.
+
+At text entry time, these conventions provide a little speed up.  At
+read time, they slightly improve the readability over a few alternate
+ways of coding diacritics.  Of course, it would better to have a
+specialised keyboard to make direct eight bits entries and fonts for
+immediately displaying eight bit :charset:`ISO Latin-1` characters.
+But not everybody is so fortunate.  In a few mailing environments, and
+sadly enough, it still happens that the eight bit is often willing-fully
+destroyed.
+
+.. :cindex Easy French
+
+Easy French has been in use in France for a while.  I only slightly
+adapted it (the diaeresis option) to make it more comfortable to several
+usages in Québec originating from Université de Montréal.  In fact,
+the main problem for me was not to necessarily to invent Easy French,
+but to recognise the *best* convention to use, (best is not being
+defined, here) and to try to solve the main pitfalls associated with the
+selected convention.  Shortly said, we have:
+
+  :kbd:`e'`
+    for :kbd:`e` (and some other vowels) with an acute accent,
+  :kbd:`e\``
+    for :kbd:`e` (and some other vowels) with a grave accent,
+  :kbd:`e^`
+    for :kbd:`e` (and some other vowels) with a circumflex accent,
+  :kbd:`e"`
+    for :kbd:`e` (and some other vowels) with a diaeresis,
+  :kbd:`c,`
+    for :kbd:`c` with a cedilla.
+
+There is no attempt at expressing the :kbd:`ae` and :kbd:`oe`
+diphthongs.  French also uses tildes over :kbd:`n` and :kbd:`a`, but
+seldomly, and this is not represented either.  In some countries,
+:kbd:`:` is used instead of :kbd:`"` to mark diaeresis. |package|
+supports only one convention per call, depending on the ``-c`` option
+of the |package| command.  French quotes (sometimes called *angle
+quotes*) are noted the same way English quotes are noted in TeX, *id
+est* by :kbd:``\`\`` and :kbd:`''`.  No effort has been put to preserve
+Latin ligatures (:kbd:`ae`}, :kbd:`oe`) which are representable in
+several other charsets.  So, these ligatures may be lost through Easy
+French conventions.
+
+The convention is prone to losing information, because the diacritic
+meaning overloads some characters that already have other uses.  To
+alleviate this, some knowledge of the French language is boosted
+into the recognition routines.  So, the following subtleties are
+systematically obeyed by the various recognisers.
+
+  + A comma which follows a :kbd:`c` is interpreted as a cedilla only if
+    it is followed by one of the vowels :kbd:`a`, :kbd:`o` or :kbd:`u`.
+
+  + A single quote which follows a :kbd:`e` does not necessarily means
+    an acute accent if it is followed by a single other one.  For example:
+
+      :kbd:`e'`
+        will give an :kbd:`e` with an acute accent.
+      :kbd:`e\'\'`
+        will give a simple :kbd:`e`, with a closing quotation mark.
+      :kbd:`e\'\'\'`
+        will give an :kbd:`e` with an acute accent, followed by a closing
+        quotation mark.
+
+    There is a problem induced by this convention if there are English
+    quotations with a French text.  In sentences like::
+
+      There's a meeting at Archie's restaurant.
+
+    the single quotes will be mistaken twice for acute accents.  So
+    English contractions and suffix possessives could be mangled.
+
+  + A double quote or colon, depending on ``-c`` option, which follows
+    a vowel is interpreted as diaeresis only if it is followed by another
+    letter.  But there are in French several words that *end* with a
+    diaeresis, and the |package| library is aware of them.  There are
+    words ending in ``igue``, either feminine words without a relative
+    masculine (besaiguë and ciguë), or feminine words with a relative
+    masculine [#]_ (aiguë, ambiguë, contiguë, exiguë, subaiguë and
+    suraiguë).  There are also words not ending in *igue*, but instead,
+    either ending by ``i`` [#]_ (aï, congaï, goï, haïkaï, inouï,
+    saï, samuraï, thaï and tokaï), ending by *e* (canoë) or ending by
+    *u* [#]_ (Esaü).
+
+    Just to complete this topic, note that it would be wrong to make
+    a rule for all words ending in *igue* as needing a diaerisis, as
+    there are counter-examples (becfigue, bèsigue, bigue, bordigue,
+    bourdigue, brigue, contre-digue, digue, d'intrigue, fatigue, figue,
+    garrigue, gigue, igue, intrigue, ligue, prodigue, sarigue and
+    zigue).
+
+.. [#] There are supposed to be seven words in this case.  So, one
+   is missing.
+
+.. [#] Look at one of the following sentences (the second has to be
+   interpreted with the ``-c`` option)::
+
+     "Ai"e!  Voici le proble`me que j'ai"
+     Ai:e!  Voici le proble`me que j'ai:
+
+   There is an ambiguity between an *aï* the small animal, and
+   the indicative future of *avoir* (first person singular), when
+   followed by what could be a diaeresis mark.  Hopefully, the case
+   is solved by the fact that an apostrophe always precedes the verb
+   and almost never the animal.
+
+.. [#] I did not pay attention to proper nouns, but this one showed
+   up as being fairly evident.
+
+Mule as a multiplexed charset
+-----------------------------
+
+.. :tindex Mule, a charset
+.. :cindex multiplexed charsets
+.. :cindex super-charsets
+
+This version of |package| barely starts supporting multiplexed or
+super-charsets, that is, those encoding methods by which a single text
+stream may contain a combination of more than one constituent charset.
+The only multiplexed charset in |package| is :charset:`Mule`, and even
+then, it is only very partially implemented: the only correspondence
+available is with :charset:`Latin-1`.  The author fastly implemented this
+only because he needed this for himself.  However, it is intended
+that Mule support to become more real in subsequent releases of
+|package|.
+
+Multiplexed charsets are not to be confused with mixed charset texts (see
+`Using mixed charset input`_).  For mixed charset input, the rules allowing to
+distinguish which charset is current, at any given place, are kind of
+informal, and driven from the semantics of what the file contains.  On the
+other side, multiplexed charsets are *designed* to be interpreted fairly
+precisely, and quite independently of any informational context.
+
+.. :cindex MULE, in Emacs
+
+The spelling :code:`Mule` originally stands for *mul*\ `tilingual` *e*\
+`nhancement to GNU Emacs`, it is the result of a collective effort
+orchestrated by Handa Ken'ichi since 1993.  When :code:`Mule` got
+rewritten in the main development stream of GNU Emacs 20, the FSF
+renamed it :code:`MULE`, meaning *mul*\ `tilingual` *e*\ `nvironment
+in GNU Emacs`.  Even if the charset :code:`Mule` is meant to stay
+internal to GNU Emacs, it sometimes breaks loose in external files, and
+as a consequence, a recoding tool is sometimes needed.  Within Emacs,
+:code:`Mule` comes with :code:`Leim`, which stands for *l*\ `ibraries
+of` *e*\ `macs` *i*\ `nput` *m*\ `ethods`.  One of these libraries is
+named :code:`quail` [#]_.
+
+.. [#] Usually, quail means quail egg in Japanese, while egg alone is
+   usually chicken egg.  Both quail egg and chicken egg are popular food
+   in Japan.  The :code:`quail` input system has been named because it
+   is smaller that the previous :code:`EGG` system.  As for :code:`EGG`,
+   it is the translation of :code:`TAMAGO`.  This word comes from the
+   Japanese sentence *ta*\ `kusan` *ma*\ `tasete` *go*\ `mennasai`, meaning
+   `sorry to have let you wait so long`.  Of course, the publication of
+   :code:`EGG` has been delayed many times... (Story by Takahashi Naoto)

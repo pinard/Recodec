@@ -1,0 +1,163 @@
+Charsets for CDC machines
+=========================
+
+.. :cindex CDC charsets
+.. :cindex charsets for CDC machines
+
+What is now |package| evolved out, through many transformations
+really, from a set of programs which were originally written in
+:dfn:`COMPASS`, Control Data Corporation's assembler, with bits in
+FORTRAN, and later rewritten in CDC 6000 Pascal.  The CDC heritage shows
+by the fact some old CDC charsets are still supported.
+
+The |package| author used to be familiar with CDC Scope-NOS/BE and
+Kronos-NOS, and many CDC formats.  Reading CDC tapes directly on other
+machines is often a challenge, and |package| does not always solve
+it.  It helps having tapes created in coded mode instead of binary mode,
+and using :code:`S` (Stranger) tapes instead of :code:`I` (Internal)
+tapes.  ANSI labels and multi-file tapes might be the source of trouble.
+There are ways to handle a few Cyber Record Manager formats, but some of
+them might be quite difficult to decode properly after the transfer is
+done.
+
+The |package| program is usable only for a small subset of NOS text
+formats, and surely not with binary textual formats, like :code:`UPDATE`
+or :code:`MODIFY` sources, for example. |package| is not especially
+suited for reading 8/12 or 56/60 packing, yet this could easily arranged
+if there was a demand for it.  It does not have the ability to translate
+Display Code directly, as the ASCII conversion implied by tape drivers
+or FTP does the initial approximation. |package| can decode 6/12
+caret notation over Display Code already mapped to ASCII.
+
+Control Data's Display Code
+---------------------------
+
+.. :cindex CDC Display Code, a table
+
+This code is not available in |package|, but repeated here for
+reference.  This is a 6-bit code used on CDC mainframes.
+
+::
+
+  Octal display code to graphic       Octal display code to octal ASCII
+
+  00  :    20  P    40  5   60  #     00 072  20 120  40 065  60 043
+  01  A    21  Q    41  6   61  [     01 101  21 121  41 066  61 133
+  02  B    22  R    42  7   62  ]     02 102  22 122  42 067  62 135
+  03  C    23  S    43  8   63  %     03 103  23 123  43 070  63 045
+  04  D    24  T    44  9   64  "     04 104  24 124  44 071  64 042
+  05  E    25  U    45  +   65  _     05 105  25 125  45 053  65 137
+  06  F    26  V    46  -   66  !     06 106  26 126  46 055  66 041
+  07  G    27  W    47  *   67  &     07 107  27 127  47 052  67 046
+  10  H    30  X    50  /   70  '     10 110  30 130  50 057  70 047
+  11  I    31  Y    51  (   71  ?     11 111  31 131  51 050  71 077
+  12  J    32  Z    52  )   72  <     12 112  32 132  52 051  72 074
+  13  K    33  0    53  $   73  >     13 113  33 060  53 044  73 076
+  14  L    34  1    54  =   74  @     14 114  34 061  54 075  74 100
+  15  M    35  2    55      75  \     15 115  35 062  55 040  75 134
+  16  N    36  3    56  ,   76  ^     16 116  36 063  56 054  76 136
+  17  O    37  4    57  .   77  ;     17 117  37 064  57 056  77 073
+
+In older times, :kbd:`:` used octal 63, and octal 0 was not a character.
+The table above shows the ASCII glyph interpretation of codes 60 to 77,
+yet these 16 codes were once defined differently.
+
+There is no explicit end of line in Display Code, and the Cyber Record
+Manager introduced many new ways to represent them, the traditional
+end of lines being reachable by setting :code:`RT` to ``Z``.  If 6-bit
+bytes in a file are sequentially counted from 1, a traditional end of
+line does exist if bytes 10*:var:`n`\ +9 and 10:var:`n`\ +10 are both
+zero for a given :var:`n`, in which case these two bytes are not to be
+interpreted as :kbd:`::`.  Also, up to 9 immediately preceeding zero
+bytes, going backward, are to be considered as part of the end of line
+and not interpreted as :kbd:`:` [#]_.
+
+.. [#] This convention replaced an older one saying that up to 4
+   immediately preceeding *pairs* of zero bytes, going backward, are to be
+   considered as part of the end of line and not interpreted as :kbd:`::`.
+
+ASCII 6/12 from NOS
+-------------------
+
+.. :tindex CDC-NOS, and its aliases
+.. :tindex NOS
+
+This charset is available in |package| under the name
+:charset:`CDC-NOS`, with :charset:`NOS` as an acceptable alias.
+
+.. :cindex NOS 6/12 code
+.. :cindex caret ASCII code
+
+This is one of the charsets in use on CDC Cyber NOS systems to represent
+ASCII, sometimes named :dfn:`NOS 6/12` code for coding ASCII.  This
+code is also known as :dfn:`caret ASCII`.  It is based on a six bits
+character set in which small letters and control characters are coded
+using a :kbd:`^` escape and, sometimes, a :kbd:`@` escape.
+
+The routines given here presume that the six bits code is already
+expressed in ASCII by the communication channel, with embedded ASCII
+:kbd:`^` and :kbd:`@` escapes.
+
+Here is a table showing which characters are being used to encode each
+ASCII character.
+
+::
+
+  000  ^5  020  ^#  040     060  0  100 @A  120  P  140  @G  160  ^P
+  001  ^6  021  ^[  041  !  061  1  101  A  121  Q  141  ^A  161  ^Q
+  002  ^7  022  ^]  042  "  062  2  102  B  122  R  142  ^B  162  ^R
+  003  ^8  023  ^%  043  #  063  3  103  C  123  S  143  ^C  163  ^S
+  004  ^9  024  ^"  044  $  064  4  104  D  124  T  144  ^D  164  ^T
+  005  ^+  025  ^_  045  %  065  5  105  E  125  U  145  ^E  165  ^U
+  006  ^-  026  ^!  046  &  066  6  106  F  126  V  146  ^F  166  ^V
+  007  ^*  027  ^&  047  '  067  7  107  G  127  W  147  ^G  167  ^W
+  010  ^/  030  ^'  050  (  070  8  110  H  130  X  150  ^H  170  ^X
+  011  ^(  031  ^?  051  )  071  9  111  I  131  Y  151  ^I  171  ^Y
+  012  ^)  032  ^<  052  *  072 @D  112  J  132  Z  152  ^J  172  ^Z
+  013  ^$  033  ^>  053  +  073  ;  113  K  133  [  153  ^K  173  ^0
+  014  ^=  034  ^@  054  ,  074  <  114  L  134  \  154  ^L  174  ^1
+  015  ^   035  ^\  055  -  075  =  115  M  135  ]  155  ^M  175  ^2
+  016  ^,  036  ^^  056  .  076  >  116  N  136 @B  156  ^N  176  ^3
+  017  ^.  037  ^;  057  /  077  ?  117  O  137  _  157  ^O  177  ^4
+
+ASCII *bang bang*
+-----------------
+
+.. :tindex Bang-Bang
+
+This charset is available in |package| under the name
+:charset:`Bang-Bang`.
+
+This code, in use on Cybers at Université de Montréal mainly,
+served to code a lot of French texts.  The original name of this
+charset is :dfn:`ASCII codé Display`.  This code is also known as
+:dfn:`Bang-bang`.  It is based on a six bits character set in which
+capitals, French diacritics and a few others are coded using an :kbd:`!`
+escape followed by a single character, and control characters using a
+double :kbd:`!` escape followed by a single character.
+
+The routines given here presume that the six bits code is already
+expressed in ASCII by the communication channel, with embedded ASCII
+:kbd:`!` escapes.
+
+Here is a table showing which characters are being used to encode each
+ASCII character.
+
+::
+
+  000 !!@  020 !!P  040    060 0  100 @   120 !P  140 !@ 160 P
+  001 !!A  021 !!Q  041 !" 061 1  101 !A  121 !Q  141 A  161 Q
+  002 !!B  022 !!R  042 "  062 2  102 !B  122 !R  142 B  162 R
+  003 !!C  023 !!S  043 #  063 3  103 !C  123 !S  143 C  163 S
+  004 !!D  024 !!T  044 $  064 4  104 !D  124 !T  144 D  164 T
+  005 !!E  025 !!U  045 %  065 5  105 !E  125 !U  145 E  165 U
+  006 !!F  026 !!V  046 &  066 6  106 !F  126 !V  146 F  166 V
+  007 !!G  027 !!W  047 '  067 7  107 !G  127 !W  147 G  167 W
+  010 !!H  030 !!X  050 (  070 8  110 !H  130 !X  150 H  170 X
+  011 !!I  031 !!Y  051 )  071 9  111 !I  131 !Y  151 I  171 Y
+  012 !!J  032 !!Z  052 *  072 :  112 !J  132 !Z  152 J  172 Z
+  013 !!K  033 !![  053 +  073 ;  113 !K  133 [   153 K  173 ![
+  014 !!L  034 !!\  054 ,  074 <  114 !L  134 \   154 L  174 !\
+  015 !!M  035 !!]  055 -  075 =  115 !M  135 ]   155 M  175 !]
+  016 !!N  036 !!^  056 .  076 >  116 !N  136 ^   156 N  176 !^
+  017 !!O  037 !!_  057 /  077 ?  117 !O  137 _   157 O  177 !_

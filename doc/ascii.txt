@@ -1,0 +1,144 @@
+ASCII and some derivatives
+==========================
+
+Usual ASCII
+-----------
+
+.. :tindex ASCII, an alias for the ANSI_X3.4-1968 charset
+.. :tindex ANSI_X3.4-1968, and its aliases
+.. :tindex IBM367
+.. :tindex US-ASCII
+.. :tindex cp367
+.. :tindex iso-ir-6
+.. :tindex us
+
+This charset is available in |package| under the name
+:charset:`ASCII`.  In fact, it's true name is :charset:`ANSI_X3.4-1968` as per
+RFC 1345, accepted aliases being :charset:`ANSI_X3.4-1986`, :charset:`ASCII`,
+:charset:`IBM367`, :charset:`ISO646-US`, :charset:`ISO_646.irv:1991`,
+:charset:`US-ASCII`, :charset:`cp367`, :charset:`iso-ir-6` and :charset:`us`.
+The shortest way of specifying it in |package| is :charset:`us`.
+
+.. :cindex ASCII table, recreating with |package|
+
+This documentation used to include ASCII tables.  They have been removed
+since the |package| program can now recreate these easily::
+
+  recodec -lf us                   for commented ASCII
+  recodec -ld us                   for concise decimal table
+  recodec -lo us                   for concise octal table
+  recodec -lh us                   for concise hexadecimal table
+
+ASCII extended by Latin Alphabets
+---------------------------------
+
+.. :cindex Latin charsets
+
+There are many Latin charsets.  The following has been written by Tim
+Lasko <lasko@video.dec.com>, a long while ago:
+
+  :charset:`ISO Latin-1`, or more completely ISO Latin Alphabet No
+  1, is now an international standard as of February 1987 (IS 8859,
+  Part 1).  For those American USEnet'rs that care, the 8-bit ASCII
+  standard, which is essentially the same code, is going through the
+  final administrative processes prior to publication. :charset:`ISO
+  Latin-1` (IS 8859/1) is actually one of an entire family of eight-bit
+  one-byte character sets, all having ASCII on the left hand side, and
+  with varying repertoires on the right hand side:
+
+    + Latin Alphabet No 1 (caters to Western Europe - now approved).
+    + Latin Alphabet No 2 (caters to Eastern Europe - now approved).
+    + Latin Alphabet No 3 (caters to SE Europe + others - in draft ballot).
+    + Latin Alphabet No 4 (caters to Northern Europe - in draft ballot).
+    + Latin-Cyrillic alphabet (right half all Cyrillic - processing currently
+      suspended pending USSR input).
+    + Latin-Arabic alphabet (right half all Arabic - now approved).
+    + Latin-Greek alphabet (right half Greek + symbols - in draft ballot).
+    + Latin-Hebrew alphabet (right half Hebrew + symbols - proposed).
+
+.. :tindex Latin-1
+
+The ISO Latin Alphabet 1 is available as a charset in |package|
+under the name :charset:`Latin-1`.  In fact, it's true name is
+:charset:`ISO_8859-1:1987` as per RFC 1345, accepted aliases being
+:charset:`CP819`, :charset:`IBM819`, :charset:`ISO-8859-1`, :charset:`ISO_8859-1`,
+:charset:`iso-ir-100`, :charset:`l1` and :charset:`Latin-1`.  The shortest way of
+specifying it in |package| is :charset:`l1`.
+
+.. :cindex Latin-1 table, recreating with |package|
+
+It is an eight-bit code which coincides with ASCII for the lower half.
+This documentation used to include :charset:`Latin-1` tables.  They have
+been removed since the |package| program can now recreate these
+easily::
+
+  recodec -lf l1                   for commented ISO Latin-1
+  recodec -ld l1                   for concise decimal table
+  recodec -lo l1                   for concise octal table
+  recodec -lh l1                   for concise hexadecimal table
+
+ASCII 7-bits, :kbd:`BS` to overstrike
+-------------------------------------
+
+.. :tindex ASCII-BS, and its aliases
+.. :tindex BS, an alias for ASCII-BS charset
+
+This charset is available in |package| under the name
+:charset:`ASCII-BS`, with :charset:`BS` as an acceptable alias.
+
+.. :cindex diacritics, with :charset:`ASCII-BS` charset
+
+The file is straight ASCII, seven bits only.  According to the
+definition of ASCII, diacritics are applied by a sequence of three
+characters: the letter, one :kbd:`BS`, the diacritic mark.  We deviate
+slightly from this by exchanging the diacritic mark and the letter so,
+on a screen device, the diacritic will disappear and let the letter
+alone.  At recognition time, both methods are acceptable.
+
+The French quotes are coded by the sequences: :kbd:`< BS "` or :kbd:`"
+BS <` for the opening quote and :kbd:`> BS "` or :kbd:`" BS >` for the
+closing quote.  This artificial convention was inherited in straight
+:charset:`ASCII-BS` from habits around :charset:`Bang-Bang` entry, and is not
+well known.  But we decided to stick to it so that :charset:`ASCII-BS`
+charset will not lose French quotes.
+
+The :charset:`ASCII-BS` charset is independent of :charset:`ASCII`, and
+different.  The following examples demonstrate this, knowing at advance
+that ``!2`` is the :charset:`Bang-Bang` way of representing an :kbd:`e`
+with an acute accent.  Compare::
+
+  % echo \!2 | recodec -v bang..l1/d
+  Request: Bang-Bang..ISO-8859-1/Decimal-1
+  233,  10
+
+with::
+
+  % echo \!2 | recodec -v bang..bs/d
+  Request: Bang-Bang..ISO-8859-1..ASCII-BS/Decimal-1
+   39,   8, 101,  10
+
+In the first case, the :kbd:`e` with an acute accent is merely
+transmitted by the :code:`Latin-1..ASCII` mapping, not having a special
+recoding rule for it.  In the :code:`Latin-1..ASCII-BS` case, the acute
+accent is applied over the :kbd:`e` with a backspace: diacriticised
+characters have special rules.  For the :charset:`ASCII-BS` charset,
+reversibility is still possible, but there might be difficult cases.
+
+ASCII without diacritics nor underline
+--------------------------------------
+.. :tindex flat, a charset
+
+This charset is available in |package| under the name :charset:`flat`.
+
+.. :cindex diacritics and underlines, removing
+.. :cindex removing diacritics and underlines
+
+This code is ASCII expunged of all diacritics and underlines, as long
+as they are applied using three character sequences, with :kbd:`BS` in
+the middle.  Also, despite slightly unrelated, each control character
+is represented by a sequence of two or three graphic characters.
+The newline character, however, keeps its functionality and is not
+represented.
+
+Note that charset :charset:`flat` is a terminal charset.  We can convert
+*to* :charset:`flat`, but not *from* it.

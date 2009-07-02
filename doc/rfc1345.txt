@@ -1,0 +1,94 @@
+Tabular sources (RFC 1345)
+==============================
+
+.. :cindex RFC 1345
+.. :cindex character mnemonics, documentation
+.. :cindex :code:`chset` tools
+
+An important part of the tabular charset knowledge in |package|
+comes from RFC 1345 or, alternatively, from the :code:`chset` tools,
+both maintained by Keld Simonsen.  The RFC 1345 document:
+
+  `Character Mnemonics & Character Sets`, K. Simonsen, Request for
+  Comments no. 1345, Network Working Group, June 1992.
+
+.. :cindex deviations from RFC 1345
+
+defines many character mnemonics and character sets.  The |package| library
+implements most of RFC 1345, however:
+
+  + It does not recognise those charsets which overload character positions:
+    :charset:`dk-us` and :charset:`us-dk`.  However, see `Using mixed charset
+    input`_.
+    .. :tindex dk-us, not recognised by recode
+    .. :tindex us-dk, not recognised by recode
+
+  + It does not recognise those charsets which combine two characters for
+    representing a third: :charset:`ANSI_X3.110-1983`,
+    :charset:`ISO_6937-2-add`, :charset:`T.101-G2`, :charset:`T.61-8bit`,
+    :charset:`iso-ir-90` and :charset:`videotex-suppl`.
+    .. :tindex ANSI_X3.110-1983, not recognised by recode
+    .. :tindex ISO_6937-2-add, not recognised by recode
+    .. :tindex T.101-G2, not recognised by recode
+    .. :tindex T.61-8bit, not recognised by recode
+    .. :tindex iso-ir-90, not recognised by recode
+
+  + It does not recognise 16-bits charsets: :charset:`GB_2312-80`,
+    :charset:`JIS_C6226-1978`, :charset:`JIS_C6226-1983`,
+    :charset:`JIS_X0212-1990` and :charset:`KS_C_5601-1987`.
+    .. :tindex GB_2312-80, not recognised by recode
+    .. :tindex JIS_C6226-1978, not recognised by recode
+    .. :tindex JIS_X0212-1990, not recognised by recode
+    .. :tindex KS_C_5601-1987, not recognised by recode
+
+  + It interprets the charset :charset:`isoir91` as :charset:`NATS-DANO`
+    (alias :charset:`iso-ir-9-1`), *not* as :charset:`JIS_C6229-1984-a` (alias
+    :charset:`iso-ir-91`).  It also interprets the charset :charset:`isoir92` as
+    :charset:`NATS-DANO-ADD` (alias :charset:`iso-ir-9-2`), *not* as
+    :charset:`JIS_C6229-1984-b` (alias :charset:`iso-ir-92`).  It might be
+    better just avoiding these two alias names.
+    .. :tindex isoir91
+    .. :tindex isoir92
+
+Keld Simonsen <keld@dkuug.dk> did most of RFC 1345 himself, with some
+funding from Danish Standards and Nordic standards (INSTA) project.  He
+also did the character set design work, with substantial input from Olle
+Jaernefors.  Keld typed in almost all of the tables, some have been
+contributed.  A number of people have checked the tables in various
+ways.  The RFC lists a number of people who helped.
+
+.. :cindex |package|, and RFC 1345
+
+Keld and the |package| maintainer have an arrangement by which any new
+discovered information submitted by |package| users, about tabular charsets,
+is forwarded to Keld, eventually merged into Keld's work, and only then,
+reimported into |package|.  Neither the |package| program nor its library try
+to compete, nor even establish themselves as an alternate or diverging
+reference: RFC 1345 and its new drafts stay the genuine source for most
+tabular information conveyed by |package|.  Keld has been more than
+collaborative so far, so there is no reason that we act otherwise.  In a word,
+|package| should be perceived as the application of external references, but
+not as a reference in itself.
+
+.. :tindex RFC1345, a charset, and its aliases
+.. :tindex 1345
+.. :tindex mnemonic, an alias for RFC1345 charset
+
+Internally, RFC 1345 associates which each character an unambiguous mnemonic
+of a few characters, taken from ISO 646, which is a minimal ASCII subset of 83
+characters.  The charset made up by these mnemonics is available in |package|
+under the name :charset:`RFC1345`.  It has :charset:`mnemonic` and
+:charset:`1345` for aliases.  As implemened, this charset exactly corresponds
+to :charset:`mnemonic+ascii+38`, using RFC 1345 nomenclature.  Roughly said,
+ISO 646 characters represent themselves, except for the ampersand (:kbd:`&`)
+which appears doubled.  A prefix of a single ampersand introduces a mnemonic.
+For mnemonics using two characters, the prefix is immediately by the mnemonic.
+For longer mnemonics, the prefix is followed by an underline (:kbd:`_`), the
+mmemonic, and another underline.  Conversions to this charset are usually
+reversible.
+
+Currently, |package| does not offer any of the many other possible variations
+of this family of representations.  They will likely be implemented in some
+future version, however.
+
+.. include:: inc-rfc1345.txt

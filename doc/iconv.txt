@@ -1,0 +1,74 @@
+The iconv library
+=================
+
+.. :cindex :code:`iconv` library
+.. :cindex library, :code:`iconv`
+.. :cindex :code:`libiconv`
+.. :cindex interface, with :code:`iconv` library
+.. :cindex Haible, Bruno
+
+The |package| library itself contains most code and tables from
+the portable :code:`iconv` library, written by Bruno Haible.  In fact,
+many capabilities of the |package| library are duplicated because
+of this merging, as the older |package| and :code:`iconv` libraries
+share many charsets.  We discuss, here, the issues related to this
+duplication, and other peculiarities specific to the :code:`iconv`
+library.  The plan is to remove duplications and better merge
+specificities, as |package| evolves.
+
+As implemented, if a recoding request can be satisfied by the |package|
+library both with and without its :code:`iconv` library part, it is likely
+that the :code:`iconv` library will be used.  To sort out if the :code:`iconv`
+is indeed used of not, just use the ``-v`` or ``--verbose`` option, see
+`Controlling how files are recoded`_.
+
+.. :tindex libiconv
+
+The :code:`:libiconv:` charset represents a conceptual pivot charset
+within the :code:`iconv` part of the |package| library (in fact,
+this pivot exists, but is not directly reachable).  This charset has a
+mere :code:`:` (a colon) for an alias.  It is not allowed to recode from
+or to this charset directly.  But when this charset is selected as an
+intermediate, usually by automatic means, then the :code:`iconv` part of
+the |package| library is called to handle the transformations.  By
+using an ``--ignore=:libiconv:`` option on the |package| call or
+equivalently, but more simply, ``-x:``, |package| is instructed to
+fully avoid this charset as an intermediate, with the consequence that
+the :code:`iconv` part of the library is defeated.  Consider these two
+calls:
+
+.. parsed-literal::
+
+  recodec l1..1250 < :var:`input` > :var:`output`
+  recodec -x: l1..1250 < :var:`input` > :var:`output`
+
+Both should transform :var:`input` from :charset:`ISO-8859-1` to
+:charset:`CP1250` on :var:`output`.  The first call uses the :code:`iconv`
+part of the library, while the second call avoids it.  Whatever the path
+used, the results should normally be identical.  However, there might be
+observable differences.  Most of them might result from reversibility
+issues, as the :code:`iconv` engine, which the |package| library
+directly uses for the time being, does not address reversibility.  Even
+if much less likely, some differences might result from slight errors in
+the tables used, such differences should then be reported as bugs.
+
+Other irregularities might be seen in the area of error detection
+and recovery.  The |package| library usually tries to detect
+canonicity errors in input, and production of ambiguous output, but the
+:code:`iconv` part of the library currently does not.  Input is always
+validated, however.  The |package| library may not always react
+properly when its :code:`iconv` part has no translation for a given
+character.
+
+Within a collection of names for a single charset, the |package|
+library distinguishes one of them as being the genuine charset name,
+while the others are said to be aliases.  When |package| lists
+all charsets, for example with the ``-l`` or ``--list`` option, the
+list integrates all :code:`iconv` library charsets.  The selection of
+one of the aliases as the genuine charset name is an artifact added by
+|package|, it does not come from :code:`iconv`.  Moreover, the
+|package| library dynamically resolves some conflicts when it
+initialises itself at runtime.  This might explain some discrepancies in
+the table below, as for what is the genuine charset name.
+
+.. include:: inc-iconv.txt

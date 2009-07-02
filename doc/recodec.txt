@@ -1,0 +1,125 @@
+==============================
+The |package| reference manual
+==============================
+
+..
+   FIXME: If moving `common` here or above, Docutils does not recognise the
+   first two titles as unique, and adds two extra levels on all headers.
+
+-------------------------
+A character set converter
+-------------------------
+
+.. include:: common.txt
+
+.. Forked out from the Free recode 3.6b manual.
+
+:Author: François Pinard
+:Version: |version|
+:Updated: |date|
+:Copyright: © 1990, 93, 94, 96-00, 04 Free Software Foundation, Inc.
+
+:Abstract:
+  This recoding library converts files between various coded character sets
+  and surface encodings.  When this cannot be achieved exactly, it may get rid
+  of the offending characters or fall back on approximations.  The library
+  recognises or produces more than 300 different character sets and is able to
+  convert files between almost any pair.  Most RFC 1345 character sets, and
+  all :code:`libiconv` character sets, are supported.  The |package| program
+  is a handy front-end to the library.
+
+..
+   Here is the indexing line within the GNU Bulletin.  Not used much anymore:
+
+      @item @b{Recode} @value{hfillkludge} (UtilT, SrcCD)
+
+*Copy conditions*
+
+  + Permission is granted to make and distribute verbatim copies of
+    this manual provided the copyright notice and this permission notice
+    are preserved on all copies.
+
+  + Permission is granted to copy and distribute modified versions of this
+    manual under the conditions for verbatim copying, provided that the entire
+    resulting derived work is distributed under the terms of a permission
+    notice identical to this one.
+
+  + Permission is granted to copy and distribute translations of this manual
+    into another language, under the above conditions for modified versions,
+    except that this permission notice may be stated in a translation approved
+    by the Foundation.
+
+..
+
+ *If you are impatient to get rolling and do not want to read this
+ whole manual, you may first read the* `Installation`_ *section as
+ needed, then directly skip into the* `Quick Tutorial`_.  *However,*
+ **be well aware** *that you are about to use experimental software.
+ My advice is that you quickly skim over the manual to get a feeling of
+ the nature of the experiment, and also, have an idea of what kind of
+ information you may find in here.*
+
+.. contents::
+.. sectnum::
+
+..
+   An index for command-line options
+   @defcodeindex op
+   Put variable and function names together
+   @syncodeindex vr fn
+
+.. include:: project.txt
+
+.. include:: tutor.txt
+
+.. include:: purpose.txt
+
+.. include:: usage.txt
+
+.. include:: unicode.txt
+
+.. include:: iconv.txt
+
+.. include:: rfc1345.txt
+
+.. include:: ascii.txt
+
+.. include:: ibm-ms.txt
+
+.. include:: cdc.txt
+
+.. include:: micros.txt
+
+.. include:: tex.txt
+
+.. include:: misc.txt
+
+.. include:: surfaces.txt
+
+.. include:: internals.txt
+
+..
+   @unnumbered Concept Index
+
+   @printindex cp
+
+   @unnumbered Option Index
+
+   This is an alphabetical list of all command-line options accepted by
+   |package|.
+
+   @printindex op
+
+   @unnumbered Library Index
+
+   This is an alphabetical index of important functions, data structures,
+   and variables in the |package| library.
+
+   @printindex fn
+
+   @unnumbered Charset and Surface Index
+
+   This is an alphabetical list of all the charsets and surfaces supported
+   by |package|, and their aliases.
+
+   @printindex tp

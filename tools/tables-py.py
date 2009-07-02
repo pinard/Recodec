@@ -27,8 +27,8 @@ Usage: python tables.py [OPTION]... DATA-FILE...
   -m  Python inclusion file for short RFC 1345 mnemonics (rfc1345.py).
   -n  Python inclusion file for character names (charname.py).
   -p  Python source files for strip data (strip.py).
-  -s  Texinfo inclusion file for libiconv (libiconv.texi).
-  -t  Texinfo inclusion file for RFC 1345 (rfc1345.texi).
+  -s  ReST inclusion file for libiconv (libiconv.txt).
+  -t  ReST inclusion file for RFC 1345 (rfc1345.txt).
 
 Option `-F' should appear first.  When `-F' and `-n' are used, process
 Alain's tables.  DATA-FILEs may be rfc1345.txt, mnemonic[.,]ds, Unicode
@@ -81,11 +81,11 @@ class Main:
             elif option == '-s':
                 if not libiconv:
                     libiconv = Libiconv()
-                libiconv.do_texinfo = True
+                libiconv.do_rest = True
             elif option == '-t':
                 if not strips:
                     strips = Strips()
-                strips.do_texinfo = True
+                strips.do_rest = True
         if not arguments:
             sys.stderr.write(__doc__)
             sys.exit(1)
@@ -169,7 +169,7 @@ main = run.main
 class Options:
     def __init__(self):
         self.do_sources = False
-        self.do_texinfo = False
+        self.do_rest = False
 
 # Charnames.
 
@@ -368,7 +368,7 @@ class Charnames(Options):
 
 class Libiconv(Options):
     SOURCES = 'libiconv.py'
-    TEXINFO = 'libiconv.texi'
+    REST = 'libiconv.txt'
 
     data = []
 
@@ -415,74 +415,37 @@ class Libiconv(Options):
     def complete(self):
         if self.do_sources:
             self.complete_sources()
-        if self.do_texinfo:
-            self.complete_texinfo()
 
     def complete_sources(self):
         if not self.do_sources:
             return
         write = common.Output(self.SOURCES, 'Python').write
-        count = 1
-        for comment, charset, aliases in self.data:
-            count += 2 + len(aliases)
         write('\n'
               "# This is derived from Bruno Haible's `libiconv' package.\n"
-              'iconv_name_list = [\n')
+              '\n'
+              'iconv_data = [\n')
+        commented = False
         for comment, charset, aliases in self.data:
-            if comment:
-                write('\n'
-                      '    # %s.\n'
-                      '\n'
-                      % comment)
-            if aliases:
-                write('    (%r' % charset)
-                for alias in aliases:
-                    write(',\n        %r' % alias)
-                write('),\n')
-            else:
-                write('    (%r,),\n' % charset)
-        write('    ]\n')
-
-    def complete_texinfo(self):
-        if not self.do_texinfo:
-            return
-        if run.french_mode:
-            write = common.Output('fr-%s' % self.TEXINFO).write
-        else:
-            write = common.Output(self.TEXINFO).write
-        write('\n'
-              '@itemize @bullet\n')
-        block = None
-        for comment, charset, aliases in self.data:
-            if not block and not comment:
+            if not commented and not comment:
                 comment = 'General character sets'
             if comment:
-                if block:
-                    write('@end table\n'
-                          '\n')
-                write('@item %s\n'
-                      '@table @code\n'
+                if commented:
+                    write('    ),\n')
+                write('\n'
+                      '    (%r,\n'
+                      '\n'
                       % comment)
-                block = comment
-            else:
-                write('\n')
-            write('@item %s\n' % charset)
+                commented = True
             if aliases:
-                write('@tindex %s@r{, aliases}\n'
-                      % re.sub(':([0-9]+)', r'(\1)', charset))
+                write('        (%r' % charset)
                 for alias in aliases:
-                    write('@tindex %s\n' % re.sub(':([0-9]+)', r'(\1)', alias))
-                if len(aliases) == 1:
-                    write('@code{%s} is an alias for this charset.\n'
-                          % aliases[0])
-                else:
-                    write('@code{%s} and @code{%s} are aliases'
-                          ' for this charset.\n'
-                          % ('}, @code{'.join(aliases[:-1]), aliases[-1]))
+                    write(',\n            %r' % alias)
+                write('),\n')
             else:
-                write('@tindex %s\n' % re.sub(':([0-9]+)', r'(\1)', charset))
-        write('@end table\n'
-              '@end itemize\n')
+                write('        (%r,),\n' % charset)
+        if commented:
+            write('    ),\n')
+        write(']\n')
 
 # Mnemonics.
 
@@ -650,7 +613,7 @@ class Mnemonics(Options):
 
 class Strips(Options):
     STRIP = 'strip.py'
-    TEXINFO = 'rfc1345.texi'
+    REST = 'rfc1345.txt'
 
     # Change STRIP_SIZE in `src/recode.h' if you change the value here.
     # See the accompanying documentation there, as needed.
@@ -762,7 +725,7 @@ class Strips(Options):
                 #if status > REM:
                 #    input.warn("`&rem' out of sequence")
                 #status = REM;
-                if self.do_texinfo:
+                if self.do_rest:
                     # Save remarks for Texinfo.
                     text = match.group(1)
                     remark.append(text)
@@ -925,7 +888,7 @@ class Strips(Options):
             self.comments = []
         if not self.comments:
             return
-        if self.do_texinfo:
+        if self.do_rest:
             # Save the documentation.
             aliases.sort()
             self.aliases_map[charset] = aliases
@@ -962,8 +925,8 @@ class Strips(Options):
     def complete(self):
         if self.do_sources:
             self.complete_sources()
-        if self.do_texinfo:
-            self.complete_texinfo()
+        if self.do_rest:
+            self.complete_rest()
 
     def complete_sources(self):
         sys.stderr.write("Completing %s\n" % self.STRIP)
@@ -1026,37 +989,41 @@ class Strips(Options):
         write('    ]\n')
         del self.declare_alias[:]
 
-    def complete_texinfo(self):
+    def complete_rest(self):
+        margin = '  '
         if run.french_mode:
-            write = common.Output('fr-%s' % self.TEXINFO).write
+            write = common.Output('fr-%s' % self.REST).write
         else:
-            write = common.Output(self.TEXINFO).write
+            write = common.Output(self.REST).write
         charsets = self.remark_map.keys()
         charsets.sort()
         for charset in charsets:
             write('\n'
-                  '@item %s\n'
-                  '@tindex %s@r{, aliases and source}\n'
-                  % (charset, re.sub(':([0-9]+)', r'(\1)', charset)))
+                  '%s:charset:`%s`\n'
+                  '%s  .. :tindex %s, aliases and source\n'
+                  % (margin, charset, re.sub(':([0-9]+)', r'(\1)', charset)))
             aliases = self.aliases_map[charset]
             if aliases:
                 if len(aliases) == 1:
                     if aliases[0]:      # FIXME: pourquoi parfois vide ??
-                        write('@tindex %s\n'
-                              '@code{%s} is an alias for this charset.\n'
-                              % (re.sub(':([0-9]+)', r'(\1)', aliases[0]),
+                        write('%s  .. :tindex %s\n'
+                              '%s  :charset:`%s` is an alias'
+                              ' for this charset.\n'
+                              % (margin, re.sub(':([0-9]+)', r'(\1)',
+                                                aliases[0]),
                                  aliases[0]))
                 else:
                     for alias in aliases:
-                        write('@tindex %s\n'
-                              % re.sub(':([0-9]+)', r'(\1)', alias))
-                    write('@code{%s} and @code{%s} are aliases'
+                        write('%s  .. :tindex %s\n'
+                              % (margin, re.sub(':([0-9]+)', r'(\1)', alias)))
+                    write('%s  :charset:`%s` and :charset:`%s` are aliases'
                           ' for this charset.\n'
-                          % ('}, @code{'.join(aliases[:-1]), aliases[-1]))
+                          % (margin, '`, :charset:`'.join(aliases[:-1]),
+                             aliases[-1]))
             for line in self.remark_map[charset]:
                 if line[0].islower():
                     line = line[0].upper() + line[1:]
-                write(line.replace('@', '@@'))
+                write('%s  %s' % (margin, line))
                 if line[-1] != '.':
                     write('.')
                 write('\n')

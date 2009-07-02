@@ -1,0 +1,152 @@
+Some IBM or Microsoft charsets
+==============================
+
+.. :cindex IBM codepages
+.. :cindex codepages
+
+The |package| program provides various IBM or Microsoft code pages (see
+`Tabular sources (RFC 1345)`_).  An easy way to find them all at once out of
+the |package| program itself is through the command::
+
+   recodec -l | egrep -i '(CP|IBM)[0-9]'
+
+But also, see few special charsets presented in the incoming sections.
+
+
+
+EBCDIC code
+-----------
+
+.. :cindex EBCDIC charsets
+
+This charset is the IBM's External Binary Coded Decimal for Interchange
+Coding.  This is an eight bits code.  The following three variants were
+implemented in |package| independently of RFC 1345:
+
+  :charset:`EBCDIC`
+    .. :tindex EBCDIC, a charset
+
+    In |package|, the :code:`us..ebcdic` conversion is identical to
+    ``dd conv=ebcdic`` conversion, and |package| :code:`ebcdic..us`
+    conversion is identical to ``dd conv=ascii`` conversion.  This
+    charset also represents the way Control Data Corporation relates
+    EBCDIC to 8-bits ASCII.
+
+  :charset:`EBCDIC-CCC`
+    .. :tindex EBCDIC-CCC
+
+    In |package|, the :code:`us..ebcdic-ccc` or
+    :code:`ebcdic-ccc..us` conversions represent the way Concurrent
+    Computer Corporation (formerly Perkin Elmer) relates EBCDIC to
+    8-bits ASCII.
+
+  :charset:`EBCDIC-IBM`
+    .. :tindex EBCDIC-IBM
+
+    In |package|, the :code:`us..ebcdic-ibm` conversion is *almost*
+    identical to the GNU ``dd conv=ibm`` conversion.  Given the exact
+    ``dd conv=ibm`` conversion table, |package| once said::
+
+      Codes 91 and 213 both recode to 173
+      Codes 93 and 229 both recode to 189
+      No character recodes to 74
+      No character recodes to 106
+
+    So I arbitrarily chose to recode 213 by 74 and 229 by 106.  This
+    makes the :charset:`EBCDIC-IBM` recoding reversible, but this is not
+    necessarily the best correction.  In any case, I think that GNU
+    :code:`dd` should be amended. :code:`dd` and |package| should
+    ideally agree on the same correction.  So, this table might change
+    once again.
+
+RFC 1345 brings into |package| 15 other EBCDIC charsets, and 21 other
+charsets having EBCDIC in at least one of their alias names.  You can
+get a list of all these by executing::
+
+  recodec -l | grep -i ebcdic
+
+Note that |package| may convert a pure stream of EBCDIC characters,
+but it does not know how to handle binary data between records which is
+sometimes used to delimit them and build physical blocks.  If end of
+lines are not marked, fixed record size may produce something readable,
+but :charset:`VB` or :charset:`VBS` blocking is likely to yield some
+garbage in the converted results.
+
+IBM's PC code
+-------------
+
+.. :tindex IBM-PC
+.. :cindex MS-DOS charsets
+.. :tindex MSDOS
+.. :tindex dos
+.. :tindex pc
+
+This charset is available in |package| under the name
+:charset:`IBM-PC`, with :charset:`dos`, :charset:`MSDOS` and :charset:`pc` as
+acceptable aliases.  The shortest way of specifying it in |package|
+is :charset:`pc`.
+
+The charset is aimed towards a PC microcomputer from IBM or any
+compatible.  This is an eight-bit code.  This charset is fairly old
+in |package|, its tables were produced a long while ago by mere
+inspection of a printed chart of the IBM-PC codes and glyph.
+
+It has :charset:`CR-LF` as its implied surface.  This means that, if
+the original end of lines have to be preserved while going out of
+:charset:`IBM-PC`, they should currently be added back through the usage of
+a surface on the other charset, or better, just never removed.  Here are
+examples for both cases:
+
+.. parsed-literal::
+
+  recodec pc..l2/cl < :var:`input` > :var:`output`
+  recodec pc/..l2 < :var:`input` > :var:`output`
+
+RFC 1345 brings into |package| 44 ``IBM`` charsets or code pages,
+and also 8 other code pages.  You can get a list of these all these by
+executing [#]_::
+
+  recodec -l | egrep -i '(CP|IBM)[0-9]'
+
+.. :cindex CR-LF surface, in IBM-PC charsets
+.. :tindex IBM819, and CR-LF surface
+
+All charset or aliases beginning with letters ``CP`` or ``IBM``
+also have :charset:`CR-LF` as their implied surface.  The same is true
+for a purely numeric alias in the same family.  For example, all of
+:charset:`819`, :charset:`CP819` and :charset:`IBM819` imply :charset:`CR-LF` as
+a surface.  Note that :charset:`ISO-8859-1` does *not* imply a surface,
+despite it shares the same tabular data as :charset:`819`.
+
+.. :tindex ibm437
+
+There are a few discrepancies between this :charset:`IBM-PC` charset and
+the very similar RFC 1345 charset :charset:`ibm437`, which have not
+been analysed yet, so the charsets are being kept separate for now.
+This might change in the future, and the :charset:`IBM-PC` charset might
+disappear.  Wizards would be interested in comparing the output of these
+two commands::
+
+  recodec -vh IBM-PC..Latin-1
+  recodec -vh IBM437..Latin-1
+
+The first command uses the charset prior to RFC 1345 introduction.
+Both methods give different recodings.  These differences are annoying,
+the fuzziness will have to be explained and settle down one day.
+
+.. [#] On DOS/Windows, stock shells do not know that apostrophes quote
+   special characters like :kbd:`|`, so one need to use double quotes
+   instead of apostrophes.
+
+Unisys' Icon code
+-----------------
+
+.. :tindex Icon-QNX, and aliases
+.. :tindex QNX, an alias for a charset
+
+This charset is available in |package| under the name
+:charset:`Icon-QNX`, with :charset:`QNX` as an acceptable alias.
+
+The file is using Unisys' Icon way to represent diacritics with code 25
+escape sequences, under the system QNX.  This is a seven-bit code, even
+if eight-bit codes can flow through as part of IBM-PC charset.

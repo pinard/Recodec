@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 package = 'Recodec'
-version = '0.2a'
+version = '0.2b'
 
 if __name__ == '__main__':
     import sys

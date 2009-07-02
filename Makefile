@@ -26,8 +26,11 @@ RECODING_MODULES = african afrtran ascii_bs atarist bangbang base64 cdcnos \
 dump endline flat html ibmpc java juca latex permute qnx quoted strip \
 testdump texinfo texte ucs utf16 utf7 utf8 varia vietnam builtin
 
-EXTRA_BUILT = $(addprefix Recode/, \
-  charname.py fr_charname.py libiconv.py preset.py rfc1345.py)
+EXTRA_BUILT = \
+  $(addprefix doc/, \
+    inc-iconv.txt inc-stamp.txt recodec.html) \
+  $(addprefix Recode/, \
+    charname.py fr_charname.py libiconv.py preset.py rfc1345.py)
 
 all: $(EXTRA_BUILT)
 	$(PYSETUP) build
@@ -53,17 +56,10 @@ tags:
 DISTRIBUTION = $(shell $(PYTHON) Recode/version.py)
 
 publish: distcheck
-	python $(HOME)/webert-0.0/Webert/htmlpage.py README index.html
-	chmod 644 index.html $(DISTRIBUTION).tar.gz
-	scp -p index.html $(DISTRIBUTION).tar.gz bor:w/recodec/
-	rm index.html $(DISTRIBUTION).tar.gz
-	ssh bor rm -vf w/recodec/Recodec.tar.gz
-	ssh bor ln -vs $(DISTRIBUTION).tar.gz w/recodec/Recodec.tar.gz
-	ssh bor ls -Llt w/recodec
+	mv $(DISTRIBUTION).tar.gz ../archives/
+	ls -l ../archives/
 
-dist: $(DISTRIBUTION).tar.gz
-
-distcheck: $(DISTRIBUTION).tar.gz
+distcheck: dist
 	rm -rf =distcheck
 	mkdir =distcheck
 	cd =distcheck && tar xfz ../$(DISTRIBUTION).tar.gz
@@ -72,13 +68,32 @@ distcheck: $(DISTRIBUTION).tar.gz
 	  && cd test && PYTHONPATH=.. $(PYTHON) -S suite.py -b
 	rm -rf =distcheck
 
+dist: $(DISTRIBUTION).tar.gz
+
 $(DISTRIBUTION).tar.gz: $(EXTRA_BUILT)
+	ajuster-web
 	$(PYSETUP) sdist
 	mv dist/$(DISTRIBUTION).tar.gz .
 	rmdir dist
 	ls -l *.gz
 
 PYTHONTOOL = PYTHONPATH=.:tools $(PYTHON) -S
+
+doc/inc-iconv.txt: tools/inc-iconv-txt.py Recode/libiconv.py
+	$(PYTHONTOOL) tools/inc-iconv-txt.py
+	mv $(notdir $@) $@
+
+doc/inc-rfc1345.txt: tools/tables-py.py $(MNEMONICS_DS) $(RFC1345_TXT)
+	$(PYTHONTOOL) tools/tables-py.py -t $(MNEMONICS_DS) $(RFC1345_TXT)
+	mv $(notdir $@) $@
+
+DOC_SOURCES = $(filter-out doc/inc-stamp.txt, $(wildcard doc/*.txt))
+doc/inc-stamp.txt: tools/inc-stamp-txt.py Recode/version.py $(DOC_SOURCES)
+	$(PYTHONTOOL) tools/inc-stamp-txt.py $(DOC_SOURCES)
+	mv $(notdir $@) $@
+
+doc/recodec.html: doc/inc-stamp.txt
+	cd doc && rst2html.py recodec.txt > recodec.html
 
 Recode/preset.py: tools/preset-py.py \
   $(addprefix Recode/, $(addsuffix .py, $(RECODING_MODULES)))

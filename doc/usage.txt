@@ -1,0 +1,1110 @@
+How to use this program
+=======================
+
+With the synopsis of the |package| call, we stress the difference
+between using this program as a file filter, or recoding many files
+at once.  The first parameter of any call states the recoding request,
+and this deserves a section on its own.  Options are then presented,
+but somewhat grouped according to the related functionalities they
+control.
+
+..
+   FIXME: Should use |package| below, but then, references do not work.
+   regardless of it they are spelled Recodec or |package|.
+
+Synopsis of Recodec call
+------------------------
+
+.. :cindex |package|, synopsis of invocation
+.. :cindex invocation of |package|, synopsis
+
+The general format of the program call is one of:
+
+.. parsed-literal::
+
+  recodec [:var:`option`]... [:var:`charset` | :var:`request` [:var:`file`]... ]
+
+Some calls are used only to obtain lists produced by |package|
+itself, without actually recoding any file.  They are recognised
+through the usage of listing options, and these options decide what
+meaning should be given to an optional :var:`charset` parameter.
+See `Asking for various lists`_.
+
+In other calls, the first parameter (:var:`request`) always explains which
+transformations are expected on the files.  There are many variations to the
+aspect of this parameter.  We will discuss more complex situations later (see
+`The request parameter`_), but for many simple cases, this parameter merely
+looks like this [#]_:
+
+.. parsed-literal::
+
+  :var:`before`\ ..\ :var:`after`
+
+where :var:`before` and :var:`after` each gives the name of a charset.
+Each :var:`file` will be read assuming it is coded with charset
+:var:`before`, it will be recoded over itself so to use the charset
+:var:`after`.  If there is no :var:`file` on the |package| command,
+the program rather acts as a Unix filter and transforms standard input
+onto standard output.
+
+.. :cindex filter operation
+.. :cindex |package|, operation as filter
+
+The capability of recoding many files at once is very convenient.  For
+example, one could easily prepare a distribution from :charset:`Latin-1` to
+MSDOS, this way::
+
+  mkdir package
+  cp -p Makefile *.[ch] package
+  recodec Latin-1..MSDOS package/*
+  zoo ah package.zoo package/*
+  rm -rf package
+
+(In this example, the non-mandatory ``-p`` option to :code:`cp` is for
+preserving timestamps, and the :code:`zoo` program is an archiver from
+Rahul Dhesi which once was quite popular.)
+
+The filter operation is especially useful when the input files should
+not be altered.  Let us make an example to illustrate this point.
+Suppose that someone has a file named :file:`datum.txt`, which is
+almost a TeX file, except that diacriticised characters are written
+using :charset:`Latin-1`.  To complete the recoding of the diacriticised
+characters *only* and produce a file :file:`datum.tex`, without
+destroying the original, one could do::
+
+  cp -p datum.txt datum.tex
+  recodec -d l1..tex datum.tex
+
+However, using |package| as a filter will achieve the same goal more
+neatly::
+
+  recodec -d l1..tex <datum.txt >datum.tex
+
+This example also shows that :charset:`l1` could be used instead of
+:charset:`Latin-1`; charset names often have such aliases.
+
+.. [#] In previous versions or |package|, a single colon ``:`` was
+   used instead of the two dots ``..`` for separating charsets, but this
+   was creating problems because colons are allowed in official charset
+   names.  The old request syntax is still recognised for compatibility
+   purposes, but is deprecated.
+
+The request parameter
+---------------------
+
+In the case where the :var:`request` is merely written as :var:`before`\ ..\
+:var:`after`, then :var:`before` and :var:`after` specify the start charset and
+the goal charset for the recoding.
+
+.. :cindex charset names, valid characters
+.. :cindex valid characters in charset names
+
+For |package|, charset names may contain any character, besides a
+comma, a forward slash, or two periods in a row.  But in practice, charset
+names are currently limited to alphabetic letters (upper or lower case),
+digits, hyphens, underlines, periods, colons or round parentheses.
+
+.. :cindex request, syntax
+.. :cindex |package| request syntax
+
+The complete syntax for a valid :var:`request` allows for unusual
+things, which might surprise at first.  (Do not pay too much attention
+to these facilities on first reading.)  For example, :var:`request`
+may also contain intermediate charsets, like in the following example:
+
+.. parsed-literal::
+
+  :var:`before`..:var:`interim1`..:var:`interim2`..:var:`after`
+
+.. :cindex intermediate charsets
+.. :cindex chaining of charsets in a request
+.. :cindex charsets, chaining in a request
+
+meaning that |package| should internally produce the :var:`interim1`
+charset from the start charset, then work out of this :var:`interim1`
+charset to internally produce :var:`interim2`, and from there towards the
+goal charset.  In fact, |package| internally combines recipes and
+automatically uses interim charsets, when there is no direct recipe for
+transforming :var:`before` into :var:`after`.  But there might be many ways
+to do it.  When many routes are possible, the above :dfn:`chaining` syntax
+may be used to more precisely force the program towards a particular route,
+which it might not have naturally selected otherwise.  On the other hand,
+because |package| tries to choose good routes, chaining is only needed
+to achieve some rare, unusual effects.
+
+Moreover, many such requests (sub-requests, more precisely) may be
+separated with commas (but no spaces at all), indicating a sequence
+of recodings, where the output of one has to serve as the input of the
+following one.  For example, the two following requests are equivalent:
+
+.. parsed-literal::
+
+  :var:`before`\ ..\ :var:`interim1`\ ..\ :var:`interim2`\ ..\ :var:`after`
+  :var:`before`\ ..\ :var:`interim1`,:var:`interim1`\ ..\ :var:`interim2`,:var:`interim2`\ ..\ :var:`after`
+
+In this example, the charset input for any recoding sub-request is
+identical to the charset output by the preceding sub-request.  But it
+does not have to be so in the general case.  One might wonder what would
+be the meaning of declaring the charset input for a recoding sub-request
+of being of different nature than the charset output by a preceding
+sub-request, when recodings are chained in this way.  Such a strange
+usage might have a meaning and be useful for the |package| expert,
+but they are quite uncommon in practice.
+
+.. :cindex surfaces, syntax
+
+More useful is the distinction between the concept of charset, and
+the concept of surfaces.  An encoded charset is represented by:
+
+.. parsed-literal::
+
+  :var:`pure-charset`\ /\ :var:`surface1`\ /\ :var:`surface2`...
+
+.. :cindex surfaces, commutativity
+.. :cindex commutativity of surfaces
+
+using slashes to introduce surfaces, if any.  The order of application
+of surfaces is usually important, they cannot be freely commuted.  In the
+given example, :var:`surface1` is first applied over the :var:`pure-charset`,
+then :var:`surface2` is applied over the result.  Given this request:
+
+.. parsed-literal::
+
+  :var:`before`\ /\ :var:`surface1`\ /\ :var:`surface2`\ ..\ :var:`after`\ /\ :var:`surface3`
+
+the |package| program will understand that the input files should
+have :var:`surface2` removed first (because it was applied last), then
+:var:`surface1` should be removed.  The next step will be to translate the
+codes from charset :var:`before` to charset :var:`after`, prior to applying
+:var:`surface3` over the result.
+
+.. :cindex implied surfaces
+.. :cindex surfaces, implied
+.. :tindex IBM-PC charset, and CR-LF surface
+
+Some charsets have one or more *implied* surfaces.  In this case, the
+implied surfaces are automatically handled merely by naming the charset,
+without any explicit surface to qualify it.  Let's take an example to
+illustrate this feature.  The request ``pc..l1`` will indeed decode
+MS-DOS end of lines prior to converting IBM-PC codes to :charset:`Latin-1`,
+because ``pc`` is the name of a charset [#]_ which has :charset:`CR-LF` for
+its usual surface.  The request ``pc/..l1`` will *not* decode end of
+lines, since the slash introduces surfaces, and even if the surface list
+is empty, it effectively defeats the automatic removal of surfaces for
+this charset.  So, empty surfaces are useful, indeed!
+
+.. :cindex aliases
+.. :cindex alternate names for charsets and surfaces
+.. :cindex charsets, aliases
+.. :cindex surfaces, aliases
+
+Both charsets and surfaces may have predefined alternate names, or aliases.
+However, and this is rather important to understand, implied surfaces
+are attached to individual aliases rather than on genuine charsets.
+Consequently, the official charset name and all of its aliases do not
+necessarily share the same implied surfaces.  The charset and all its
+aliases may each have its own different set of implied surfaces.
+
+.. :cindex abbreviated names for charsets and surfaces
+.. :cindex names of charsets and surfaces, abbreviation
+
+Charset names, surface names, or their aliases may always be abbreviated
+to any unambiguous prefix.  Internally in |package|, disambiguating
+tables are kept separate for charset names and surface names.
+
+.. :cindex letter case, in charset and surface names
+
+While recognising a charset name or a surface name (or aliases thereof),
+|package| ignores all characters besides letters and digits, so for
+example, the hyphens and underlines being part of an official charset
+name may safely be omitted (no need to un-confuse them!).  There is also
+no distinction between upper and lower case for charset or surface names.
+
+One of the :var:`before` or :var:`after` keywords may be omitted.  If the
+double dot separator is omitted too, then the charset is interpreted as
+the :var:`before` charset [#]_.
+
+.. :cindex default charset
+.. :cindex charset, default
+.. :vindex DEFAULT_CHARSET
+
+When a charset name is omitted or left empty, the value of the
+:code:`DEFAULT_CHARSET` variable in the environment is used instead.
+If this variable is not defined, the |package| library uses the
+current locale's encoding. On POSIX compliant systems, this depends
+on the first non-empty value among the environment variables LC_ALL,
+LC_CTYPE, LANG, and can be determined through the command ``locale
+charmap``.
+
+If the charset name is omitted but followed by surfaces, the surfaces
+then qualify the usual or default charset.
+For example, the request ``../x`` is sufficient for applying an
+hexadecimal surface to the input text [#]_.
+
+The allowable values for :var:`before` or :var:`after` charsets, and various
+surfaces, are described in the remainder of this document.
+
+.. [#] More precisely, :charset:`pc` is an alias for the charset :charset:`IBM-PC`.
+
+.. [#] Both :var:`before` and :var:`after` may be omitted, in which case
+   the double dot separator is mandatory.  This is not very useful, as the
+   recoding reduces to a mere copy in that case.
+
+.. [#] MS-DOS is one of those systems for which the default charset has
+   implied surfaces, :charset:`CR-LF` here.  Such surfaces are automatically
+   removed or applied whenever the default charset is read or written,
+   exactly as it would go for any other charset.  In the example above, on
+   such systems, the hexadecimal surface would then *replace* the implied
+   surfaces.  For *adding* an hexadecimal surface without removing any, one
+   should write the request as ``/../x``.
+
+Asking for various lists
+------------------------
+
+Many options control listing output generated by |package| itself,
+they are not meant to accompany actual file recodings.  These options are:
+
+  ``--version``
+    .. :opindex --version
+    .. :cindex |package| version, printing
+
+    The program merely prints its version numbers on standard output, and
+    exits without doing anything else.
+
+  ``--help``
+    .. :opindex --help
+    .. :cindex help page, printing
+
+    The program merely prints a page of help on standard output, and exits
+    without doing any recoding.
+
+  ``-C``, ``--copyright``
+    .. :opindex -C
+    .. :opindex --copyright
+    .. :cindex copyright conditions, printing
+
+    Given this option, all other parameters and options are ignored.  The
+    program prints briefly the copyright and copying conditions.  See the
+    file :file:`COPYING` in the distribution for full statement of the
+    Copyright and copying conditions.
+
+  ``-h[``\ :var:`language`\ ``/][``\ :var:`name`\ ``]``, ``--header[=[``\ :var:`language`\ ``/][``\ :var:`name`\ ``]]``
+    .. :opindex -h
+    .. :opindex --header
+    .. :cindex source file generation
+    .. :cindex programming language support
+    .. :cindex languages, programming
+    .. :cindex supported programming languages
+
+    Instead of recoding files, |package| writes a :var:`language`
+    source file on standard output and exits.  This source is meant to
+    be included in a regular program written in the same programming
+    :var:`language`: its purpose is to declare and initialise an array,
+    named :var:`name`, which represents the requested recoding.  The
+    only acceptable values for :var:`language` are ``c`` or ``perl``,
+    and may may be abbreviated.  If :var:`language` is not specified,
+    ``c`` is assumed.  If :var:`name` is not specified, then it defaults
+    to :var:`before`\ ``_``\ :var:`after`.  Strings :var:`before` and
+    :var:`after` are cleaned before being used according to the syntax
+    of :var:`language`.
+
+    Even if |package| tries its best, this option does not always
+    succeed in producing the requested source table, it then prints
+    ``Recoding is too complex for a mere table``.  It will succeed
+    however, provided the recoding can be internally represented by
+    only one step after the optimisation phase, and if this merged step
+    conveys a one-to-one or a one-to-many explicit table.  Also, when
+    attempting to produce sources tables, |package| relaxes its
+    checking a tiny bit: it ignores the algorithmic part of some tabular
+    recodings, it also avoids the processing of implied surfaces.  But
+    this is all fairly technical.  Better try and see!
+
+    Most tables are produced using decimal numbers to refer to character
+    values [#]_.  Yet, users who know all |package| tricks and
+    stunts could indeed force octal or hexadecimal output for the table
+    contents.  For example::
+
+      recodec ibm297/test8..cp1252/x < /dev/null
+
+    produces a sequence of hexadecimal values which represent a
+    conversion table from :charset:`IBM297` to :charset:`CP1252`.
+
+    Beware that other options might affect the produced source tables, these
+    are: ``-d``, ``-g`` and, particularly, ``-s``.
+
+  ``-k`` :var:`pairs`, ``--known=``\ :var:`pairs`
+    .. :opindex -k
+    .. :opindex --known=
+    .. :cindex unknown charsets
+    .. :cindex guessing charsets
+    .. :cindex charsets, guessing
+
+    This particular option is meant to help identifying an unknown
+    charset, using as hints some already identified characters of the
+    charset.  Some examples will help introducing the idea.
+
+    Let's presume here that |package| is run in an ISO-8859-1
+    locale, and that :code:`DEFAULT_CHARSET` is unset in the
+    environment.  Suppose you have guessed that code 130 (decimal) of
+    the unknown charset represents a lower case ``e`` with an acute
+    accent.  That is to say that this code should map to code 233
+    (decimal) in the usual charset.  By executing::
+
+      recodec -k 130:233
+
+    you should obtain a listing similar to::
+
+      AtariST atarist
+      CWI cphu cwi cwi2
+      IBM437 437 cp437 ibm437
+      IBM850 850 cp850 ibm850
+      IBM851 851 cp851 ibm851
+      IBM852 852 cp852 ibm852
+      IBM857 857 cp857 ibm857
+      IBM860 860 cp860 ibm860
+      IBM861 861 cp861 cpis ibm861
+      IBM863 863 cp863 ibm863
+      IBM865 865 cp865 ibm865
+
+    You can give more than one clue at once, to restrict the list further.
+    Suppose you have *also* guessed that code 211 of the unknown
+    charset represents an upper case ``E`` with diaeresis, that is, code
+    203 in the usual charset.  By requesting::
+
+      recodec -k 130:233,211:203
+
+    you should obtain::
+
+      IBM850 850 cp850 ibm850
+      IBM852 852 cp852 ibm852
+      IBM857 857 cp857 ibm857
+
+    The usual charset may be overridden by specifying one non-option argument.
+    For example, to request the list of charsets for which code 130 maps to
+    code 142 for the Macintosh, you may ask::
+
+      recodec -k 130:142 mac
+
+    and get::
+
+      AtariST atarist
+      CWI cphu cwi cwi2
+      IBM437 437 cp437 ibm437
+      IBM850 850 cp850 ibm850
+      IBM851 851 cp851 ibm851
+      IBM852 852 cp852 ibm852
+      IBM857 857 cp857 ibm857
+      IBM860 860 cp860 ibm860
+      IBM861 861 cp861 cpis ibm861
+      IBM863 863 cp863 ibm863
+      IBM865 865 cp865 ibm865
+
+    which, of course, is identical to the result of the first example,
+    since the code 142 for the Macintosh is a small ``e`` with acute.
+
+    More formally, option ``-k`` lists all possible *before* charsets
+    for the *after* charset given as the sole non-option argument to
+    |package|, but subject to restrictions given in :var:`pairs`.
+    If there is no non-option argument, the *after* charset is taken to
+    be the default charset for this |package|.
+
+    The restrictions are given as a comma separated list of pairs, each pair
+    consisting of two numbers separated by a colon.  The numbers are taken as
+    decimal when the initial digit is between ``1`` and ``9``; ``0x`` starts
+    an hexadecimal number, or else ``0`` starts an octal number.  The first
+    number is a code in any *before* charset, while the second number is a
+    code in the specified *after* charset.  If the first number would not be
+    transformed into the second number by recoding from some *before* charset
+    to the *after* charset, then this *before* charset is rejected.  A
+    *before* charset is listed only if it is not rejected by any pair.  The
+    program will only test those *before* charsets having a tabular style
+    internal description, so should be the selected *after* charset.  See
+    `Tabular sources (RFC 1345)`_.
+
+    The produced list is in fact a subset of the list produced by the
+    option ``-l``.  As for option ``-l``, the non-option argument is
+    interpreted as a charset name, possibly abbreviated to any non
+    ambiguous prefix.
+
+  ``-l[``\ :var:`format`\ ``]``, ``--list[=``\ :var:`format`\ ``]``
+    .. :opindex -l
+    .. :opindex --list
+    .. :cindex listing charsets
+    .. :cindex information about charsets
+
+    This option asks for information about all charsets, or about one
+    particular charset.  No file will be recoded.
+
+    If there is no non-option arguments, |package| ignores the
+    :var:`format` value of the option, it writes a sorted list of
+    charset names on standard output, one per line.  When a charset name
+    have aliases or synonyms, they follow the true charset name on its
+    line, sorted from left to right.  Each charset or alias is followed
+    by its implied surfaces, if any.  This list is over two hundred
+    lines.  It is best used with ``grep -i``, as in::
+
+      recodec -l | grep -i greek
+
+    There might be one non-option argument, in which case it is interpreted as
+    a charset name, possibly abbreviated to any non ambiguous prefix.  This
+    particular usage of the ``-l`` option is obeyed *only* for charsets having
+    a tabular style internal description (see `Tabular sources (RFC 1345)`_).
+    Even if most charsets have this property, some do not, and the option
+    ``-l`` cannot be used to detail these particular charsets.  For knowing if
+    a particular charset can be listed this way, you should merely try and see
+    if this works.  The :var:`format` value of the option is a keyword from
+    the following list.  Keywords may be abbreviated by dropping suffix
+    letters, and even reduced to the first letter only:
+
+      ``decimal``
+        This format asks for the production on standard output of a concise
+        tabular display of the charset, in which character code values are
+        expressed in decimal.
+
+      ``octal``
+        This format uses octal instead of decimal in the concise tabular
+        display of the charset.
+
+      ``hexadecimal``
+        This format uses hexadecimal instead of decimal in the concise tabular
+        display of the charset.
+
+      ``full``
+        This format requests an extensive display of the charset on standard
+        output, using one line per character showing its decimal, hexadecimal,
+        octal and :charset:`UCS-2` code values, and also a descriptive comment
+        which should be the 10646 name for the character.
+
+        .. :vindex LANGUAGE, when listing charsets
+        .. :vindex LANG, when listing charsets
+        .. :cindex French description of charsets
+
+        The descriptive comment is given in English and ASCII, yet
+        if the English description is not available but a French
+        one is, then the French description is given instead, using
+        :charset:`Latin-1`.  However, if the :code:`LANGUAGE` or
+        :code:`LANG` environment variable begins with the letters
+        ``fr``, then listing preference goes to French when both
+        descriptions are available.
+
+    When option ``-l`` is used together with a :var:`charset` argument,
+    the :var:`format` defaults to :code:`decimal`.
+
+  ``-T``, ``--find-subsets``
+    .. :opindex -T
+    .. :opindex --find-subsets
+    .. :cindex identifying subsets in charsets
+    .. :cindex subsets in charsets
+
+    This option is a maintainer tool for evaluating the redundancy of
+    those charsets, in |package|, which are internally represented
+    by an :charset:`UCS-2` data table.  After the listing has been
+    produced, the program exits without doing any recoding.  The output
+    is meant to be sorted, like this: ``recodec -T | sort``.  The option
+    triggers |package| into comparing all pairs of charsets,
+    seeking those which are subsets of others.  The concept and results
+    are better explained through a few examples.  Consider these three
+    sample lines from ``-T`` output::
+
+      [  0] IBM891 == IBM903
+      [  1] IBM1004 < CP1252
+      [ 12] INVARIANT < CSA_Z243.4-1985-1
+
+    The first line means that :charset:`IBM891` and :charset:`IBM903` are
+    completely identical as far as |package| is concerned, so
+    one is fully redundant to the other.  The second line says that
+    :charset:`IBM1004` is wholly contained within :charset:`CP1252`, yet there
+    is a single character which is in :charset:`CP1252` without being
+    in :charset:`IBM1004`.  The third line says that :charset:`INVARIANT`
+    is wholly contained within :charset:`CSA_Z243.4-1985-1`, but twelve
+    characters are in :charset:`CSA_Z243.4-1985-1` without being in
+    :charset:`INVARIANT`.  The whole output might most probably be reduced
+    and made more significant through a transitivity study.
+
+.. [#] The author of |package| by far prefer expressing numbers
+   in decimal than octal or hexadecimal, as he considers that the
+   current state of technology should not force users anymore in such
+   strange things.  But Unicode people see things differently, to
+   the point |package| cannot escape being tainted with some
+   hexadecimal.
+
+Controlling how files are recoded
+---------------------------------
+
+The following options have the purpose of giving the user some fine
+grain control over the recoding operation themselves.
+
+  ``-c``, ``--colons``
+    .. :opindex -c
+    .. :opindex --colons
+    .. :cindex diaeresis
+
+    With :charset:`Texte` Easy French conventions, use the column :kbd:`:`
+    instead of the double-quote :kbd:`"` for marking diaeresis.
+    See `Easy French conventions`_.
+
+  ``-g``, ``--graphics``
+    .. :opindex -g
+    .. :opindex --graphics
+    .. :cindex IBM graphics characters
+    .. :cindex box-drawing characters
+
+    This option is only meaningful while getting *out* of the
+    :charset:`IBM-PC` charset.  In this charset, characters 176 to 223 are used
+    for constructing rulers and boxes, using simple or double horizontal or
+    vertical lines.  This option forces the automatic selection of ASCII
+    characters for approximating these rulers and boxes, at cost of making
+    the transformation irreversible.  Option ``-g`` implies ``-f``.
+
+  ``-t``, ``--touch``
+    .. :opindex -t
+    .. :opindex --touch
+    .. :cindex time stamps of files
+    .. :cindex file time stamps
+
+    The *touch* option is meaningful only when files are recoded over
+    themselves.  Without it, the time-stamps associated with files are
+    preserved, to reflect the fact that changing the code of a file does not
+    really alter its informational contents.  When the user wants the
+    recoded files to be time-stamped at the recoding time, this option
+    inhibits the automatic protection of the time-stamps.
+
+  ``-v``, ``--verbose``
+    .. :opindex -v
+    .. :opindex --verbose
+    .. :cindex verbose operation
+    .. :cindex details about recoding
+    .. :cindex recoding details
+    .. :cindex quality of recoding
+
+    Before doing any recoding, the program will first print on the
+    :code:`stderr` stream the list of all intermediate charsets planned
+    for recoding, starting with the :var:`before` charset and ending
+    with the :var:`after` charset.  It also prints an indication of the
+    recoding quality, as one of the word ``reversible``, ``one to one``,
+    ``one to many``, ``many to one`` or ``many to many``.
+
+    This information will appear once or twice.  It is shown a second time
+    only when the optimisation and step merging phase succeeds in replacing
+    many single steps by a new one.
+
+    This option also has a second effect.  The program will print on
+    :code:`stderr` one message per recoded :var:`file`, so as to keep the user
+    informed of the progress of its command.
+
+    An easy way to know beforehand the sequence or quality of a recoding is
+    by using the command such as:
+
+    .. parsed-literal::
+
+      recodec -v :var:`before`..:var:`after` < /dev/null
+
+    using the fact that, in |package|, an empty input file produces
+    an empty output file.
+
+  ``-x`` :var:`charset`\ , ``--ignore=``\ :var:`charset`
+    .. :opindex -x
+    .. :opindex --ignore
+    .. :cindex ignore charsets
+    .. :cindex recoding path, rejection
+
+    This option tells the program to ignore any recoding path through the
+    specified :var:`charset`, so disabling any single step using this charset
+    as a start or end point.  This may be used when the user wants to force
+    |package| into using an alternate recoding path (yet using chained
+    requests offers a finer control, see `The request parameter`_).
+
+    :var:`charset` may be abbreviated to any unambiguous prefix.
+
+Reversibility issues
+--------------------
+
+The following options are somewhat related to reversibility issues:
+
+  ``-f``, ``--force``
+    .. :opindex -f
+    .. :opindex --force
+    .. :cindex force recoding
+    .. :cindex irreversible recoding
+
+    With this option, irreversible or otherwise erroneous recodings
+    are run to completion, and |package| does not exit with a
+    non-zero status if it would be only because irreversibility matters.
+    See `Reversibility issues`_.
+
+    Without this option, |package| tries to protect you against
+    recoding a file irreversibly over itself [#]_. Whenever an
+    irreversible recoding is met, or any other recoding error,
+    |package| produces a warning on standard error.  The current
+    input file does not get replaced by its recoded version, and
+    |package| then proceeds with the recoding of the next file.
+
+    When the program is merely used as a filter, standard output will
+    have received a partially recoded copy of standard input, up to the
+    first error point.  After all recodings have been done or attempted,
+    and if some recoding has been aborted, |package| exits with a
+    non-zero status.
+
+    In releases of |package| prior to version 3.5, this option was
+    always selected, so it was rather meaningless.  Nevertheless, users
+    were invited to start using ``-f`` right away in scripts calling
+    |package| whenever convenient, in preparation for the current
+    behaviour.
+
+  ``-q``, ``--quiet``, ``--silent``
+    .. :opindex -q
+    .. :opindex --quiet
+    .. :opindex --silent
+    .. :cindex suppressing diagnostic messages
+    .. :cindex error messages, suppressing
+    .. :cindex silent operation
+
+    This option has the sole purpose of inhibiting warning messages about
+    irreversible recodings, and other such diagnostics.  It has no other
+    effect, in particular, it does *not* prevent recodings to be aborted
+    or |package| to return a non-zero exit status when irreversible
+    recodings are met.
+
+    This option is set automatically for the children processes, when
+    |package| splits itself in many collaborating copies.  Doing so, the
+    diagnostic is issued only once by the parent.  See option ``-p``.
+
+  ``-s``, ``--strict``
+    .. :opindex -s
+    .. :opindex --strict
+    .. :cindex strict operation
+    .. :cindex map filling, disable
+    .. :cindex disable map filling
+
+    By using this option, the user requests that |package| be very
+    strict while recoding a file, merely losing in the transformation
+    any character which is not explicitly mapped from a charset
+    to another.  Such a loss is not reversible and so, will bring
+    |package| to fail, unless the option ``-f`` is also given as a
+    kind of counter-measure.
+
+    Using ``-s`` without ``-f`` might render the |package| program
+    very susceptible to the slighest file abnormalities.  Despite the
+    fact that it might be irritating to some users, such paranoia is
+    sometimes wanted and useful.
+
+.. :cindex reversibility of recoding
+
+Even if |package| tries hard to keep the recodings reversible,
+you should not develop an unconditional confidence in its ability to
+do so.  You *ought* to keep only reasonable expectations about reverse
+recodings.  In particular, consider:
+
+  + Most transformations are fully reversible for all inputs, but lose this
+    property whenever ``-s`` is specified.
+
+  + A few transformations are not meant to be reversible, by design.
+
+  + Reversibility sometimes depends on actual file contents and cannot
+    be ascertained beforehand, without reading the file.
+
+  + Reversibility is never absolute across successive versions of this
+    program.  Even correcting a small bug in a mapping could induce slight
+    discrepancies later.
+
+  + Reversibility is easily lost by merging.  This is best explained through
+    an example.  If you reversibly recode a file from charset :var:`A` to
+    charset :var:`B`, then you reversibly recode the result from charset
+    :var:`B` to charset :var:`C`, you cannot expect to recover the original
+    file by merely recoding from charset :var:`C` directly to charset :var:`A`.
+    You will instead have to recode from charset :var:`C` back to charset
+    :var:`B`, and only then from charset :var:`B` to charset :var:`A`.
+
+  + Faulty files create a particular problem.  Consider an example,
+    recoding from :charset:`IBM-PC` to :charset:`Latin-1`.  End of
+    lines are represented as ``\r\n`` in :charset:`IBM-PC` and as
+    ``\n`` in :charset:`Latin-1`.  There is no way by which a faulty
+    :charset:`IBM-PC` file containing a ``\n`` not preceded by ``\r`` be
+    translated into a :charset:`Latin-1` file, and then back.
+
+  + There is another difficulty arising from code equivalences.  For
+    example, in a :charset:`LaTeX` charset file, the string ``\^\i{}``
+    could be recoded back and forth through another charset and become
+    ``\^{\i}``.  Even if the resulting file is equivalent to the
+    original one, it is not identical.
+
+.. :cindex map filling
+
+Unless option ``-s`` is used, |package| automatically tries to fill mappings
+with invented correspondences, often making them fully reversible.  This
+filling is not made at random.  The algorithm tries to stick to the identity
+mapping and, when this is not possible, it prefers generating many small
+permutation cycles, each involving only a few codes.
+
+For example, here is how :charset:`IBM-PC` code 186 gets translated to
+:kbd:`control-U` in :charset:`Latin-1`. :kbd:`Control-U` is 21.  Code 21 is
+the :charset:`IBM-PC` section sign, which is 167 in :charset:`Latin-1`.
+|package| cannot reciprocate 167 to 21, because 167 is the masculine ordinal
+indicator within :charset:`IBM-PC`, which is 186 in :charset:`Latin-1`.  Code
+186 within :charset:`IBM-PC` has no :charset:`Latin-1` equivalent; by
+assigning it back to 21, |package| closes this short permutation loop.
+
+As a consequence of this map filling, |package| may sometimes produce *funny*
+characters.  They may look annoying, they are nevertheless helpful when one
+changes his (her) mind and wants to revert to the prior recoding.  If you
+cannot stand these, use option ``-s``, which asks for a very strict recoding.
+
+This map filling sometimes has a few surprising consequences, which some users
+wrongly interpreted as bugs.  Here are two examples.
+
+  + In some cases, |package| seems to copy a file without recoding it.
+    But in fact, it does.  Consider a request::
+
+      recodec l1..us < File-Latin1 > File-ASCII
+      cmp File-Latin1 File-ASCII
+
+    then :code:`cmp` will not report any difference.  This is quite
+    normal. :charset:`Latin-1` gets correctly recoded to ASCII for charsets
+    commonalities (which are the first 128 characters, in this case).
+    The remaining last 128 :charset:`Latin-1` characters have no ASCII
+    correspondent.  Instead of losing them, |package| elects to
+    map them to unspecified characters of ASCII, so making the recoding
+    reversible.  The simplest way of achieving this is merely to keep
+    those last 128 characters unchanged.  The overall effect is copying
+    the file verbatim.
+
+    If you feel this behaviour is too generous and if you do not wish
+    to care about reversibility, simply use option ``-s``.  By doing
+    so, |package| will strictly map only those :charset:`Latin-1`
+    characters which have an ASCII equivalent, and will merely drop
+    those which do not.  Then, there is more chance that you will
+    observe a difference between the input and the output file.
+
+  + Recoding the wrong way could sometimes give the false impression that
+    recoding has *almost* been done properly.  Consider the requests::
+
+      recodec 437..l1 < File-Latin1 > Temp1
+      recodec 437..l1 < Temp1 > Temp2
+
+    so declaring wrongly :file:`File-Latin1` to be an IBM-PC file, and
+    recoding to :charset:`Latin-1`.  This is surely ill defined and not
+    meaningful.  Yet, if you repeat this step a second time, you might
+    notice that many (not all) characters in :file:`Temp2` are identical
+    to those in :file:`File-Latin1`.  Sometimes, people try to discover
+    how |package| works by experimenting a little at random, rather
+    than reading and understanding the documentation; results such as
+    this are surely confusing, as they provide those people with a false
+    feeling that they understood something.
+
+    Reversible codings have this property that, if applied several times
+    in the same direction, they will eventually bring any character
+    back to its original value.  Since |package| seeks small
+    permutation cycles when creating reversible codings, besides
+    characters unchanged by the recoding, most permutation cycles
+    will be of length 2, and fewer of length 3, etc.  So, it is just
+    expectable that applying the recoding twice in the same direction
+    will recover most characters, but will fail to recover those
+    participating in permutation cycles of length 3.  On the other
+    end, recoding six times in the same direction would recover all
+    characters in cycles of length 1, 2, 3 or 6.
+
+.. [#] There are still some cases of ambiguous output which are
+   rather difficult to detect, and for which the protection is not
+   active.}.
+
+Selecting sequencing methods
+----------------------------
+
+.. :cindex sequencing
+
+This program uses a few techniques when it is discovered that many
+passes are needed to comply with the :var:`request`.  For example,
+suppose that four elementary steps were selected at recoding path
+optimisation time.  Then |package| will split itself into four
+different interconnected tasks, logically equivalent to:
+
+.. parsed-literal::
+
+  :var:`step1` <:var:`input` | :var:`step2` | :var:`step3` | :var:`step4` >:var:`output`
+
+The splitting into subtasks is often done using Unix pipes.  But the
+splitting may also be completely avoided, and rather simulated by using
+memory buffer, or intermediate files.  The various ``--sequence=``\
+:var:`strategy` options gives you control over the flow methods, by
+replacing :var:`strategy` with ``memory``, ``pipe`` or ``files``.  So,
+these options may be used to override the default behaviour, which is
+also explained below.
+
+  ``--sequence=memory``
+    .. :opindex --sequence
+    .. :cindex memory sequencing
+
+    When the recoding requires a combination of two or more elementary
+    recoding steps, this option forces many passes over the data, using
+    in-memory buffers to hold all intermediary results.
+    .. :This should be the default behaviour when
+    .. :files to be recoded are *small* enough.
+
+  ``-i``, ``--sequence=files``
+    .. :opindex -i
+    .. :cindex file sequencing
+
+    When the recoding requires a combination of two or more elementary
+    recoding steps, this option forces many passes over the data, using
+    intermediate files between passes.  This is the default behaviour
+    when files are recoded over themselves.  If this option is selected
+    in filter mode, that is, when the program reads standard input and
+    writes standard output, it might take longer for programs further
+    down the pipe chain to start receiving some recoded data.
+
+  ``-p``, ``--sequence=pipe``
+    .. :opindex -p
+    .. :cindex pipe sequencing
+
+    When the recoding requires a combination of two or more elementary
+    recoding steps, this option forces the program to fork itself into
+    a few copies interconnected with pipes, using the :code:`pipe(2)`
+    system call.  All copies of the program operate in parallel.  This
+    is the default behaviour in filter mode.  If this option is used
+    when files are recoded over themselves, this should also save disk
+    space because some temporary files might not be needed, at the cost
+    of more system overhead.
+
+    If, at installation time, the :code:`pipe(2)` call is said to be
+    unavailable, selecting option ``-p`` is equivalent to selecting
+    option ``-i``.  (This happens, for example, on MS-DOS systems.)
+
+Using mixed charset input
+-------------------------
+
+In real life and practice, textual files are often made up of many
+charsets at once.  Some parts of the file encode one charset, while
+other parts encode another charset, and so forth.  Usually, a file
+does not toggle between more than two or three charsets.  The means to
+distinguish which charsets are encoded at various places is not always
+available.  The |package| program is able to handle only a few
+simple cases of mixed input.
+
+The default |package| behaviour is to expect pure charset files, to
+be recoded as other pure charset files.  However, the following options
+allow for a few precise kinds of mixed charset files.
+
+..
+   Some notes on transliteration and substitution.
+
+   Transliteration is still much study, discussion and work to come,
+   but when generic transliteration will be added in |package|, it
+   will be added *through* the |package| library.
+
+   However, I agree that it might be *convenient* that the
+   ``latin1..fi`` conversion works by letting all ASCII characters
+   through, but then, the result would be a mix of ASCII and ``fi``,
+   it would not be pure ``fi`` anymore.  It would be convenient
+   because, in practice, people might write programs in ASCII, keeping
+   comments or strings directly in ``fi``, all in the same file.  The
+   original files are indeed mixed, and people sometimes expect that
+   |package| will do mixed conversions.
+
+   A conversion does not become *right* because it is altered to be
+   more convenient.  And |package| is not *wrong* because it does not
+   offer some conveniences people would like to have.  As long as
+   |package| main job is producing ``fi``, than ``[`` is just
+   not representable in ``fi``, and |package| is rather right in not
+   letting ``[`` through.  It has to do something special about it.
+   The character might be thrown away, transliterated or replaced by a
+   substitute, or mapped to some other code for reversibility purposes.
+
+   Transliteration or substitution are currently not implemented
+   in |package|, yet for the last few years, I've been saving
+   documentation about these phenomena.  The transliteration
+   which you are asking for, here, is that the ``[`` character in
+   :charset:`Latin-1`, for example, be transliterated to A-umlaut in
+   ``fi``, which is a bit non-meaningful.  Remember, there is no ``[``
+   in ``fi``.
+
+  ``-d``, ``--diacritics``
+    .. :opindex -d
+    .. :opindex --diacritics
+    .. :cindex convert a subset of characters
+    .. :cindex partial conversion
+
+    While converting to or from one of :charset:`HTML` or :charset:`LaTeX`
+    charset, limit conversion to some subset of all characters.  For
+    :charset:`HTML`, limit conversion to the subset of all non-ASCII
+    characters.  For :charset:`LaTeX`, limit conversion to the subset of
+    all non-English letters.  This is particularly useful, for example,
+    when people create what would be valid :charset:`HTML`, TeX or LaTeX
+    files, if only they were using provided sequences for applying
+    diacritics instead of using the diacriticised characters directly
+    from the underlying character set.
+
+    While converting to :charset:`HTML` or :charset:`LaTeX` charset, this
+    option assumes that characters not in the said subset are properly coded
+    or protected already, |package| then transmit them literally.  While
+    converting the other way, this option prevents translating back coded or
+    protected versions of characters not in the said subset. See `World Wide
+    Web representations`_.  See `LaTeX macro calls`_.
+
+    ..
+       ``-M``, ``--message``
+          .. :opindex -M
+          .. :opindex --message
+    ..
+          Option ``-M`` would be for messages, it would ideally process
+          RFC 1522 inserts in ASCII headers, converting them to
+          the goal code, rewriting some MIME header line too, and
+          stopping its special work at the first empty line.  A special
+          combination of both capabilities would be for the recoding
+          of PO files, in which the header, and :code:`msgid` and
+          :code:`msgstr` strings, might all use different charsets.
+          Recoding some PO files currently looks like a nightmare, which
+          I would like |package| to repair.
+
+  ``-S[``\ :var:`language`\ ``]``, ``--source[=``\ :var:`language`\ ``]``
+    .. :opindex -S
+    .. :opindex --source
+    .. :cindex convert strings and comments
+    .. :cindex string and comments conversion
+
+    The bulk of the input file is expected to be written in
+    :charset:`ASCII`, except for parts, like comments and string constants,
+    which are written using another charset than :charset:`ASCII`.  When
+    :var:`language` is ``c``, the recoding will proceed only with
+    the contents of comments or strings, while everything else will
+    be copied without recoding.  When :var:`language` is ``po``, the
+    recoding will proceed only within translator comments (those having
+    whitespace immediately following the initial ``#``) and with the
+    contents of :code:`msgstr` strings.
+
+    For the above things to work, the non-:charset:`ASCII` encoding of the
+    comment or string should be such that an :charset:`ASCII` scan will
+    successfully find where the comment or string ends.
+
+    Even if :charset:`ASCII` is the usual charset for writing programs,
+    some compilers are able to directly read other charsets, like
+    :charset:`UTF-8`, say.  There is currently no provision in
+    |package| for reading mixed charset sources which are not based
+    on :charset:`ASCII`.  It is probable that the need for mixed recoding
+    is not as pressing in such cases.
+
+    For example, after one does:
+
+    .. parsed-literal::
+
+      recodec -Spo pc/..u8 < :var:`input`.po > :var:`output`.po
+
+    file :file:`:var:`output`.po` holds a copy of
+    :file:`:var:`input`.po` in which *only* translator comments and
+    the contents of :code:`msgstr` strings have been recoded from the
+    :charset:`IBM-PC` charset to pure :charset:`UTF-8`, without attempting
+    conversion of end-of-lines.  Machine generated comments and original
+    :code:`msgid` strings are not to be touched by this recoding.
+
+    If :var:`language` is not specified, ``c`` is assumed.
+
+Using |package| within Emacs
+---------------------------------
+
+The fact |package| is a filter makes it quite easy to use from
+within GNU Emacs.  For example, recoding the whole buffer from the
+:charset:`IBM-PC` charset to current charset (:charset:`Latin-1` on Unix) is
+easily done with::
+
+  C-x h C-u M-| recodec ibmpc RET
+
+``C-x h`` selects the whole buffer, and ``C-u M-|`` filters and
+replaces the current region through the given shell command.  Here is
+another example, binding the keys ``C-c T`` to the recoding of the
+current region from Easy French to :charset:`Latin-1` (on Unix) and the key
+``C-u C-c T`` from :charset:`Latin-1` (on Unix) to Easy French::
+
+  (global-set-key "\C-cT" 'recode-texte)
+
+  (defun recode-texte (flag)
+    (interactive "P")
+    (shell-command-on-region
+     (region-beginning) (region-end)
+     (concat "recodec " (if flag "..txte" "txte")) t)
+    (exchange-point-and-mark))
+
+Debugging considerations
+------------------------
+
+It is our experience that when |package| does not provide
+satisfying results, either |package| was not called properly,
+correct results raised some doubts nevertheless, or files to recode were
+somewhat mangled.  Genuine bugs are surely possible.
+
+Unless you already are a |package| expert, it might be a good idea to quickly
+revisit the tutorial (see the `Quick Tutorial`_) or the prior sections in this
+chapter, to make sure that you properly formatted your recoding request.  In
+the case you intended to use |package| as a filter, make sure that you did not
+forget to redirect your standard input (through using the :kbd:`<` symbol in
+the shell, say).  Some |package| false mysteries are also easily explained,
+see `Reversibility issues`_.
+
+For the other cases, some investigation is needed.  To illustrate how
+to proceed, let's presume that you want to recode the :file:`nicepage`
+file, coded :charset:`UTF-8`, into :charset:`HTML`.  The problem is that
+the command ``recodec u8..h nicepage`` yields::
+
+  recode: Invalid input in step `UTF-8..ISO-10646-UCS-2'
+
+One good trick is to use |package| in filter mode instead of in file
+replacement mode, see `Synopsis of Recodec call`_.  Another good trick is to
+use the ``-v`` option asking for a verbose description of the recoding steps.
+We could rewrite our recoding call as ``recodec -v u8..h <nicepage``, to get
+something like:
+
+.. parsed-literal::
+
+  Request: UTF-8..:libiconv:..ISO-10646-UCS-2..HTML_4.0
+  Shrunk to: UTF-8..ISO-10646-UCS-2..HTML_4.0
+  [...:var:`some output`...]
+  recode: Invalid input in step \`UTF-8..ISO-10646-UCS-2'
+  .. `
+
+This might help you to better understand what the diagnostic
+means.  The recoding request is achieved in two steps, the first
+recodes :charset:`UTF-8` into :charset:`UCS-2`, the second recodes
+:charset:`UCS-2` into :charset:`HTML`.  The problem occurs within the first
+of these two steps, and since, the input of this step is the input file
+given to |package|, this is this overall input file which seems to
+be invalid.  Also, when used in filter mode, |package| processes as
+much input as possible before the error occurs and sends the result of
+this processing to standard output.  Since the standard output has not
+been redirected to a file, it is merely displayed on the user screen.
+By inspecting near the end of the resulting :charset:`HTML` output, that
+is, what was recoding a bit before the recoding was interrupted, you may
+infer about where the error stands in the real :charset:`UTF-8` input
+file.
+
+If you have the proper tools to examine the intermediate recoding
+data, you might also prefer to reduce the problem to a single step to
+better study it.  This is what I usually do.  For example, the last
+|package| call above is more or less equivalent to::
+
+  recodec -v UTF-8..ISO_10646-UCS-2 <nicepage >temporary
+  recodec -v ISO_10646-UCS-2..HTML_4.0 <temporary
+  rm temporary
+
+If you know that the problem is within the first step, you might prefer
+to concentrate on using the first |package| line.  If you know
+that the problem is within the second step, you might execute the first
+|package| line once and for all, and then play with the second
+|package| call, repeatedly using the :file:`temporary` file created
+once by the first call.
+
+Note that the ``-f`` switch may be used to force the production of
+:code:`HTML` output despite invalid input, it might be satisfying enough
+for you, and easier than repairing the input file.  That depends on how
+strict you would like to be about the precision of the recoding process.
+
+If you later see that your HTML file begins with ``&lt;html&gt;`` when you
+expected ``<html>``, then |package| might have done a bit more that you
+wanted.  In this case, your input file was half-:charset:`UTF-8`,
+half-:charset:`HTML` already, that is, a mixed file (see `Using mixed charset
+input`_).  There is a special :code:`-d` switch for this case.  So, your might
+be end up calling ``recodec -fd nicepage``.  Until you are quite sure that you
+accept overwriting your input file whatever what, I recommend that you stick
+with filter mode.
+
+If, after such experiments, you seriously think that the |package|
+program does not behave properly, there might be a genuine bug in the
+program itself, in which case I invite you to to contribute a bug
+report, see `Contributions and bug reports`_.

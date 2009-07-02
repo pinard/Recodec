@@ -1,0 +1,98 @@
+
+Quick Tutorial
+==============
+
+.. :cindex |package| use, a tutorial
+.. :cindex tutorial
+
+So, really, you just are in a hurry to use |package|, and do not feel like
+studying this manual?  Even reading this paragraph slows you down?  We might
+have a problem, as you will have to do some guess work, and might not become
+very proficient unless you have a very solid intuition....
+
+Let me use here, as a quick tutorial, an actual reply of mine to a |package|
+user, who writes:
+
+  My situation is this---I occasionally get email with special characters in
+  it.  Sometimes this mail is from a user using IBM software and sometimes it
+  is a user using Mac software.  I myself am on a SPARC Solaris machine.
+
+Your situation is similar to mine, except that I *often* receive email needing
+recoding, that is, much more than *occasionally*!  The usual recodings I do
+are Mac to :charset:`Latin-1`, IBM page codes to :charset:`Latin-1`,
+Easy-French to :charset:`Latin-1`, remove Quoted-Printable, remove Base64.
+These are so frequent that I made myself a few two-keystroke Emacs commands to
+filter the Emacs region.  This is very convenient for me.  I also resort to
+many other email conversions, yet more rarely than the frequent cases above.
+
+  It *seems* like this should be doable using |package|.  However, when I try
+  something like ``grecode mac macfile.txt`` I get nothing out---no error, no
+  output, nothing.
+
+Presuming you are using some recent version of |package|, the command::
+
+  recodec mac macfile.txt
+
+is a request for recoding :file:`macfile.txt` over itself, overwriting the
+original, from Macintosh usual character code and Macintosh end of lines, to
+:charset:`Latin-1` and Unix end of lines.  This is overwrite mode.  If you
+want to use |package| as a filter, which is probably what you need, rather
+do::
+
+   recodec mac
+
+and give your Macintosh file as standard input, you'll get the
+:charset:`Latin-1` file on standard output.  The above command is an
+abbreviation for any of::
+
+  recodec mac..
+  recodec mac..l1
+  recodec mac..Latin-1
+  recodec mac/CR..Latin-1/
+  recodec Macintosh..ISO_8859-1
+  recodec Macintosh/CR..ISO_8859-1/
+
+That is, a :charset:`CR` surface, encoding newlines with ASCII :key:`CR`, is
+first to be removed (this is a default surface for ``mac``), then the
+Macintosh charset is converted to :charset:`Latin-1` and no surface is added
+to the result (there is no default surface for ``l1``).  If you want ``mac``
+code converted, but you know that newlines are already coded the Unix way,
+just do::
+
+  recodec mac/
+
+the slash then overriding the default surface with empty, that is, none.  Here
+are other easy recipes::
+
+  recodec pc          to filter IBM-PC code and CR-LF (default) to Latin-1
+  recodec pc/         to filter IBM-PC code to Latin-1
+  recodec 850         to filter code page 850 and CR-LF (default) to Latin-1
+  recodec 850/        to filter code page 850 to Latin-1
+  recodec /qp         to remove quoted printable
+
+The last one is indeed equivalent to any of::
+
+  recodec /qp..
+  recodec l1/qp..l1/
+  recodec ISO_8859-1/Quoted-Printable..ISO_8859-1/
+
+Here are some reverse recipes::
+
+  recodec ..mac       to filter Latin-1 to Macintosh code and CR (default)
+  recodec ..mac/      to filter Latin-1 to Macintosh code
+  recodec ..pc        to filter Latin-1 to IBM-PC code and CR-LF (default)
+  recodec ..pc/       to filter Latin-1 to IBM-PC code
+  recodec ..850       to filter Latin-1 to code page 850 and CR-LF (default)
+  recodec ..850/      to filter Latin-1 to code page 850
+  recodec ../qp       to force quoted printable
+
+In all the above calls, replace ``recodec`` by ``recodec -f`` if you want to
+proceed despite recoding errors.  If you do not use ``-f`` and there is an
+error, the recoding output will be interrupted after first error in filter
+mode, or the file will not be replaced by a recoded copy in overwrite mode.
+
+You may use ``recodec -l`` to get a list of available charsets and surfaces,
+and ``recodec --help`` to get a quick summary of options.  The above output is
+meant for those having already read this manual, so let me dare a suggestion:
+why could not you find a few more minutes in your schedule to peek further
+down, right into the following chapters!
