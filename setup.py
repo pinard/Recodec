@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 from distutils.core import setup
 
@@ -9,7 +9,7 @@ from Recode import version
 
 setup(name=version.package,
       version=version.version,
-      description="Conversion between charsets, surfaces and structures.",
+      description="Conversion between charsets, surfaces and structures",
       author='François Pinard',
       author_email='pinard@iro.umontreal.ca',
       url='http://www.iro.umontreal.ca/contrib/recode/HTML',
