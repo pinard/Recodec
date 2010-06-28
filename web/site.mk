@@ -9,5 +9,5 @@ SITE_ROOT = 1
 TEMPLATE = $(HOME)/entretien/mes-sites/gabarit.html
 
 html-$(host)/recodec.html: src/recodec.html
-	@echo "$(package_name) <- $<"
+	@echo "$(package_name) ← $<"
 	@$(traiter-html-template-forced)
