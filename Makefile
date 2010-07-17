@@ -7,6 +7,7 @@ DISTRIBUTION = $(shell python Recode/version.py)
 PYTHON = python
 PYSETUP = $(PYTHON) setup.py
 PYTHONTOOL = PYTHONPATH=.:tools $(PYTHON) -S
+RST2HTML = rst2html
 
 RFC1345_TXT = data/rfc1345.txt
 ENCODINGS_DEF = data/encodings.def $(wildcard data/encodings_*.def)
@@ -87,7 +88,9 @@ doc/inc-stamp.txt: tools/inc-stamp-txt.py Recode/version.py $(DOC_SOURCES)
 	mv $(notdir $@) $@
 
 doc/recodec.html: doc/inc-stamp.txt doc/inc-iconv.txt doc/inc-rfc1345.txt
-	cd doc && rst2html.py recodec.txt > recodec.html
+	cd doc && $(RST2HTML) recodec.txt > recodec-tmp.html
+	mv doc/recodec-tmp.html $@
+
 
 Recode/preset.py: tools/preset-py.py $(PY_SOURCES)
 	rm -f $@
