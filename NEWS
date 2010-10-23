@@ -1,31 +1,60 @@
-Recodec NEWS - User visible changes.		-*- outline -*- (allout)
-Copyright © 2002 Free Software Foundation, Inc.
+.. role:: code(strong)
+.. role:: file(literal)
+.. role:: samp(literal)
 
-* Version 0.3 - François Pinard, 2002-10.
+===================================
+Recodec NEWS - User visible changes
+===================================
 
-* Older Recodec releases
-.. Version 0.2 - François Pinard, 2002-09.
-.. Version 0.1 - François Pinard, 2002-09.
-.. Version 0.0 - François Pinard, 2002-09.
+.. contents::
+.. sectnum::
 
-* Cumulative changes, respective to Free Recode 3.6.
+Versions
+========
 
-.. General changes
-. : More charsets are reversible, precise inventory to follow later.
+======== ======================== ==============
+Version  Author                   Date      
+======== ======================== ==============
+0.3      François Pinard          2002-10
+0.2      François Pinard          2002-09
+0.1      François Pinard          2002-09
+0.0      François Pinard          2002-09
+======== ======================== ==============
 
-.. Option changes
-. : Bare `--list' (`-l') should now be written `--list=codings' (`-lc').
-. : `--silent' or `--quiet' (`-q') is accepted but ignored.
-. : `--source' (`-S') and `--headers' (`-h') now require a language.
-. : `--freeze-table' (`-F') disappears, now a separate maintenance program.
-. : `--find-subsets' (`-T') disappears, now a separate maintenance program.
+Cumulative changes
+==================
 
-.. Charsets and surfaces
-. : `Unicode-Escape-X' charset, according to Java documentation.
-. : `flat' and `Texinfo' are better connected.
-. : `q4' and `QNX-4' as new aliases for `IBM437'.
-. : `test7', `test8', `test15' and `test16' now charsets, not surfaces.
+(respective to Free Recode 3.6)
 
-.. Prior history
-   For prior history, see `NEWS' in Free `recode'.  Both `NEWS' file will
-   eventually get merged.
+General changes
+---------------
+
++ More charsets are reversible, precise inventory to follow later.
+
+Option changes
+--------------
+
++ Bare :samp:`--list` (:samp:`-l`) should now be written
+  :samp:`--list=codings` (:samp:`-lc`).
++ :samp:`--silent` or :samp:`--quiet` (:samp:`-q`) is accepted but ignored.
++ :samp:`--source` (:samp:`-S`) and :samp:`--headers` (:samp:`-h`)
+  now require a language.
++ :samp:`--freeze-table` (:samp:`-F`) disappears,
+  now a separate maintenance program.
++ :samp:`--find-subsets` (:samp:`-T`) disappears,
+  now a separate maintenance program.
+
+Charsets and surfaces
+---------------------
+
++ :code:`Unicode-Escape-X` charset, according to Java documentation.
++ :code:`flat` and :code:`Texinfo` are better connected.
++ :code:`q4` and :code:`QNX-4` as new aliases for :code:`IBM437`.
++ :code:`test7`, :code:`test8`, :code:`test15` and :code:`test16` now
+  charsets, not surfaces.
+
+Prior history
+-------------
+
+For prior history, see :file:`NEWS` in Free recode.  Both :file:`NEWS`
+file will eventually get merged.
