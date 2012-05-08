@@ -35,7 +35,7 @@ DOC_SOURCES = $(filter-out doc/inc-stamp.txt, $(wildcard doc/*.txt))
 PY_SOURCES = $(addprefix Recode/, $(addsuffix .py, $(RECODING_MODULES)))
 
 all: $(EXTRA_BUILT)
-	$(PYSETUP) build
+	$(PYSETUP) --quiet build
 
 install: $(EXTRA_BUILT)
 	$(PYSETUP) install
