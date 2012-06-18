@@ -1,0 +1,18 @@
+syntax: glob
+*.pyc
+build/*
+*~
+admin/
+archives/
+build-*/
+charsets/
+codecs/
+essai-sphinx/
+fallbacks/
+html-*
+mule/
+outils/
+pub/
+surfaces/
+unicode/
+web/notes/
