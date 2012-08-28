@@ -1,7 +1,8 @@
 syntax: glob
 *.pyc
-build/*
 *~
+GNUmakefile
+build/*
 admin/
 archives/
 build-*/
