@@ -2,7 +2,7 @@
 README for |package| |version|
 ==============================
 
-.. include:: /home/pinard/entretien/codes/doc/common.txt
+.. include:: /home/pinard/entretien/Recodec/doc/common.txt
 .. |Recode| replace:: Free :code:`recode`
 
 Here is |package| |version|, a clone of |Recode| meant for prototyping,

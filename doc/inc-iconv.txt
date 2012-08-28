@@ -817,6 +817,30 @@
 
       :charset:`csISO2022KR` and :charset:`ISO2022KR` are aliases for this charset.
 
+    :charset:`CP856`
+
+      .. :tindex CP856
+
+    :charset:`CP922`
+
+      .. :tindex CP922
+
+    :charset:`CP943`
+
+      .. :tindex CP943
+
+    :charset:`CP1046`
+
+      .. :tindex CP1046
+
+    :charset:`CP1124`
+
+      .. :tindex CP1124
+
+    :charset:`CP1129`
+
+      .. :tindex CP1129
+
     :charset:`CP437`
 
       .. :tindex CP437, aliases
@@ -898,6 +922,14 @@
 
       :charset:`IBM869`, :charset:`869`, :charset:`CP-GR` and :charset:`csIBM869` are aliases for this charset.
 
+    :charset:`CHAR`
+
+      .. :tindex CHAR
+
+    :charset:`WCHAR_T`
+
+      .. :tindex WCHAR_T
+
     :charset:`DEC-KANJI`
 
       .. :tindex DEC-KANJI
@@ -954,35 +986,3 @@
     :charset:`GSM-ERICSSON`
 
       .. :tindex GSM-ERICSSON
-
-    :charset:`CHAR`
-
-      .. :tindex CHAR
-
-    :charset:`WCHAR_T`
-
-      .. :tindex WCHAR_T
-
-    :charset:`CP856`
-
-      .. :tindex CP856
-
-    :charset:`CP922`
-
-      .. :tindex CP922
-
-    :charset:`CP943`
-
-      .. :tindex CP943
-
-    :charset:`CP1046`
-
-      .. :tindex CP1046
-
-    :charset:`CP1124`
-
-      .. :tindex CP1124
-
-    :charset:`CP1129`
-
-      .. :tindex CP1129

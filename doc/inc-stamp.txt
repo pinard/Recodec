@@ -23,4 +23,4 @@
 
 .. |package| replace:: Recodec
 .. |version| replace:: 0.2b
-.. |date| replace:: 2008-06-14
+.. |date| replace:: 2012-06-17
