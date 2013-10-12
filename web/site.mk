@@ -1,5 +1,5 @@
 package_name = Recodec
-rootdir = $(HOME)/entretien/codes/web
+rootdir = $(HOME)/GitHub/Recodec/web
 margin_color = "\#f1e4eb"
 caption_color = "\#d1b7ff"
 
