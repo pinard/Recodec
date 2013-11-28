@@ -40,9 +40,9 @@ class Main:
                 continue
             try:
                 module = getattr(__import__('encodings.' + base), base)
-            except AttributeError:
+            except (AttributeError, ImportError):
                 if base == 'mbcs':
-                    # Precisely ignore this Python 2.2.1 bug.
+                    # Precisely ignore this one.
                     continue
                 raise
             # Any module which registers itself is a coding name.  There is
