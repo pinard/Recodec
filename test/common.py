@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 import os, unittest
 
 for variable in 'LANG', 'LANGUAGE', 'LC_ALL', 'LC_MESSAGES':

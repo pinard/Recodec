@@ -1,5 +1,5 @@
 # DO NOT MODIFY THIS FILE!  It was automatically generated.
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 # Conversion between different charsets, surfaces and structures.
 # Copyright © 1993, 1997, 1999, 2002, 2004 Free Software Foundation, Inc.

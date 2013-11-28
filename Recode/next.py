@@ -1,5 +1,5 @@
 # Conversion of files between different charsets and surfaces.
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 # Copyright © 1993, 1994, 1997, 2002 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 # Contributed by François Pinard <pinard@iro.umontreal.ca>, 1993.

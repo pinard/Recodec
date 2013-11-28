@@ -1,5 +1,5 @@
 # Conversion of files between different charsets and surfaces.
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 # Copyright © 1996-1999, 2000-2002 Free Software Foundation, Inc.
 # Contributed by François Pinard <pinard@iro.umontreal.ca>, 1996.
 #

@@ -1,12 +1,12 @@
 # Handling basic input and output.
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 from __future__ import generators
 import sys
 
 HEADER = """\
 %(l)sDO NOT MODIFY THIS FILE!  It was automatically generated.  %(r)s
-%(l)s-*- coding: UTF-8 -*- %(r)s
+%(l)s-*- coding: utf-8 -*- %(r)s
 %(e)s
 %(l)sConversion between different charsets, surfaces and structures.
 %(c)sCopyright © 1993, 1997, 1999, 2002, 2004 Free Software Foundation, Inc.

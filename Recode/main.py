@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 # Copyright © 2002 Free Software Foundation, Inc.
 # Contributed by François Pinard <pinard@iro.umontreal.ca>, 2002.
 

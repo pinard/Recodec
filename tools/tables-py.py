@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 # Copyright © 1993, 94, 97, 98, 99, 00, 02 Free Software Foundation, Inc.
 # François Pinard <pinard@iro.umontreal.ca>, 1993.
 

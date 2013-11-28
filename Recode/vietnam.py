@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 # Vietnamese charset processing.
 # Copyright © 1999, 2000, 2002 Progiciels Bourbeau-Pinard inc.
 # Contributed by François Pinard <pinard@iro.umontreal.ca>, 1999.

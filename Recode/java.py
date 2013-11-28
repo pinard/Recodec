@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 import recode
 
 # See http://www.ugrad.cs.ubc.ca/~cs411/docs/modified/3.doc.html for Java,
