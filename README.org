@@ -1,0 +1,88 @@
+#+TITLE: README for Recodec
+#+OPTIONS: H:2 toc:2
+
+      The Recodec project is meant to disappear when it gets integrated
+      into the [[https://github.com/pinard/Recode][Recode project]].  See its /README/ file for more details.
+
+** Presentation
+Recodec is a clone of Recode meant for prototyping, experimenting, and
+preparing what Recode version 4.X will be.  Recode has also been known
+under the names /GNU Recode/ or /Free Recode/.  All these programs or
+projects convert strings or files between various character sets and
+usages, transliterating between more than 240 different character
+sets.  When exact transliteration are not possible, they get rid of
+offending characters or fall back on approximations.
+
+Recodec and Recode have fairly compatible command calls.  However,
+they use fairly different APIs internally, as Recodec extends the
+concept of Python codecs, and is designed to nicely mix with them.
+
+Not everything is implemented (the =@= signs in the output of =recodec
+--help= hints at what is currently missing from Recode).  It may also
+have some new features, compared to Recode.  Be well aware that
+Recodec is still alpha quality and should not be used without caution
+in a production environment.
+
+The Recodec program and library have been written by [[mailto:pinard@iro.umontreal.ca][François Pinard]],
+yet they reuse ideas from users, and other works in this area.  This
+is an evolving package, specifications might change in future
+releases.  Pretesters are welcome.  Please gently report problems,
+suggestions or other comments to the author, either by email, or if
+you are comfortable with GitHub facilities, through GitHub Issues.
+
+** Installation
+Install Recodec through either =python setup.py install= or =make install=
+at top-level of the unpacked distribution.  To check the installation,
+try =recodec -lc= in a shell, this should list all usable charsets,
+surfaces, and aliases.  Also, =make check= launches the validation
+suite.  The =t_names= test is currently failing, and even verbosely:
+this failure is innocuous and does not need to be reported.
+
+Around permission problems, you may install in your own home directory
+with =python setup.py install --home=$HOME=.  If you do, adjust some
+environment variables before usage, with commands like these:
+
+#+BEGIN_SRC basn
+  export PATH=$HOME/bin:$PATH
+  export PYTHONPATH=$HOME/lib/python:$PYTHONPATH
+#+END_SRC
+
+Maintenance of both Recode and Recodec, beyond mere installation and
+usage, already requires GNU Make, a C development environment, and
+Python.  It is expected that later releases will also need Cython.
+
+** Documentation
+The [[http://recode.progiciels-bpi.ca/manual/][Recode manual]] applies to Recodec as well, /mutatis mutandis/.  File
+=NEWS= lists user visible changes, in a concise way.  File =ChangeLog=
+gives a more comprehensive description for all changes, yet this file
+is not maintained anymore: Git history fills the role well enough now.
+
+The C API, as documented in the Recode manual, is not available in
+Recodec.  Until the Python API gets documented, the following example
+should help a bit.  The shell command:
+
+#+BEGIN_SRC bash
+  recodec qnx..latin-1 < INPUT > OUTPUT
+#+END_SRC
+
+could be rewritten into the following Python program:
+
+#+BEGIN_SRC python
+  import Recode
+  file('OUTPUT', 'w').write(
+      file('INPUT').read().encode('qnx..latin1', 'replace'))
+#+END_SRC
+
+or maybe a little more explicitly as:
+
+#+BEGIN_SRC python
+  from Recode import Recodec
+  input = file('INPUT')
+  output = file('OUTPUT', 'w')
+  codec = Recodec('qnx..latin-1')
+  buffer, length = codec.encode(input.read(), 'replace')
+  ouput.write(buffer)
+#+END_SRC
+
+The 'replace' argument may be omitted, this has the same effect as if
+the *--strict* (*-s*) option has been given on the *recodec* call.
