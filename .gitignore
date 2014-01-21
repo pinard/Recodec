@@ -1,3 +1,4 @@
 *.pyc
 GNUmakefile
-build/*
+build/
+html/
